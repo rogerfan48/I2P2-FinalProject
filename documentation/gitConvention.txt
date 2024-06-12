@@ -1,0 +1,5 @@
+init: 初始建置
+feat: 新功能
+fix: 修正先前功能，修bug
+style: 樣式調整、錯字改正等小改動
+refactor: 重構，不增加新功能，merge屬於此
