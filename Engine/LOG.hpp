@@ -13,9 +13,7 @@ namespace Engine {
 		ERROR
 	};
 
-	/// <summary>
 	/// Helper log class for quick logging to console and file. Can be used like std::cout.
-	/// </summary>
 	class LOG final {
 	private:
 		// Determine if global log is enabled.
@@ -24,11 +22,9 @@ namespace Engine {
 		static bool LogVerbose;
 		// The file path of the log file.
 		static const char* FilePath;
-		/// <summary>
 		/// Get the label from log type.
-		/// </summary>
-		/// <param name="type">Log type of a log instance.</param>
-		/// <returns>Returns the string label of the type.</returns>
+		/// type: Log type of a log instance.
+		/// return: the string label of the type.
 		static const char* getLabel(LogType type);
 
 		// File stream to write to.
@@ -36,27 +32,19 @@ namespace Engine {
 		// Determines if log is enabled.
 		bool enabled;
 
-		/// <summary>
 		/// Check should we log the message.
-		/// </summary>
-		/// <returns>Determines whether the messages should be logged.</returns>
+		/// return: Determines whether the messages should be logged.
 		bool canLog() const;
 	public:
 		// Determines the prefix label.
 		LogType type;
 
-		/// <summary>
 		/// Start a log chain with certain type.
-		/// </summary>
-		/// <param name="type">The type of this log chain, default is DEBUGGING.</param>
+		/// type: The type of this log chain, default is DEBUGGING.
 		explicit LOG(LogType type = DEBUGGING);
-		/// <summary>
 		/// Add new line and close file.
-		/// </summary>
 		~LOG();
-		/// <summary>
 		/// Support logging chain that can be used in the same way as std::cout.
-		/// </summary>
 		template<class T>
 		LOG& operator<<(const T &msg) {
 			if (canLog()) {
@@ -65,12 +53,10 @@ namespace Engine {
 			}
 			return *this;
 		}
-		/// <summary>
 		/// Set global configuration.
-		/// </summary>
-		/// <param name="enabled">Determine if global log is enabled.</param>
-		/// <param name="logVerbose">Determine whether should log verbose messages or not.</param>
-		/// <param name="filePath">The file path of the log file.</param>
+		/// enabled: Determine if global log is enabled.
+		/// logVerbose: Determine whether should log verbose messages or not.
+		/// filePath: The file path of the log file.
 		static void SetConfig(bool enabled = false, bool logVerbose = false, const char* filePath = "log.txt");
 	};
 }

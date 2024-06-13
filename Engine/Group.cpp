@@ -22,13 +22,9 @@ namespace Engine {
 		Clear();
 	}
 	void Group::Clear() {
-		for (auto& it : objects) {
-			if (it.first) delete it.second;
-		}
+		for (auto& it : objects)  if (it.first) delete it.second;
+		for (auto& it : controls) if (it.first) delete it.second;
 		objects.clear();
-		for (auto& it : controls) {
-			if (it.first) delete it.second;
-		}
 		controls.clear();
 	}
 	void Group::Update(float deltaTime) {
@@ -39,10 +35,7 @@ namespace Engine {
 		}
 	}
 	void Group::Draw() const {
-		for (auto& it : objects) {
-			if (it.second->Visible)
-				it.second->Draw();
-		}
+		for (auto& it : objects) if (it.second->Visible) it.second->Draw();
 	}
 	void Group::OnKeyDown(int keyCode) {
 		for (auto it = controls.begin(); it != controls.end();) {
@@ -130,8 +123,7 @@ namespace Engine {
 	}
 	std::list<IControl*> Group::GetControls() {
 		std::list<IControl*> list;
-		for (auto& it : controls)
-			list.push_back(it.second);
+		for (auto& it : controls) list.push_back(it.second);
 		return list;
 	}
 }

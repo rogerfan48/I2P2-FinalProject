@@ -7,9 +7,7 @@
 #include "IObject.hpp"
 
 namespace Engine {
-	/// <summary>
 	/// A ControlObject Group that can contain other objects or controls.
-	/// </summary>
 	class Group: public IObject, public IControl {
 	protected:
 		// Stores all object pointers in the scene.
@@ -22,179 +20,120 @@ namespace Engine {
 		//       however this implementation brings us more convenience than the impact
 		//       on performance. Trying to deal with cache misses requires complicated code,
 		//       so we'll just ignore it for simplicity.
-		/// <summary>
 		/// Add Object to scene.
-		/// </summary>
-		/// <param name="shouldDelete">Indicates whether the scene handle the Object deletion for you.</param>
-		/// <param name="obj">The Object to add.</param>
+		/// shouldDelete: Indicates whether the scene handle the Object deletion for you.
+		/// obj: The Object to add.
 		void addObject(bool shouldDelete, IObject* obj);
-		/// <summary>
 		/// Add Control to scene.
-		/// </summary>
-		/// <param name="shouldDelete">Indicates whether the scene handle the Control deletion for you.</param>
-		/// <param name="ctrl">The Control to add.</param>
+		/// shouldDelete: Indicates whether the scene handle the Control deletion for you.
+		/// ctrl: The Control to add.
 		void addControl(bool shouldDelete, IControl* ctrl);
-		/// <summary>
 		/// Insert Object to scene before the iterator.
-		/// </summary>
-		/// <param name="shouldDelete">Indicates whether the scene handle the deletion for you.</param>
-		/// <param name="obj">The Object to insert.</param>
-		/// <param name="it">The iterator that the object should insert before.</param>
+		/// shouldDelete: Indicates whether the scene handle the deletion for you.
+		/// obj: The Object to insert.
+		/// it: The iterator that the object should insert before.
 		void insertObject(bool shouldDelete, IObject* obj, std::list<std::pair<bool, IObject*>>::iterator it);
 	public:
-		/// <summary>
 		/// Create an empty group.
-		/// </summary>
 		explicit Group() = default;
-		/// <summary>
-		/// Copy constructor is deleted, no copying allowed.
-		/// </summary>
+		/// Copy constructor/Copy assignment operator are deleted, no copying/copy assignment allowed.
 		Group(Group const&) = delete;
-		/// <summary>
-		/// Copy assignment operator is deleted, no copy assignment allowed.
-		/// </summary>
 		Group& operator=(Group const&) = delete;
-		/// <summary>
 		/// The default virtual destructor to support polymorphism destruction.
-		/// </summary>
 		virtual ~Group();
-		/// <summary>
 		/// Remove all children (objects and controls).
-		/// </summary>
 		void Clear();
-		/// <summary>
 		/// Run game logic such as updating the world, checking for collision, and so on.
 		/// This is called when the game should update its logic, usually 'fps' times per second.
 		/// Delegate the update event to all visible objects.
-		/// </summary>
-		/// <param name="deltaTime">Time elapsed since last update, can be used to calculate value changes.</param>
+		/// deltaTime: Time elapsed since last update, can be used to calculate value changes.
 		void Update(float deltaTime) override;
-		/// <summary>
 		/// Draw to window display.
 		/// This is called when the game should redraw the window.
 		/// Delegate the draw event to all visible objects.
-		/// </summary>
 		void Draw() const override;
-		/// <summary>
 		/// Delegate the key down event to all controls.
-		/// </summary>
-		/// <param name="keyCode">The keycode of pressed key.</param>
+		/// keyCode: The keycode of pressed key.
 		void OnKeyDown(int keyCode) override;
-		/// <summary>
 		/// Delegate the key up event to all controls.
-		/// </summary>
-		/// <param name="keyCode">The keycode of released key.</param>
+		/// keyCode: The keycode of released key.
 		void OnKeyUp(int keyCode) override;
-		/// <summary>
 		/// Delegate the mouse key down event to all controls.
-		/// </summary>
-		/// <param name="button">The button pressed.</param>
-		/// <param name="mx">Mouse x coordinate in window space.</param>
-		/// <param name="my">Mouse y coordinate in window space.</param>
+		/// button: The button pressed.
+		/// mx: Mouse x coordinate in window space.
+		/// my: Mouse y coordinate in window space.
 		void OnMouseDown(int button, int mx, int my) override;
-		/// <summary>
 		/// Delegate the mouse key up event to all controls.
-		/// </summary>
-		/// <param name="button">The button released.</param>
-		/// <param name="mx">Mouse x coordinate in window space.</param>
-		/// <param name="my">Mouse y coordinate in window space.</param>
+		/// button: The button released.
+		/// mx: Mouse x coordinate in window space.
+		/// my: Mouse y coordinate in window space.
 		void OnMouseUp(int button, int mx, int my) override;
-		/// <summary>
 		/// Delegate the mouse move event to all controls.
-		/// </summary>
-		/// <param name="mx">Mouse x coordinate in window space.</param>
-		/// <param name="my">Mouse y coordinate in window space.</param>
+		/// mx: Mouse x coordinate in window space.
+		/// my: Mouse y coordinate in window space.
 		void OnMouseMove(int mx, int my) override;
-		/// <summary>
 		/// Delegate the mouse scroll event to all controls.
-		/// </summary>
-		/// <param name="mx">Mouse x coordinate in window space.</param>
-		/// <param name="my">Mouse y coordinate in window space.</param>
-		/// <param name="delta">Mouse z scroll delta value.</param>
+		/// mx: Mouse x coordinate in window space.
+		/// my: Mouse y coordinate in window space.
+		/// delta: Mouse z scroll delta value.
 		void OnMouseScroll(int mx, int my, int delta) override;
-		/// <summary>
 		/// Remove the Object from this scene.
-		/// </summary>
-		/// <param name="it">The iterator of the Object.</param>
+		/// it: The iterator of the Object.
 		void RemoveObject(std::list<std::pair<bool, IObject*>>::iterator it);
-		/// <summary>
 		/// Remove the Control from this scene.
-		/// </summary>
-		/// <param name="it">The iterator of the Control.</param>
+		/// it: The iterator of the Control.
 		void RemoveControl(std::list<std::pair<bool, IControl*>>::iterator it);
-		/// <summary>
 		/// Remove the ControlObject from this scene.
-		/// </summary>
-		/// <param name="ctrlIt">The iterator of the Control.</param>
-		/// <param name="objIt">The iterator of the Object.</param>
+		/// ctrlIt: The iterator of the Control.
+		/// objIt: The iterator of the Object.
 		void RemoveControlObject(std::list<std::pair<bool, IControl*>>::iterator ctrlIt, std::list<std::pair<bool, IObject*>>::iterator objIt);
-		/// <summary>
 		/// Add Object to scene.
 		/// Use inline-new when adding Object in order to support polymorphism,
 		/// The added objects will be deleted by Scene at remove or terminate.
-		/// </summary>
-		/// <param name="obj">The Object to add.</param>
+		/// obj: The Object to add.
 		void AddNewObject(IObject* obj);
-		/// <summary>
 		/// Insert Object to scene before the iterator.
 		/// Use inline-new when adding Object in order to support polymorphism,
 		/// The added objects will be deleted by Scene at remove or terminate.
-		/// </summary>
-		/// <param name="obj">The Object to insert.</param>
-		/// <param name="it">The iterator that the object should insert before.</param>
+		/// obj: The Object to insert.
+		/// it: The iterator that the object should insert before.
 		void InsertNewObject(IObject* obj, std::list<std::pair<bool, IObject*>>::iterator it);
-		/// <summary>
 		/// Add Control to scene.
 		/// Use inline-new when adding Control in order to support polymorphism,
 		/// The added controls will be deleted by Scene at remove or terminate.
-		/// </summary>
-		/// <param name="ctrl">The Control to add.</param>
+		/// ctrl: The Control to add.
 		void AddNewControl(IControl* ctrl);
-		/// <summary>
 		/// Add ControlObject to scene.
 		/// Use inline-new when adding ControlObject in order to support polymorphism,
 		/// ControlObject means classes that inherit both Control and Object. (e.g. buttons)
-		/// </summary>
-		/// <param name="ctrl">The ControlObject to add.</param>
+		/// ctrl: The ControlObject to add.
 		void AddNewControlObject(IControl* ctrl);
-		/// <summary>
 		/// Add Object to scene.
 		/// Use reference when adding Object. Make sure it won't be deconstructed due to out-of-scope.
 		/// The added objects will not be deleted by Scene at remove or terminate.
-		/// </summary>
-		/// <param name="obj">The Object to add.</param>
+		/// obj: The Object to add.
 		void AddRefObject(IObject& obj);
-		/// <summary>
 		/// Insert Object to scene before the iterator.
 		/// Use reference when adding Object. Make sure it won't be deconstructed due to out-of-scope.
 		/// The added objects will not be deleted by Scene at remove or terminate.
-		/// </summary>
-		/// <param name="obj">The Object to insert.</param>
-		/// <param name="it">The iterator that the object should insert before.</param>
+		/// obj: The Object to insert.
+		/// it: The iterator that the object should insert before.
 		void InsertRefObject(IObject& obj, std::list<std::pair<bool, IObject*>>::iterator it);
-		/// <summary>
 		/// Add Control to scene.
 		/// Use reference when adding Control. Make sure it won't be deconstructed due to out-of-scope.
 		/// The added controls will not be deleted by Scene at remove or terminate.
-		/// </summary>
-		/// <param name="ctrl">The Control to add.</param>
+		/// ctrl: The Control to add.
 		void AddRefControl(IControl& ctrl);
-		/// <summary>
 		/// Add ControlObject to scene.
 		/// Use reference when adding ControlObject. Make sure it won't be deconstructed due to out-of-scope.
 		/// The added ControlObjects will not be deleted by Scene at remove or terminate.
-		/// </summary>
-		/// <param name="ctrl">The ControlObject to add.</param>
+		/// ctrl: The ControlObject to add.
 		void AddRefControlObject(IControl& ctrl);
-		/// <summary>
 		/// Get all objects.
-		/// </summary>
-		/// <returns>A linked-list of all objects contained.</returns>
+		/// return: A linked-list of all objects contained.
 		std::list<IObject*> GetObjects();
-		/// <summary>
 		/// Get all controls.
-		/// </summary>
-		/// <returns>A linked-list of all controls contained.</returns>
+		/// returns: A linked-list of all controls contained.
 		std::list<IControl*> GetControls();
 	};
 }

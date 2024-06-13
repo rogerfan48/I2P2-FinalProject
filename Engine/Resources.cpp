@@ -55,8 +55,7 @@ namespace Engine {
 	}
 
 	std::shared_ptr<ALLEGRO_BITMAP> Resources::GetBitmap(std::string name) {
-		if (bitmaps.count(name) != 0)
-			return bitmaps[name];
+		if (bitmaps.count(name) != 0) return bitmaps[name];
 		std::string bitmapPath = bitmapPathPrefix + name;
 		ALLEGRO_BITMAP* bmp = al_load_bitmap(bitmapPath.c_str());
 		if (!bmp) throw Allegro5Exception(("failed to load image: " + bitmapPath).c_str());
@@ -66,8 +65,7 @@ namespace Engine {
 	}
 	std::shared_ptr<ALLEGRO_BITMAP> Resources::GetBitmap(std::string name, int width, int height) {
 		std::string idx = name + '?' + std::to_string(width) + 'x' + std::to_string(height);
-		if (bitmaps.count(idx) != 0)
-			return bitmaps[idx];
+		if (bitmaps.count(idx) != 0) return bitmaps[idx];
 		std::string bitmapPath = bitmapPathPrefix + name;
 		ALLEGRO_BITMAP* bmp = al_load_bitmap(bitmapPath.c_str());
 		if (!bmp) throw Allegro5Exception(("failed to load image: " + bitmapPath).c_str());
@@ -89,24 +87,20 @@ namespace Engine {
 	}
 	std::shared_ptr<ALLEGRO_FONT> Resources::GetFont(std::string name, int fontSize) {
 		std::string idx = name + '?' + std::to_string(fontSize);
-		if (fonts.count(idx) != 0)
-			return fonts[idx];
+		if (fonts.count(idx) != 0) return fonts[idx];
 		std::string fontPath = fontPathPrefix + name;
 		ALLEGRO_FONT* font = al_load_font(fontPath.c_str(), fontSize, 0);
-		if (!font)
-			throw Allegro5Exception(("failed to load font: " + fontPath).c_str());
-		LOG(INFO) << "Loaded Resource<font>: " << fontPath << " with size " << fontSize;
+		if   (!font) throw Allegro5Exception(("failed to load font: " + fontPath).c_str());
+		else LOG(INFO) << "Loaded Resource<font>: " << fontPath << " with size " << fontSize;
 		fonts[idx] = std::shared_ptr<ALLEGRO_FONT>(font, al_destroy_font);
 		return fonts[idx];
 	}
 	std::shared_ptr<ALLEGRO_SAMPLE> Resources::GetSample(std::string name) {
-		if (samples.count(name) != 0)
-			return samples[name];
+		if (samples.count(name) != 0) return samples[name];
 		std::string samplePath = samplePathPrefix + name;
 		ALLEGRO_SAMPLE* sample = al_load_sample(samplePath.c_str());
-		if (!sample)
-			throw Allegro5Exception(("failed to load audio: " + samplePath).c_str());
-		LOG(INFO) << "Loaded Resource<audio>: " << samplePath;
+		if   (!sample) throw Allegro5Exception(("failed to load audio: " + samplePath).c_str());
+		else LOG(INFO) << "Loaded Resource<audio>: " << samplePath;
 		samples[name] = std::shared_ptr<ALLEGRO_SAMPLE>(sample, al_destroy_sample);
 		return samples[name];
 	}
@@ -114,9 +108,8 @@ namespace Engine {
 		std::shared_ptr<ALLEGRO_SAMPLE> sample = GetSample(name);
 		ALLEGRO_SAMPLE_INSTANCE* sample_instance = al_create_sample_instance(sample.get());
 		std::string samplePath = samplePathPrefix + name;
-		if (!sample_instance)
-			throw Allegro5Exception(("failed to create sample instance: " + samplePath).c_str());
-		LOG(INFO) << "Created<sample_instance>: " << samplePath;
+		if   (!sample_instance) throw Allegro5Exception(("failed to create sample instance: " + samplePath).c_str());
+		else LOG(INFO) << "Created<sample_instance>: " << samplePath;
 		std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> ptr = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>(sample_instance, al_destroy_sample_instance);
 		sample_instance_pairs[name] = std::make_pair(ptr, sample);
 		return ptr;

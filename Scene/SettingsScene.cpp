@@ -52,7 +52,7 @@ void SettingsScene::Initialize() {
 
 void SettingsScene::Terminate() {
     AudioHelper::StopSample(bgmInstance);
-    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();   // because it's a smart pointer, set it to null can release memory
     IScene::Terminate();
 }
 

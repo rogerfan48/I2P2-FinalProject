@@ -17,7 +17,6 @@ int main(int argc, char **argv) {
 	Engine::LOG::SetConfig(true);
 	Engine::GameEngine& game = Engine::GameEngine::GetInstance();
 
-    // ? Register Scenes here
 	game.AddNewScene("start", new StartScene());
 	game.AddNewScene("stage-select", new StageSelectScene());
 	game.AddNewScene("settings", new SettingsScene());
@@ -26,6 +25,7 @@ int main(int argc, char **argv) {
 	game.AddNewScene("win", new WinScene());
 	game.AddNewScene("scoreboard", new ScoreboardScene());
 
-    // ? Change the start scene
-	game.Start("start", 60, 1600, 832);
+    // game.Start("start", 60, 2160, 1680);	// ? ((15+2+15 + 4)*60, (18+6 + 4)*60)
+	game.Start("start", 60, 1800, 1400);		// ? ((15+2+15 + 4)*50, (18+6 + 4)*50)
+	// game.Start("start", 60, 1440, 1120);	// ? ((15+2+15 + 4)*40, (18+6 + 4)*40)
 }

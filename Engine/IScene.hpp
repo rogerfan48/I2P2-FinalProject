@@ -4,11 +4,9 @@
 #include "Group.hpp"
 
 namespace Engine {
-	/// <summary>
 	/// This class should be inherited whenever you want to define a new scene.
 	/// Responsible for delegating draw, update, events to the objects and controls in scene.
 	/// Acts like a prototype, so all initialize and terminate shouldn't be put in constructor or destructor.
-	/// </summary>
 	class IScene: public Group {
 	protected:
 		/// <summary>
