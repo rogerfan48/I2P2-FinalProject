@@ -14,100 +14,44 @@ file(COPY allegro_monolith-5.2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(
     ArenaLegends
+    main.cpp
+
     Engine/Allegro5Exception.cpp
     Engine/Allegro5Exception.hpp
     Engine/AudioHelper.cpp
     Engine/AudioHelper.hpp
-    Bullet/Bullet.cpp
-    Bullet/Bullet.hpp
     Engine/Collider.cpp
     Engine/Collider.hpp
-    UI/Animation/DirtyEffect.cpp
-    UI/Animation/DirtyEffect.hpp
-    Enemy/Enemy.cpp
-    Enemy/Enemy.hpp
-    UI/Animation/ExplosionEffect.cpp
-    UI/Animation/ExplosionEffect.hpp
-    Bullet/FireBullet.cpp
-    Bullet/FireBullet.hpp
     Engine/GameEngine.cpp
     Engine/GameEngine.hpp
     Engine/Group.cpp
     Engine/Group.hpp
     Engine/IControl.cpp
     Engine/IControl.hpp
-    UI/Component/Image.cpp
-    UI/Component/Image.hpp
-    UI/Component/ImageButton.cpp
-    UI/Component/ImageButton.hpp
     Engine/IObject.cpp
     Engine/IObject.hpp
     Engine/IScene.cpp
     Engine/IScene.hpp
-    UI/Component/Label.cpp
-    UI/Component/Label.hpp
-    Bullet/LaserBullet.cpp
-    Bullet/LaserBullet.hpp
-    Turret/LaserTurret.cpp
-    Turret/LaserTurret.hpp
     Engine/LOG.cpp
     Engine/LOG.hpp
-    Scene/LoseScene.cpp
-    Scene/LoseScene.hpp
-    Turret/MachineGunTurret.cpp
-    Turret/MachineGunTurret.hpp
-    main.cpp
-    Bullet/MissileBullet.cpp
-    Bullet/MissileBullet.hpp
-    Turret/MissileTurret.cpp
-    Turret/MissileTurret.hpp
-    UI/Animation/Plane.cpp
-    UI/Animation/Plane.hpp
-    Enemy/PlaneEnemy.cpp
-    Enemy/PlaneEnemy.hpp
-    Scene/PlayScene.cpp
-    Scene/PlayScene.hpp
     Engine/Point.cpp
     Engine/Point.hpp
     Engine/Resources.cpp
     Engine/Resources.hpp
-    UI/Component/Slider.cpp
-    UI/Component/Slider.hpp
-    Enemy/SoldierEnemy.cpp
-    Enemy/SoldierEnemy.hpp
     Engine/Sprite.cpp
     Engine/Sprite.hpp
-    Scene/StageSelectScene.cpp
-    Scene/StageSelectScene.hpp
-    Enemy/TankEnemy.cpp
-    Enemy/TankEnemy.hpp
-    Turret/Turret.cpp
-    Turret/Turret.hpp
-    Turret/TurretButton.cpp
-    Turret/TurretButton.hpp
-    Scene/WinScene.cpp
-    Scene/WinScene.hpp
 
-    Scene/StartScene.cpp
-    Scene/StartScene.h
-    Scene/SettingsScene.cpp
-    Scene/SettingsScene.hpp
-    Scene/ScoreboardScene.cpp
-    Scene/ScoreboardScene.hpp
-    Turret/WizardTurret.cpp
-    Turret/WizardTurret.hpp
-    Turret/GunTurret.cpp
-    Turret/GunTurret.hpp
-    Turret/Shovel.cpp
-    Turret/Shovel.hpp
-    Turret/Bomb.cpp
-    Turret/Bomb.hpp
-    Enemy/Tk1Enemy.cpp
-    Enemy/Tk1Enemy.hpp
-    Enemy/Tk2Enemy.cpp
-    Enemy/Tk2Enemy.hpp
-#        UI/Component/TextInput.cpp
-#        UI/Component/TextInput.hpp
+    UI/Component/Image.cpp
+    UI/Component/Image.hpp
+    UI/Component/ImageButton.cpp
+    UI/Component/ImageButton.hpp
+    UI/Component/Label.cpp
+    UI/Component/Label.hpp
+    UI/Component/Slider.cpp
+    UI/Component/Slider.hpp
+
+    Scene/LoadScene.cpp
+    Scene/LoadScene.hpp
 )
 
 IF (WIN32)
