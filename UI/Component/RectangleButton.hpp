@@ -21,7 +21,7 @@ namespace Engine {
 		// The callback function to call when button clicked.
 		std::function<void()> OnClickCallback;
         // Original color
-        ALLEGRO_COLOR color_origin;
+        ALLEGRO_COLOR colorOrigin;
 	public:
 		// Whether the button can be pressed.
 		bool Enabled = true;
