@@ -56,6 +56,8 @@ add_executable(
 
     Scene/LoadScene.cpp
     Scene/LoadScene.hpp
+    Scene/LobbyScene.cpp
+    Scene/LobbyScene.hpp
 )
 
 IF (WIN32)
