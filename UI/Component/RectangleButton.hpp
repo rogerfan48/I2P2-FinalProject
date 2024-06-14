@@ -21,6 +21,7 @@ namespace Engine {
 		// The callback function to call when button clicked.
 		std::function<void()> OnClickCallback;
         // Original color
+		ALLEGRO_COLOR colorBorder;
         ALLEGRO_COLOR colorOrigin;
 		ALLEGRO_COLOR colorHovered;
 	public:
@@ -46,6 +47,7 @@ namespace Engine {
 		/// mx: Mouse x coordinate in window space.
 		/// my: Mouse y coordinate in window space.
 		void OnMouseMove(int mx, int my) override;
+		void Draw() const override;
 	};
 }
 #endif
