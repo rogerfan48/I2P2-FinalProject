@@ -13,16 +13,13 @@ namespace Engine {
 			bmp = Resources::GetInstance().GetBitmap(img);
 			Size.x = GetBitmapWidth();
 			Size.y = GetBitmapHeight();
-		}
-		else if (Size.x == 0) {
+		} else if (Size.x == 0) {
 			bmp = Resources::GetInstance().GetBitmap(img);
 			Size.x = GetBitmapWidth() * Size.y / GetBitmapHeight();
-		}
-		else if (Size.y == 0) {
+		} else if (Size.y == 0) {
 			bmp = Resources::GetInstance().GetBitmap(img);
 			Size.y = GetBitmapHeight() * Size.x / GetBitmapWidth();
-		}
-		else /* Size.x != 0 && Size.y != 0 */ {
+		} else {
 			bmp = Resources::GetInstance().GetBitmap(img, Size.x, Size.y);
 		}
 	}
