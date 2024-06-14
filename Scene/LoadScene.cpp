@@ -19,8 +19,6 @@ void LoadScene::Initialize() {
     int halfW = w / 2;
     int halfH = h / 2;
     ALLEGRO_COLOR bgColor = al_map_rgb(5, 0, 20);
-    ALLEGRO_COLOR btnColor = al_map_rgb(150, 90, 15);
-    ALLEGRO_COLOR btnColorHovered = al_map_rgb(200, 140, 70);
 
     AddNewObject(new Engine::Rectangle(0, 0, w, h, bgColor));
     AddNewObject(new Engine::Label("Arena Legends", "recharge.otf", 120, halfW, halfH / 3 + 50, 10, 255, 255, 255, 0.5, 0.5));

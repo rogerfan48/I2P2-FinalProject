@@ -11,7 +11,7 @@
 
 namespace Engine {
 	RectangleButton::RectangleButton(float x, float y, float w, float h, ALLEGRO_COLOR colorOrigin, ALLEGRO_COLOR colorHovered) :
-		Rectangle(x, y, w, h, color), colorOrigin(colorOrigin), colorHovered(colorHovered) {
+		Rectangle(x, y, w, h, colorOrigin), colorOrigin(colorOrigin), colorHovered(colorHovered) {
 			colorBorder = al_map_rgb(200, 200, 200);
 			Point mouse = GameEngine::GetInstance().GetMousePosition();
 			mouseIn = Engine::Collider::IsPointInRect(Engine::Point(mouse.x, mouse.y), Position, Size);
