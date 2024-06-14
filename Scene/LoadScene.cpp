@@ -7,7 +7,7 @@
 #include "Engine/AudioHelper.hpp"
 #include "Engine/GameEngine.hpp"
 #include "UI/Component/ImageButton.hpp"
-#include "UI/Component/Rectangle.hpp"
+#include "UI/Component/RectangleButton.hpp"
 #include "UI/Component/Label.hpp"
 #include "Engine/Point.hpp"
 #include "Engine/Resources.hpp"
@@ -38,8 +38,6 @@ void LoadScene::Initialize() {
     btn->SetOnClickCallback(std::bind(&LoadScene::SettingsOnClick, this, 3));
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Settings", "pirulen.ttf", 48, halfW, halfH / 2 + diff[2] + lD, 0, 0, 0, 255, 0.5, 0.5));
-
-    AddNewObject(new Engine::Rectangle(0,0,60,60,50,50,50));    // for test
 }
 void LoadScene::Terminate() {
     IScene::Terminate();

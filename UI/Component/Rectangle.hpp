@@ -11,7 +11,7 @@ namespace Engine {
 	class Rectangle : public IObject {
 	public:
 		// color
-		int r, g, b;
+		ALLEGRO_COLOR color;
 		/// Construct a rectangle object.
 		/// x: X-coordinate.
 		/// y: Y-coordinate.
@@ -19,7 +19,7 @@ namespace Engine {
 		/// h: Height of the rectangle, 0 indicates original size.
 		/// anchorX: The centerX of the object. (0, 0) means top-left, while (1, 0) means top-right.
 		/// anchorY: The centerY of the object. (0, 1) means bottom-left, while (1, 1) means bottom-right.
-		explicit Rectangle(float x, float y, float w = 0, float h = 0,  float r = 0, float g = 0, float b = 0);
+		explicit Rectangle(float x, float y, float w = 0, float h = 0, ALLEGRO_COLOR color = al_map_rgb(0, 0, 0));
 		/// Draw the loaded rectangle.
 		void Draw() const override;
 	};
