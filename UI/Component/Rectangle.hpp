@@ -7,27 +7,20 @@
 #include "Engine/IObject.hpp"
 
 namespace Engine {
-	/// <summary>
 	/// A simple static rectangle object.
-	/// </summary>
 	class Rectangle : public IObject {
 	public:
-		// Smart pointer to bitmap.
+		// color
 		int r, g, b;
-		/// <summary>
 		/// Construct a rectangle object.
-		/// </summary>
-		/// <param name="img">The rectangle path in 'Resource/rectangles/'</param>
-		/// <param name="x">X-coordinate.</param>
-		/// <param name="y">Y-coordinate.</param>
-		/// <param name="w">Width of the rectangle, 0 indicates original size.</param>
-		/// <param name="h">Height of the rectangle, 0 indicates original size.</param>
-		/// <param name="anchorX">The centerX of the object. (0, 0) means top-left, while (1, 0) means top-right.</param>
-		/// <param name="anchorY">The centerY of the object. (0, 1) means bottom-left, while (1, 1) means bottom-right.</param>
+		/// x: X-coordinate.
+		/// y: Y-coordinate.
+		/// w: Width of the rectangle, 0 indicates original size.
+		/// h: Height of the rectangle, 0 indicates original size.
+		/// anchorX: The centerX of the object. (0, 0) means top-left, while (1, 0) means top-right.
+		/// anchorY: The centerY of the object. (0, 1) means bottom-left, while (1, 1) means bottom-right.
 		explicit Rectangle(float x, float y, float w = 0, float h = 0,  float r = 0, float g = 0, float b = 0);
-		/// <summary>
 		/// Draw the loaded rectangle.
-		/// </summary>
 		void Draw() const override;
 	};
 }

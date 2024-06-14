@@ -8,4 +8,3 @@ Makefile
 .vscode/
 .DS_Store
 ninja.exe
-main.cpp
