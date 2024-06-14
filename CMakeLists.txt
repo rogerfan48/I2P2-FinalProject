@@ -49,6 +49,8 @@ add_executable(
     UI/Component/Label.hpp
     UI/Component/Slider.cpp
     UI/Component/Slider.hpp
+    UI/Component/Rectangle.cpp
+    UI/Component/Rectangle.hpp
 
     Scene/LoadScene.cpp
     Scene/LoadScene.hpp
