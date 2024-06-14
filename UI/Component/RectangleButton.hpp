@@ -22,6 +22,7 @@ namespace Engine {
 		std::function<void()> OnClickCallback;
         // Original color
         ALLEGRO_COLOR colorOrigin;
+		ALLEGRO_COLOR colorHovered;
 	public:
 		// Whether the button can be pressed.
 		bool Enabled = true;
@@ -30,7 +31,9 @@ namespace Engine {
 		/// y: Y-coordinate.
 		/// w: Width of the rectangle, 0 indicates original size.
 		/// h: Height of the rectangle, 0 indicates original size.
-		explicit RectangleButton(float x, float y, float w, float h, float r, float g, float b);
+		/// r, g, b: origin color
+		/// ar, ag, ab: hover color
+		explicit RectangleButton(float x, float y, float w, float h, ALLEGRO_COLOR color, ALLEGRO_COLOR colorHovered);
 		/// Set the callback function when clicked.
 		/// onClickCallback: 
 		void SetOnClickCallback(std::function<void(void)> onClickCallback);

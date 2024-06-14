@@ -19,7 +19,7 @@ namespace Engine {
 		/// h: Height of the rectangle, 0 indicates original size.
 		/// anchorX: The centerX of the object. (0, 0) means top-left, while (1, 0) means top-right.
 		/// anchorY: The centerY of the object. (0, 1) means bottom-left, while (1, 1) means bottom-right.
-		explicit Rectangle(float x, float y, float w, float h, float r, float g, float b);
+		explicit Rectangle(float x, float y, float w, float h, ALLEGRO_COLOR color);
 		/// Draw the loaded rectangle.
 		void Draw() const override;
 	};

@@ -8,8 +8,8 @@
 #include "Engine/Resources.hpp"
 
 namespace Engine {
-	Rectangle::Rectangle(float x, float y, float w, float h, float r, float g, float b) :
-		IObject(x, y, w, h, 0.5, 0.5), color(al_map_rgb(r, g, b)) {}
+	Rectangle::Rectangle(float x, float y, float w, float h, ALLEGRO_COLOR color) :
+		IObject(x, y, w, h, 0.5, 0.5), color(color) {}
 	void Rectangle::Draw() const {
 		al_draw_filled_rectangle(Position.x, Position.y, 
             Position.x + Size.x, Position.y + Size.y, color);
