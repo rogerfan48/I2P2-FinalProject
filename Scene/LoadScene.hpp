@@ -6,11 +6,10 @@
 #include "Engine/IScene.hpp"
 class LoadScene final : public Engine::IScene {
 public:
+    float tick = 0;
     explicit LoadScene() = default;
     void Initialize() override;
+    void Update(float deltaTime) override;
     void Terminate() override;
-    void PlayOnClick(int stage);
-    void SettingsOnClick(int stage);
-    void ScoreboardOnClick(int stage);
 };
 #endif // LOADSCENE_HPP
