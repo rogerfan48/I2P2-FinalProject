@@ -38,6 +38,8 @@ void LoadScene::Initialize() {
     btn->SetOnClickCallback(std::bind(&LoadScene::SettingsOnClick, this, 3));
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Settings", "pirulen.ttf", 48, halfW, halfH / 2 + diff[2] + lD, 0, 0, 0, 255, 0.5, 0.5));
+
+    AddNewControlObject(new Engine::RectangleButton(0,0,50,50,50,50,50));
 }
 void LoadScene::Terminate() {
     IScene::Terminate();
