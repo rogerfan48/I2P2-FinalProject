@@ -78,7 +78,7 @@ void LobbyScene::OnlinePlayOnClick(int stage) {
 void LobbyScene::SettingsOnClick(int stage) {
     AudioHelper::StopSample(bgmInstance);
 	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
-    Engine::GameEngine::GetInstance().ChangeScene("load");
+    Engine::GameEngine::GetInstance().ChangeScene("setting");
 }
 void LobbyScene::ScoreboardOnClick(int stage) {
     AudioHelper::StopSample(bgmInstance);

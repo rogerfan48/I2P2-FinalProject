@@ -60,6 +60,8 @@ add_executable(
     Scene/LobbyScene.hpp
     Scene/CardSetScene.cpp
     Scene/CardSetScene.hpp
+    Scene/SettingScene.cpp
+    Scene/SettingScene.hpp
     Scene/PlayScene.cpp
     Scene/PlayScene.hpp
 
