@@ -60,22 +60,28 @@ void LobbyScene::Initialize() {
     bgmInstance = AudioHelper::PlaySample("bgm/lobbyBGM.ogg", true, AudioHelper::BGMVolume);
 }
 void LobbyScene::Terminate() {
-    AudioHelper::StopSample(bgmInstance);
-	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     IScene::Terminate();
 }
 void LobbyScene::CardSetOnClick(int stage) {
     Engine::GameEngine::GetInstance().ChangeScene("cardSet");
 }
 void LobbyScene::SinglePlayOnClick(int stage) {
+    AudioHelper::StopSample(bgmInstance);
+	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     Engine::GameEngine::GetInstance().ChangeScene("play");
 }
 void LobbyScene::OnlinePlayOnClick(int stage) {
+    AudioHelper::StopSample(bgmInstance);
+	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     Engine::GameEngine::GetInstance().ChangeScene("play");
 }
 void LobbyScene::SettingsOnClick(int stage) {
+    AudioHelper::StopSample(bgmInstance);
+	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     Engine::GameEngine::GetInstance().ChangeScene("load");
 }
 void LobbyScene::ScoreboardOnClick(int stage) {
+    AudioHelper::StopSample(bgmInstance);
+	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     Engine::GameEngine::GetInstance().ChangeScene("load");
 }

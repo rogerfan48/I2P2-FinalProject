@@ -32,12 +32,8 @@ void CardSetScene::Initialize() {
     btn->SetOnClickCallback(std::bind(&CardSetScene::CheckOnClick, this, 2));
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Check", "recharge.otf", 52, 1250, 1300, 0, 0, 0, 255, 0.5, 0.5));
-
-    bgmInstance = AudioHelper::PlaySample("bgm/lobbyBGM.ogg", true, AudioHelper::BGMVolume);
 }
 void CardSetScene::Terminate() {
-    AudioHelper::StopSample(bgmInstance);
-	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     IScene::Terminate();
 }
 void CardSetScene::CheckOnClick(int stage) {
