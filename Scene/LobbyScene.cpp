@@ -1,17 +1,13 @@
 #include "LobbyScene.hpp"
 #include <allegro5/allegro_audio.h>
-#include <functional>
-#include <memory>
 #include <string>
 
-#include "Engine/AudioHelper.hpp"
 #include "Engine/GameEngine.hpp"
-#include "UI/Component/ImageButton.hpp"
-#include "UI/Component/RectangleButton.hpp"
-#include "UI/Component/Label.hpp"
 #include "Engine/Point.hpp"
 #include "Engine/Resources.hpp"
-#include "UI/Component/Slider.hpp"
+#include "Engine/AudioHelper.hpp"
+#include "UI/Component/RectangleButton.hpp"
+#include "UI/Component/Label.hpp"
 
 void LobbyScene::Initialize() {
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
