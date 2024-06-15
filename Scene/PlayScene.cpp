@@ -3,6 +3,7 @@
 #include <allegro5/bitmap.h>
 #include <allegro5/allegro_audio.h>
 #include <vector>
+#include <iostream>
 
 #include "Engine/IScene.hpp"
 #include "Engine/Group.hpp"
@@ -19,6 +20,7 @@ std::map<int, ALLEGRO_COLOR> PlayScene::TileColor;
 std::vector<std::string> PlayScene::MapTile;
 
 void PlayScene::Initialize() {
+    tick = 0;
     MapTile.push_back("01010101010101044010101010101010");
     MapTile.push_back("10101010101010144101010101010101");
     MapTile.push_back("01010555010101044010101055501010");
@@ -75,6 +77,15 @@ void PlayScene::Terminate() {
 }
 void PlayScene::Update(float deltaTime) {
     IScene::Update(deltaTime);
+    tick += deltaTime;
+    if(tick >= 1) {
+        for(auto &i : TowerGroup->GetObjects()) {
+            auto tower = dynamic_cast<Tower*>(i);
+            tower->hp-=100;
+        }
+        tick--;
+        std::cout<<"success"<<std::endl;
+    }
 }
 void PlayScene::Draw() const {
     IScene::Draw();

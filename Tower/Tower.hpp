@@ -9,11 +9,12 @@
 
 class Tower: public Engine::Image {
 protected:
-    int hp, maxHp;
+    float maxHp;
     float CoolDown;
     PlayScene* getPlayScene();
-
+    ALLEGRO_COLOR bloodColor = al_map_rgb(0, 255, 0), textColor = al_map_rgb(255, 255, 255);
 public:
+    float hp;
     bool enabled = true;
     // Army* target = nullptr;
     Tower(std::string imgTower, float x, float y, float w, float h, int hp, float coolDown);

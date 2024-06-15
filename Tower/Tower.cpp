@@ -1,7 +1,11 @@
 #include <allegro5/color.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 #include <cmath>
 #include <utility>
+#include <algorithm>
+#include <string>
 
 #include "Engine/GameEngine.hpp"
 #include "Engine/Group.hpp"
@@ -9,6 +13,7 @@
 #include "Engine/IScene.hpp"
 #include "Scene/PlayScene.hpp"
 #include "Engine/Point.hpp"
+#include "Engine/Resources.hpp"
 #include "UI/Component/Image.hpp"
 #include "Tower.hpp"
 
@@ -19,6 +24,7 @@ Tower::Tower(std::string imgTower, float x, float y, float w, float h, int hp, f
 	Image(imgTower, x, y, w, h, 0, 0), hp(hp), maxHp(hp), CoolDown(coolDown) {}
 void Tower::Update(float deltaTime) {
 	PlayScene* scene = getPlayScene();
+	if(hp <= maxHp * 0.2) bloodColor = al_map_rgb(255, 0, 0), textColor = al_map_rgb(255, 255, 255);
 	// if (!Enabled)
 	// 	return;
 	// if (Target) {
@@ -70,8 +76,10 @@ void Tower::Update(float deltaTime) {
 }
 void Tower::Draw() const {
 	Image::Draw();
-    al_draw_rectangle(Position.x, Position.y-40, 
-			Position.x+Size.x, Position.y-20, al_map_rgb(255,255,255),10);
-	al_draw_filled_rectangle(Position.x, Position.y-40, 
-            Position.x+hp/maxHp*Size.x, Position.y-20, al_map_rgb(0,255,0));
+    al_draw_filled_rectangle(Position.x, Position.y+Size.y-20, 
+			Position.x+Size.x, Position.y+Size.y, al_map_rgb(128,128,128));
+	al_draw_filled_rectangle(Position.x+5, Position.y+Size.y-15,
+            Position.x+std::max(0.0f,hp)/maxHp*(Size.x-10)+5, Position.y+Size.y-5, bloodColor);
+	al_draw_text(Engine::Resources::GetInstance().GetFont("recharge.otf",15).get(), textColor, 
+			Position.x, Position.y+Size.y-35, ALLEGRO_ALIGN_LEFT, std::to_string((int)hp).c_str());
 }

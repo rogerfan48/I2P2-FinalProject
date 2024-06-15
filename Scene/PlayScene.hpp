@@ -25,6 +25,7 @@ private:
     static std::map<int, ALLEGRO_COLOR> TileColor;
     static std::vector<std::string> MapTile;
     std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
+    float tick;
 public:
 
     static const int BlockSize;
