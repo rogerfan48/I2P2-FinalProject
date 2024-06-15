@@ -1,11 +1,15 @@
 #ifndef SIDETOWER_HPP
 #define SIDETOWER_HPP
+
 #include "Tower.hpp"
 
 class SideTower: public Tower {
 public:
-    // color 第一個字母要大寫, ex : Blue
+    static const int SideTowerMaxHp;
+    static const float SideTowerCoolDown;
+    // color: Blue/Red
+    // x, y: left-up position
     SideTower(std::string color, float x, float y);
-    // void CreateBullet() override;
 };
-#endif
+
+#endif // SIDETOWER_HPP

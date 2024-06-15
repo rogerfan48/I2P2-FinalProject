@@ -5,27 +5,20 @@
 #include <string>
 
 #include "Engine/Sprite.hpp"
-
-class Enemy;
-class PlayScene;
+#include "Scene/PlayScene.hpp"
 
 class Tower: public Engine::Image {
 protected:
-    int hp, max_hp;
-    float coolDown;
-    float reload = 0;
-    float rotateRadian = 2 * ALLEGRO_PI;
-    std::list<Tower*>::iterator lockedTowerIterator;
+    int hp, maxHp;
+    float CoolDown;
     PlayScene* getPlayScene();
-    // Reference: Design Patterns - Factory Method.
-    // virtual void CreateBullet() = 0;
 
 public:
-    bool Enabled = true;
-    bool Preview = false;
-    Enemy* Target = nullptr;
+    bool enabled = true;
+    // Army* target = nullptr;
     Tower(std::string imgTower, float x, float y, float w, float h, int hp, float coolDown);
     void Update(float deltaTime) override;
     void Draw() const override;
 };
-#endif 
+
+#endif // TOWER_HPP

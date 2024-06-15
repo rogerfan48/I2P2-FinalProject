@@ -16,7 +16,7 @@ PlayScene* Tower::getPlayScene() {
 	return dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetActiveScene());
 }
 Tower::Tower(std::string imgTower, float x, float y, float w, float h, int hp, float coolDown) :
-	Image(imgTower, x, y, w, h, 0, 0), hp(hp), max_hp(hp), coolDown(coolDown) {}
+	Image(imgTower, x, y, w, h, 0, 0), hp(hp), maxHp(hp), CoolDown(coolDown) {}
 void Tower::Update(float deltaTime) {
 	PlayScene* scene = getPlayScene();
 	// if (!Enabled)
@@ -73,5 +73,5 @@ void Tower::Draw() const {
     al_draw_rectangle(Position.x, Position.y-40, 
 			Position.x+Size.x, Position.y-20, al_map_rgb(255,255,255),10);
 	al_draw_filled_rectangle(Position.x, Position.y-40, 
-            Position.x+hp/max_hp*Size.x, Position.y-20, al_map_rgb(0,255,0));
+            Position.x+hp/maxHp*Size.x, Position.y-20, al_map_rgb(0,255,0));
 }
