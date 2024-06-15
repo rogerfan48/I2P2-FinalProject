@@ -65,7 +65,7 @@ void LobbyScene::Terminate() {
     IScene::Terminate();
 }
 void LobbyScene::CardSetOnClick(int stage) {
-    Engine::GameEngine::GetInstance().ChangeScene("lobby");
+    Engine::GameEngine::GetInstance().ChangeScene("cardSet");
 }
 void LobbyScene::SinglePlayOnClick(int stage) {
     Engine::GameEngine::GetInstance().ChangeScene("play");
