@@ -34,6 +34,7 @@ public:
     static const int MapDiff;
 
     Group* TileMapGroup;
+    Group* TowerGroup;
 
     explicit PlayScene() = default;
 	void Initialize() override;

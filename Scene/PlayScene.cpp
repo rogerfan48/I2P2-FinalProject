@@ -7,6 +7,8 @@
 #include "Engine/IScene.hpp"
 #include "Engine/Group.hpp"
 #include "Engine/AudioHelper.hpp"
+#include "Tower/MainTower.hpp"
+#include "Tower/SideTower.hpp"
 #include "UI/Component/Rectangle.hpp"
 
 const int PlayScene::BlockSize = 50;
@@ -19,9 +21,9 @@ std::vector<std::string> PlayScene::MapTile;
 void PlayScene::Initialize() {
     MapTile.push_back("01010101010101044010101010101010");
     MapTile.push_back("10101010101010144101010101010101");
-    MapTile.push_back("01010555010101044010101015551010");
-    MapTile.push_back("10133555333333322333333335553101");
-    MapTile.push_back("01030555010101044010101015553010");
+    MapTile.push_back("01010555010101044010101055501010");
+    MapTile.push_back("10133555333333322333333355533101");
+    MapTile.push_back("01030555010101044010101055503010");
     MapTile.push_back("10131010101010144101010101013101");
     MapTile.push_back("01030101010101044010101010103010");
     MapTile.push_back("15555010101010144101010101055551");
@@ -56,6 +58,15 @@ void PlayScene::Initialize() {
     }
 
     bgmInstance = AudioHelper::PlaySample("bgm/playBGMw321.ogg", false, AudioHelper::BGMVolume);
+
+    AddNewObject(TowerGroup = new Group());
+    TowerGroup->AddNewObject(new SideTower("Red", MapDiff+5*BlockSize, MapDiff+2*BlockSize));
+    TowerGroup->AddNewObject(new SideTower("Red", MapDiff+5*BlockSize, MapDiff+13*BlockSize));
+    TowerGroup->AddNewObject(new MainTower("Red", MapDiff+BlockSize, MapDiff+7*BlockSize));
+    TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+2*BlockSize));
+    TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+13*BlockSize));
+    TowerGroup->AddNewObject(new MainTower("Blue", MapDiff+27*BlockSize, MapDiff+7*BlockSize));
+
 }
 void PlayScene::Terminate() {
     AudioHelper::StopSample(bgmInstance);

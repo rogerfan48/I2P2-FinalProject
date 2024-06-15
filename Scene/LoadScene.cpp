@@ -26,7 +26,7 @@ void LoadScene::Initialize() {
 void LoadScene::Update(float deltaTime) {
     IScene::Update(deltaTime);
     tick += deltaTime;
-    if (tick >= 3) {
+    if (tick >= 1) {
         tick = 0;
         Engine::GameEngine::GetInstance().ChangeScene("lobby");
     }
