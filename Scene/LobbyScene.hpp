@@ -5,12 +5,16 @@
 #include <memory>
 #include "Engine/IScene.hpp"
 class LobbyScene final : public Engine::IScene {
+private:
+	std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
 public:
     explicit LobbyScene() = default;
     void Initialize() override;
     void Terminate() override;
-    void PlayOnClick(int stage);
-    void SettingsOnClick(int stage);
+    void CardSetOnClick(int stage);
+    void SinglePlayOnClick(int stage);
+    void OnlinePlayOnClick(int stage);
     void ScoreboardOnClick(int stage);
+    void SettingsOnClick(int stage);
 };
 #endif

@@ -32,36 +32,46 @@ void LobbyScene::Initialize() {
     AddNewObject(new Engine::Label("Arena Legends", "recharge.otf", 140, halfW, halfH/3, 10, 255, 255, 255, 0.5, 0.5));
 
     btn = new Engine::RectangleButton(halfW-labelW/2, halfH/2+diff[0], labelW, lhc, btnColor, btnColorHovered);
-    btn->SetOnClickCallback(std::bind(&LobbyScene::ScoreboardOnClick, this, 2));
+    btn->SetOnClickCallback(std::bind(&LobbyScene::CardSetOnClick, this, 1));
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Card Set", "recharge.otf", 60, halfW, halfH/2+diff[0]+lhc/2, 0, 0, 0, 255, 0.5, 0.5));
 
     btn = new Engine::RectangleButton(halfW-labelW/2, halfH/2+diff[1], (labelW-padding)/2, lhp, btnColor, btnColorHovered);
-    btn->SetOnClickCallback(std::bind(&LobbyScene::PlayOnClick, this, 1));
+    btn->SetOnClickCallback(std::bind(&LobbyScene::SinglePlayOnClick, this, 2));
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Single", "recharge.otf", 60, halfW-(labelW+padding)/4-36, halfH/2+diff[1]+lhp/2-36, 0, 0, 0, 255, 0.5, 0.5));
     AddNewObject(new Engine::Label("Battle", "recharge.otf", 60, halfW-(labelW+padding)/4+36, halfH/2+diff[1]+lhp/2+36, 0, 0, 0, 255, 0.5, 0.5));
     btn = new Engine::RectangleButton(halfW+padding/2, halfH/2+diff[1], (labelW-padding)/2, lhp, btnColor, btnColorHovered);
-    btn->SetOnClickCallback(std::bind(&LobbyScene::PlayOnClick, this, 1));
+    btn->SetOnClickCallback(std::bind(&LobbyScene::OnlinePlayOnClick, this, 3));
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Online", "recharge.otf", 60, halfW+(labelW+padding)/4-36, halfH/2+diff[1]+lhp/2-36, 0, 0, 0, 255, 0.5, 0.5));
     AddNewObject(new Engine::Label("Battle", "recharge.otf", 60, halfW+(labelW+padding)/4+36, halfH/2+diff[1]+lhp/2+36, 0, 0, 0, 255, 0.5, 0.5));
 
     btn = new Engine::RectangleButton(halfW-labelW/2, halfH/2+diff[2], labelW, labelH, btnColor, btnColorHovered);
-    btn->SetOnClickCallback(std::bind(&LobbyScene::ScoreboardOnClick, this, 2));
+    btn->SetOnClickCallback(std::bind(&LobbyScene::ScoreboardOnClick, this, 4));
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Scoreboard", "recharge.otf", 52, halfW, halfH/2+diff[2]+labelH/2, 0, 0, 0, 255, 0.5, 0.5));
 
     btn = new Engine::RectangleButton(halfW-labelW/2, halfH/2+diff[3], labelW, labelH, btnColor, btnColorHovered);
-    btn->SetOnClickCallback(std::bind(&LobbyScene::SettingsOnClick, this, 3));
+    btn->SetOnClickCallback(std::bind(&LobbyScene::SettingsOnClick, this, 5));
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Settings", "recharge.otf", 52, halfW, halfH/2+diff[3]+labelH/2, 0, 0, 0, 255, 0.5, 0.5));
+
+    bgmInstance = AudioHelper::PlaySample("bgm/lobbyBGM.ogg", true, AudioHelper::BGMVolume);
 }
 void LobbyScene::Terminate() {
+    AudioHelper::StopSample(bgmInstance);
+	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     IScene::Terminate();
 }
-void LobbyScene::PlayOnClick(int stage) {
+void LobbyScene::CardSetOnClick(int stage) {
     Engine::GameEngine::GetInstance().ChangeScene("lobby");
+}
+void LobbyScene::SinglePlayOnClick(int stage) {
+    Engine::GameEngine::GetInstance().ChangeScene("play");
+}
+void LobbyScene::OnlinePlayOnClick(int stage) {
+    Engine::GameEngine::GetInstance().ChangeScene("play");
 }
 void LobbyScene::SettingsOnClick(int stage) {
     Engine::GameEngine::GetInstance().ChangeScene("load");
