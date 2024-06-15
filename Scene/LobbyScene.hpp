@@ -5,9 +5,9 @@
 #include <memory>
 #include "Engine/IScene.hpp"
 class LobbyScene final : public Engine::IScene {
-protected:
+private:
 	std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
-    friend class SettingScene;
+    bool reloadBgm = true;
 public:
     explicit LobbyScene() = default;
     void Initialize() override;
