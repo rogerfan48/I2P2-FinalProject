@@ -60,6 +60,18 @@ add_executable(
     Scene/LobbyScene.hpp
     Scene/PlayScene.cpp
     Scene/PlayScene.hpp
+
+    Tower/Tower.cpp
+    Tower/Tower.hpp
+    Tower/MainTower.cpp
+    Tower/MainTower.hpp
+    Tower/SideTower.cpp
+    Tower/SideTower.hpp
+
+    Entity/Army/Army.cpp
+    Entity/Army/Army.hpp
+    Entity/Spell/Spell.cpp
+    Entity/Spell/Spell.hpp
 )
 
 IF (WIN32)
