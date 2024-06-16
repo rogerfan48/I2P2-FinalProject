@@ -9,6 +9,9 @@
 #include "UI/Component/RectangleButton.hpp"
 #include "UI/Component/Label.hpp"
 
+#include "Card/Knight.hpp"
+#include "Card/Zap.hpp"
+
 void CardSetScene::Initialize() {
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
@@ -23,6 +26,21 @@ void CardSetScene::Initialize() {
     AddNewObject(new Engine::Rectangle(0, 0, w, h, bgColor));
     AddNewObject(new Engine::Label("Card Set: Select Exactly 8 Cards", "recharge.otf", 60, halfW, 100, 255, 255, 255, 255, 0.5, 0.5));
 
+    AddNewObject(CardGroup = new Group());
+
+    CardGroup->AddNewObject(new Knight(1, 140, 250));
+    CardGroup->AddNewObject(new Knight(1, 530, 250));
+    CardGroup->AddNewObject(new Knight(1, 920, 250));
+    CardGroup->AddNewObject(new Knight(1, 1310, 250));
+    CardGroup->AddNewObject(new Knight(1, 140, 540));
+    CardGroup->AddNewObject(new Knight(1, 530, 540));
+    CardGroup->AddNewObject(new Knight(0, 920, 540));
+    CardGroup->AddNewObject(new Knight(0, 1310, 540));
+    CardGroup->AddNewObject(new Knight(0, 140, 830));
+    CardGroup->AddNewObject(new Zap(1, 530, 830));
+    CardGroup->AddNewObject(new Zap(1, 920, 830));
+    CardGroup->AddNewObject(new Zap(0, 1310, 830));
+
     btn = new Engine::RectangleButton(300, 1250, 500, 100, btnColor, btnColorHovered);
     btn->SetOnClickCallback(std::bind(&CardSetScene::BackOnClick, this, 1));
     AddNewControlObject(btn);
@@ -32,6 +50,8 @@ void CardSetScene::Initialize() {
     btn->SetOnClickCallback(std::bind(&CardSetScene::CheckOnClick, this, 2));
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Check", "recharge.otf", 52, 1250, 1300, 0, 0, 0, 255, 0.5, 0.5));
+
+    
 }
 void CardSetScene::Terminate() {
     IScene::Terminate();

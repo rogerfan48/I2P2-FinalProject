@@ -72,6 +72,13 @@ add_executable(
     Tower/SideTower.cpp
     Tower/SideTower.hpp
 
+    Card/Card.cpp
+    Card/Card.hpp
+    Card/Knight.cpp
+    Card/Knight.hpp
+    Card/Zap.cpp
+    Card/Zap.hpp
+
     Entity/Army/Army.cpp
     Entity/Army/Army.hpp
     Entity/Spell/Spell.cpp

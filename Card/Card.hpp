@@ -2,23 +2,37 @@
 #define CARD_HPP
 
 #include <string>
+#include <allegro5/color.h>
 
 #include "Engine/GameEngine.hpp"
 #include "Engine/IControl.hpp"
 #include "Engine/IObject.hpp"
+#include "Engine/Resources.hpp"
 
 enum CARD_TYPE {
     ARMY, SPELL
 };
+// temp:
+// speed: very slow:0, slow:1, median:2, fast:3, very fast:4
+
 class Card: public Engine::IObject, Engine::IControl {
 protected:
 
 public:
+    static const int CardWidth;
+    static const int CardHeight;
+    static const int HeadDiameter;
+
     bool hovered;
     bool selected;
 
     std::string Name;
     std::string Description;
+    std::shared_ptr<ALLEGRO_BITMAP> bg;
+    std::shared_ptr<ALLEGRO_BITMAP> head;
+    std::shared_ptr<ALLEGRO_FONT> fontName;
+    std::shared_ptr<ALLEGRO_FONT> fontDesc;
+    const ALLEGRO_COLOR White = al_map_rgb(255, 255, 255);
 
     CARD_TYPE cardType;
     // Army:
@@ -30,27 +44,16 @@ public:
     float detectRadius;
     int count;
     int cost;
-    Card(std::string Name, std::string Description,
-        int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, int count, int cost) :
-        cardType(ARMY), hp(hp), atk(atk), coolDown(coolDown), speed(speed), 
-        atkRadius(atkRadius), detectRadius(detectRadius), count(count), cost(cost),
-        Name(Name), Description(Description), hovered(false), selected(false) {}
+    Card(bool selected, float x, float y, std::string Name, std::string Description,
+        int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, int count, int cost);
 
     // Spell:
-    int atk;    // or heal
+    int pt;    // atk or heal
     float radius;
     float time;
-    Card(std::string Name, std::string Description, int atk, float radius, float time): 
-        cardType(SPELL), atk(atk), radius(radius), time(time),
-        Name(Name), Description(Description), hovered(false), selected(false) {}
+    Card(bool selected, float x, float y, std::string Name, std::string Description, int pt, float radius, float time);
 
-    void Draw() const {
-        if (Engine::GameEngine::GetInstance().GetActiveScene() == Engine::GameEngine::GetInstance().GetScene("cardSet")) {
-            
-        } else  {
-
-        }
-    }
+    void Draw() const override;
 };
 
 #endif // CARD_HPP
