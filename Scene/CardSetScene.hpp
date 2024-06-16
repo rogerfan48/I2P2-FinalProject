@@ -5,16 +5,23 @@
 #include <memory>
 #include "Engine/IScene.hpp"
 #include "Engine/Group.hpp"
+#include "UI/Component/RectangleButton.hpp"
+#include "Card/Card.hpp"
 
 class CardSetScene final : public Engine::IScene {
 private:
 	std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
 public:
-    explicit CardSetScene() = default;
+    UserData& userData = Engine::GameEngine::GetInstance().userData;
+    std::set<int> newCardSet;
+
     Group* CardGroup;
+    Engine::RectangleButton* saveButton;
+
+    explicit CardSetScene() = default;
     void Initialize() override;
     void Terminate() override;
-    void CheckOnClick(int stage);
+    void SaveOnClick(int stage);
     void BackOnClick(int stage);
 };
 

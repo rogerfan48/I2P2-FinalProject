@@ -24,6 +24,7 @@ namespace Engine {
 		ALLEGRO_COLOR colorBorder;
         ALLEGRO_COLOR colorOrigin;
 		ALLEGRO_COLOR colorHovered;
+		ALLEGRO_COLOR colorUnable;
 	public:
 		// Whether the button can be pressed.
 		bool Enabled = true;

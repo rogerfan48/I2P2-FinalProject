@@ -76,13 +76,36 @@ add_executable(
     Card/Card.hpp
     Card/Knight.cpp
     Card/Knight.hpp
+    Card/Archers.cpp
+    Card/Archers.hpp
+    Card/Musketeer.cpp
+    Card/Musketeer.hpp
+    Card/Skeletons.cpp
+    Card/Skeletons.hpp
+    Card/Giant.cpp
+    Card/Giant.hpp
+    Card/Pekka.cpp
+    Card/Pekka.hpp
+    Card/Wizard.cpp
+    Card/Wizard.hpp
+    Card/HogRider.cpp
+    Card/HogRider.hpp
+    Card/Barbarians.cpp
+    Card/Barbarians.hpp
     Card/Zap.cpp
     Card/Zap.hpp
+    Card/Poison.cpp
+    Card/Poison.hpp
+    Card/Heal.cpp
+    Card/Heal.hpp
 
     Entity/Army/Army.cpp
     Entity/Army/Army.hpp
     Entity/Spell/Spell.cpp
     Entity/Spell/Spell.hpp
+
+    Helper/Helper.cpp
+    Helper/Helper.hpp
 )
 
 IF (WIN32)

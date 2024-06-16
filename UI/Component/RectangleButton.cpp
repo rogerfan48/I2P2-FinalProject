@@ -13,6 +13,7 @@ namespace Engine {
 	RectangleButton::RectangleButton(float x, float y, float w, float h, ALLEGRO_COLOR colorOrigin, ALLEGRO_COLOR colorHovered) :
 		Rectangle(x, y, w, h, colorOrigin), colorOrigin(colorOrigin), colorHovered(colorHovered) {
 			colorBorder = al_map_rgb(200, 200, 200);
+			colorUnable = al_map_rgb(100, 100, 100);
 			Point mouse = GameEngine::GetInstance().GetMousePosition();
 			mouseIn = Engine::Collider::IsPointInRect(Engine::Point(mouse.x, mouse.y), Position, Size);
 			if (Enabled && mouseIn) color = colorHovered;
@@ -32,7 +33,11 @@ namespace Engine {
 		else color = colorOrigin;
 	}
 	void RectangleButton::Draw() const {
-		al_draw_filled_rectangle(Position.x-1, Position.y-1, Position.x + Size.x + 2, Position.y + Size.y + 2, colorBorder);
-		al_draw_filled_rectangle(Position.x, Position.y, Position.x + Size.x, Position.y + Size.y, color);
+		if (Enabled) {
+			al_draw_filled_rectangle(Position.x-1, Position.y-1, Position.x + Size.x + 2, Position.y + Size.y + 2, colorBorder);
+			al_draw_filled_rectangle(Position.x, Position.y, Position.x + Size.x, Position.y + Size.y, color);
+		} else {
+			al_draw_filled_rectangle(Position.x, Position.y, Position.x + Size.x, Position.y + Size.y, colorUnable);
+		}
 	}
 }
