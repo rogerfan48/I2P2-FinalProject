@@ -25,7 +25,7 @@ void LoadScene::Initialize() {
     AddNewObject(turtle);
     AddNewObject(new Engine::Label("Loading . . .", "recharge.otf", 64, halfW, halfH + 500, 255, 255, 255, 255, 0.5, 0.5));
 
-    bgmInstance = AudioHelper::PlaySample("turtle.mp3", true, AudioHelper::BGMVolume);
+    bgmInstance = AudioHelper::PlaySample("turtle.ogg", true, AudioHelper::BGMVolume);
 }
 void LoadScene::Update(float deltaTime) {
     IScene::Update(deltaTime);
