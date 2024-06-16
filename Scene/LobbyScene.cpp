@@ -10,6 +10,7 @@
 #include "UI/Component/Label.hpp"
 
 std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmLobby;
+
 void LobbyScene::Initialize() {
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
@@ -58,7 +59,7 @@ void LobbyScene::Initialize() {
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Settings", "recharge.otf", 52, halfW, halfH/2+diff[3]+labelH/2, 0, 0, 0, 255, 0.5, 0.5));
 
-    if(reloadBgm) bgmLobby = AudioHelper::PlaySample("bgm/lobbyBGM.ogg", true, AudioHelper::BGMVolume);
+    if (reloadBgm) bgmLobby = AudioHelper::PlaySample("bgm/lobbyBGM.ogg", true, AudioHelper::BGMVolume);
 }
 void LobbyScene::Terminate() {
     IScene::Terminate();
@@ -79,13 +80,13 @@ void LobbyScene::OnlinePlayOnClick(int stage) {
 	bgmLobby = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     Engine::GameEngine::GetInstance().ChangeScene("play");
 }
-void LobbyScene::SettingsOnClick(int stage) {
-    reloadBgm = false;
-    Engine::GameEngine::GetInstance().ChangeScene("setting");
-}
 void LobbyScene::ScoreboardOnClick(int stage) {
     reloadBgm = true;
     AudioHelper::StopSample(bgmLobby);
 	bgmLobby = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     Engine::GameEngine::GetInstance().ChangeScene("load");
+}
+void LobbyScene::SettingsOnClick(int stage) {
+    reloadBgm = false;
+    Engine::GameEngine::GetInstance().ChangeScene("setting");
 }
