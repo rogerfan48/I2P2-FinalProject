@@ -17,5 +17,6 @@ public:
     void OnlinePlayOnClick(int stage);
     void ScoreboardOnClick(int stage);
     void SettingsOnClick(int stage);
+	void OnKeyDown(int keyCode) override;
 };
 #endif

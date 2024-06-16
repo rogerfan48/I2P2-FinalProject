@@ -75,3 +75,8 @@ void CardSetScene::SaveOnClick(int stage) {
 void CardSetScene::BackOnClick(int stage) {
     Engine::GameEngine::GetInstance().ChangeScene("lobby");
 }
+void CardSetScene::OnKeyDown(int keyCode) {
+    IScene::OnKeyDown(keyCode);
+    if(keyCode == ALLEGRO_KEY_ESCAPE) Engine::GameEngine::GetInstance().ChangeScene("lobby");
+    else if(keyCode == ALLEGRO_KEY_ENTER) SaveOnClick(2);
+}

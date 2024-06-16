@@ -23,6 +23,7 @@ public:
     void Terminate() override;
     void SaveOnClick(int stage);
     void BackOnClick(int stage);
+	void OnKeyDown(int keyCode) override;
 };
 
 #endif // CARDSETSCENE_HPP

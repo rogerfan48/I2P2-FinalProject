@@ -13,5 +13,6 @@ const int MainTower::MainTowerMaxHp = 4824;
 const float MainTower::MainTowerCoolDown = 1.0;
 
 MainTower::MainTower(std::string color, float x, float y) :
-    Tower("tower/"+color+"MainTower.png", x, y, 4*PlayScene::BlockSize, 4*PlayScene::BlockSize, MainTowerMaxHp, MainTowerCoolDown) {
+    Tower("tower/"+color+"SleepMainTower.png", x, y, 4*PlayScene::BlockSize, 4*PlayScene::BlockSize, MainTowerMaxHp, MainTowerCoolDown) {
+        enabled = false, Tower::color = color;
 }

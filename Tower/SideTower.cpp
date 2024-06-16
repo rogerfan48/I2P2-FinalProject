@@ -14,4 +14,5 @@ const float SideTower::SideTowerCoolDown = 0.8;
 
 SideTower::SideTower(std::string color, float x, float y) :
     Tower("tower/"+color+"SideTower.png", x, y, 3*PlayScene::BlockSize, 3*PlayScene::BlockSize, SideTowerMaxHp, SideTowerCoolDown) {
+        Tower::color = color;
 }

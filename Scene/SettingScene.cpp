@@ -47,6 +47,10 @@ void SettingScene::Terminate() {
 void SettingScene::BackOnClick(int stage) {
     Engine::GameEngine::GetInstance().ChangeScene("lobby");
 }
+void SettingScene::OnKeyDown(int keyCode) {
+    IScene::OnKeyDown(keyCode);
+    if(keyCode == ALLEGRO_KEY_ESCAPE) Engine::GameEngine::GetInstance().ChangeScene("lobby");
+}
 void SettingScene::BGMSlideOnValueChanged(float value) {
     AudioHelper::ChangeSampleVolume(bgmLobby, value);
     AudioHelper::BGMVolume = value;

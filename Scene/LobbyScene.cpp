@@ -90,3 +90,7 @@ void LobbyScene::SettingsOnClick(int stage) {
     reloadBgm = false;
     Engine::GameEngine::GetInstance().ChangeScene("setting");
 }
+void LobbyScene::OnKeyDown(int keyCode) {
+    IScene::OnKeyDown(keyCode);
+    if(keyCode == ALLEGRO_KEY_ESCAPE) Engine::GameEngine::GetInstance().ChangeScene("setting");
+}

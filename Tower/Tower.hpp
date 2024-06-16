@@ -16,6 +16,7 @@ protected:
 public:
     float hp;
     bool enabled = true;
+    std::string color;
     // Army* target = nullptr;
     Tower(std::string imgTower, float x, float y, float w, float h, int hp, float coolDown);
     void Update(float deltaTime) override;

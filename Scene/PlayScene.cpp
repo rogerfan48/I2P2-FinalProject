@@ -8,6 +8,7 @@
 #include "Engine/IScene.hpp"
 #include "Engine/Group.hpp"
 #include "Engine/AudioHelper.hpp"
+#include "Engine/Resources.hpp"
 #include "Tower/MainTower.hpp"
 #include "Tower/SideTower.hpp"
 #include "UI/Component/Rectangle.hpp"
@@ -81,10 +82,22 @@ void PlayScene::Update(float deltaTime) {
     if(tick >= 1) {
         for(auto &i : TowerGroup->GetObjects()) {
             auto tower = dynamic_cast<Tower*>(i);
-            tower->hp-=100;
+            tower->hp-=1000;
         }
         tick--;
-        std::cout<<"success"<<std::endl;
+    }
+    for(auto &i : TowerGroup->GetObjects()) {
+        auto tower = dynamic_cast<Tower*>(i);
+        if(tower->hp < 0) {
+            for(auto &j : TowerGroup->GetObjects()) {
+                auto temp = dynamic_cast<Tower*>(j);
+                if(temp->enabled == false && temp->color == tower->color) {
+                    temp->bmp = Engine::Resources::GetInstance().GetBitmap("tower/"+temp->color+"MainTower.png", temp->Size.x, temp->Size.y);
+                    temp->enabled = true;
+                }
+            }
+            RemoveObject(tower->GetObjectIterator());
+        }
     }
 }
 void PlayScene::Draw() const {
