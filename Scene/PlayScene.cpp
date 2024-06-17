@@ -4,8 +4,10 @@
 #include <allegro5/allegro_audio.h>
 #include <vector>
 #include <iostream>
+#include <string>
 
 #include "Engine/IScene.hpp"
+#include "Engine/GameEngine.hpp"
 #include "Engine/Group.hpp"
 #include "Engine/AudioHelper.hpp"
 #include "Engine/Resources.hpp"
@@ -17,11 +19,16 @@ const int PlayScene::BlockSize = 50;
 const int PlayScene::MapBlockWidth = 32, PlayScene::MapBlockHeight = 18;
 const int PlayScene::CardSetHeight = 6;
 const int PlayScene::MapDiff = 100;
+static int halfW, halfH;
 std::map<int, ALLEGRO_COLOR> PlayScene::TileColor;
 std::vector<std::string> PlayScene::MapTile;
+MainTower *redMainTower, *blueMainTower;
+static Engine::Image* turtle;
 
 void PlayScene::Initialize() {
     tick = 0;
+    halfW = Engine::GameEngine::GetInstance().GetScreenSize().x / 2;
+    halfH = Engine::GameEngine::GetInstance().GetScreenSize().y / 2;
     MapTile.push_back("01010101010101044010101010101010");
     MapTile.push_back("10101010101010144101010101010101");
     MapTile.push_back("01010555010101044010101055501010");
@@ -65,10 +72,10 @@ void PlayScene::Initialize() {
     AddNewObject(TowerGroup = new Group());
     TowerGroup->AddNewObject(new SideTower("Red", MapDiff+5*BlockSize, MapDiff+2*BlockSize));
     TowerGroup->AddNewObject(new SideTower("Red", MapDiff+5*BlockSize, MapDiff+13*BlockSize));
-    TowerGroup->AddNewObject(new MainTower("Red", MapDiff+BlockSize, MapDiff+7*BlockSize));
+    TowerGroup->AddNewObject(redMainTower = new MainTower("Red", MapDiff+BlockSize, MapDiff+7*BlockSize));
     TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+2*BlockSize));
     TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+13*BlockSize));
-    TowerGroup->AddNewObject(new MainTower("Blue", MapDiff+27*BlockSize, MapDiff+7*BlockSize));
+    TowerGroup->AddNewObject(blueMainTower = new MainTower("Blue", MapDiff+27*BlockSize, MapDiff+7*BlockSize));
 
 }
 void PlayScene::Terminate() {
@@ -79,22 +86,48 @@ void PlayScene::Terminate() {
 void PlayScene::Update(float deltaTime) {
     IScene::Update(deltaTime);
     tick += deltaTime;
+    // time up
+    if(tick > 505) {
+        Engine::GameEngine::GetInstance().ChangeScene("lobby");
+    }
+    // update tuetle
+    if(tick > 500) {
+        turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string((int)((tick-500)*30+1)) + ".jpg", 1024, 576);
+        return;
+    }
+    // tower->hp --
     if(tick >= 1) {
         for(auto &i : TowerGroup->GetObjects()) {
             auto tower = dynamic_cast<Tower*>(i);
-            tower->hp-=1000;
+            tower->hp-=500;
         }
         tick--;
     }
+    // win
+    if(redMainTower->hp <= 0) {
+        tick = 500;
+        AddNewObject(new Engine::Rectangle(halfW-600, halfH-400, 1200, 800, al_map_rgba(255,255,255,100)));
+        turtle = new Engine::Image("loading/1.jpg", halfW-512, halfH-288, 1024, 576, 0, 0);
+        AddNewObject(turtle);
+        AudioHelper::StopSample(bgmInstance);
+	    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+        bgmInstance = AudioHelper::PlaySample("turtle.ogg", false, AudioHelper::BGMVolume);
+    }
+    
     for(auto &i : TowerGroup->GetObjects()) {
         auto tower = dynamic_cast<Tower*>(i);
-        if(tower->hp < 0) {
-            for(auto &j : TowerGroup->GetObjects()) {
-                auto temp = dynamic_cast<Tower*>(j);
-                if(temp->enabled == false && temp->color == tower->color) {
-                    temp->bmp = Engine::Resources::GetInstance().GetBitmap("tower/"+temp->color+"MainTower.png", temp->Size.x, temp->Size.y);
-                    temp->enabled = true;
-                }
+        if(tower->hp <= 0) {
+            if(tower->color == "Blue") {
+                blueMainTower->bmp = Engine::Resources::GetInstance().GetBitmap(
+                        "tower/"+blueMainTower->color+"MainTower.png", 
+                        blueMainTower->Size.x, blueMainTower->Size.y);
+                blueMainTower->enabled = true;
+            }
+            else {
+                redMainTower->bmp = Engine::Resources::GetInstance().GetBitmap(
+                        "tower/"+redMainTower->color+"MainTower.png", 
+                        redMainTower->Size.x, redMainTower->Size.y);
+                redMainTower->enabled = true;
             }
             RemoveObject(tower->GetObjectIterator());
         }

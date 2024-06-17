@@ -52,7 +52,7 @@ void LobbyScene::Initialize() {
     btn = new Engine::RectangleButton(halfW-labelW/2, halfH/2+diff[2], labelW, labelH, btnColor, btnColorHovered);
     btn->SetOnClickCallback(std::bind(&LobbyScene::ScoreboardOnClick, this, 4));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("Scoreboard", "recharge.otf", 52, halfW, halfH/2+diff[2]+labelH/2, 0, 0, 0, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Dancing Turtle", "recharge.otf", 52, halfW, halfH/2+diff[2]+labelH/2, 0, 0, 0, 255, 0.5, 0.5));
 
     btn = new Engine::RectangleButton(halfW-labelW/2, halfH/2+diff[3], labelW, labelH, btnColor, btnColorHovered);
     btn->SetOnClickCallback(std::bind(&LobbyScene::SettingsOnClick, this, 5));

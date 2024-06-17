@@ -10,7 +10,7 @@
 #include "UI/Component/Rectangle.hpp"
 #include "UI/Component/Label.hpp"
 
-Engine::Image* turtle;
+static Engine::Image* turtle;
 void LoadScene::Initialize() {
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
@@ -30,9 +30,7 @@ void LoadScene::Initialize() {
 void LoadScene::Update(float deltaTime) {
     IScene::Update(deltaTime);
     tick += deltaTime;
-    RemoveObject(turtle->GetObjectIterator());
-    turtle = new Engine::Image("loading/" + std::to_string((int)(tick*30+1)) + ".jpg", halfW - 504, halfH - 200, 1008, 567, 0, 0);
-    AddNewObject(turtle);
+    turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string((int)(tick*30+1)) + ".jpg", 1008, 567);
     if (tick >= 4) {
         tick = 0;
         Engine::GameEngine::GetInstance().ChangeScene("lobby");
