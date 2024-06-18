@@ -14,6 +14,7 @@
 #include "Tower/MainTower.hpp"
 #include "Tower/SideTower.hpp"
 #include "UI/Component/Rectangle.hpp"
+#include "UI/Component/Label.hpp"
 #include "Card/AllCard.hpp"
 
 const int PlayScene::BlockSize = 50;
@@ -27,9 +28,11 @@ std::vector<std::string> PlayScene::MapTile;
 static int halfW, halfH;
 MainTower *redMainTower, *blueMainTower;
 static Engine::Image* turtle;
+static Engine::Label* waterNum;
+static Engine::Rectangle* waterColumn;
 
 void PlayScene::Initialize() {
-    tick = 0;
+    tick = 0, waterCount = 0;
     halfW = Engine::GameEngine::GetInstance().GetScreenSize().x / 2;
     halfH = Engine::GameEngine::GetInstance().GetScreenSize().y / 2;
 
@@ -60,6 +63,11 @@ void PlayScene::Initialize() {
     AddNewControlObject(CardGroup = new Group());
     for (int i=0; i<4; i++)
         CardGroup->AddNewControlObject(getCardById(userData.availableCards[i], 100+400*i+10, 1100+10));
+
+    AddNewObject(new Engine::Rectangle(1100,1020,550,60,al_map_rgb(0,0,0)));
+    AddNewObject(waterColumn = new Engine::Rectangle(1110,1030,530,40,al_map_rgb(255,0,255)));
+    AddNewObject(new Engine::Image("water.png",1050,960));
+    AddNewObject(waterNum = new Engine::Label(std::to_string((int)waterCount),"recharge.otf",30,1105,1050,0,0,0,255,0.5,0.5));
 }
 void PlayScene::Terminate() {
     AudioHelper::StopSample(bgmInstance);
@@ -68,7 +76,8 @@ void PlayScene::Terminate() {
 }
 void PlayScene::Update(float deltaTime) {
     IScene::Update(deltaTime);
-    // tick += deltaTime;
+    tick += deltaTime, waterCount += deltaTime;
+    waterColumn->Size.x = (waterCount-(int)waterCount)*530, waterNum->Text = std::to_string((int)waterCount);
     // // time up
     // if(tick > 505) {
     //     Engine::GameEngine::GetInstance().ChangeScene("lobby");

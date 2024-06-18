@@ -28,7 +28,7 @@ private:
     std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
     UserData& userData = Engine::GameEngine::GetInstance().data.A;
     float tick;
-
+    float waterCount;
 public:
     static const int BlockSize;
     static const int MapBlockWidth;
