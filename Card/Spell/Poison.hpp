@@ -3,5 +3,6 @@
 class Poison: public Card {
 public:
     Poison(bool selected, float x, float y);
+    Poison(float x, float y);
     void Draw() const override;
 };

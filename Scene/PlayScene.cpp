@@ -14,14 +14,17 @@
 #include "Tower/MainTower.hpp"
 #include "Tower/SideTower.hpp"
 #include "UI/Component/Rectangle.hpp"
+#include "Card/AllCard.hpp"
 
 const int PlayScene::BlockSize = 50;
 const int PlayScene::MapBlockWidth = 32, PlayScene::MapBlockHeight = 18;
 const int PlayScene::CardSetHeight = 6;
 const int PlayScene::MapDiff = 100;
-static int halfW, halfH;
+
 std::map<int, ALLEGRO_COLOR> PlayScene::TileColor;
 std::vector<std::string> PlayScene::MapTile;
+
+static int halfW, halfH;
 MainTower *redMainTower, *blueMainTower;
 static Engine::Image* turtle;
 
@@ -29,6 +32,8 @@ void PlayScene::Initialize() {
     tick = 0;
     halfW = Engine::GameEngine::GetInstance().GetScreenSize().x / 2;
     halfH = Engine::GameEngine::GetInstance().GetScreenSize().y / 2;
+
+    userData.initGame();
     
     initMapTileAndTileColor();
     AddNewObject(TileMapGroup = new Group());
@@ -51,6 +56,10 @@ void PlayScene::Initialize() {
     TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+2*BlockSize));
     TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+13*BlockSize));
     TowerGroup->AddNewObject(blueMainTower = new MainTower("Blue", MapDiff+27*BlockSize, MapDiff+7*BlockSize));
+
+    AddNewControlObject(CardGroup = new Group());
+    for (int i=0; i<4; i++)
+        CardGroup->AddNewControlObject(getCardById(userData.availableCards[i], 100+400*i+10, 1100+10));
 }
 void PlayScene::Terminate() {
     AudioHelper::StopSample(bgmInstance);
@@ -59,53 +68,53 @@ void PlayScene::Terminate() {
 }
 void PlayScene::Update(float deltaTime) {
     IScene::Update(deltaTime);
-    tick += deltaTime;
-    // time up
-    if(tick > 505) {
-        Engine::GameEngine::GetInstance().ChangeScene("lobby");
-    }
-    // update turtle
-    if(tick > 500) {
-        turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string((int)((tick-500)*30+1)) + ".jpg", 1600, 900);
-        return;
-    }
-    // tower->hp --
-    if(tick >= 1) {
-        for(auto &i : TowerGroup->GetObjects()) {
-            auto tower = dynamic_cast<Tower*>(i);
-            tower->hp-=1000;
-        }
-        tick--;
-    }
-    // win
-    if(redMainTower->hp <= 0) {
-        tick = 500;
-        AddNewObject(new Engine::Rectangle(halfW-800, halfH-500, 1600, 1000, al_map_rgba(255,255,255,100)));
-        turtle = new Engine::Image("loading/1.jpg", halfW-800, halfH-450, 1600, 900, 0, 0);
-        AddNewObject(turtle);
-        AudioHelper::StopSample(bgmInstance);
-        bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
-        bgmInstance = AudioHelper::PlaySample("turtle.ogg", false, AudioHelper::BGMVolume);
-    }
+    // tick += deltaTime;
+    // // time up
+    // if(tick > 505) {
+    //     Engine::GameEngine::GetInstance().ChangeScene("lobby");
+    // }
+    // // update turtle
+    // if(tick > 500) {
+    //     turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string((int)((tick-500)*30+1)) + ".jpg", 1600, 900);
+    //     return;
+    // }
+    // // tower->hp --
+    // if(tick >= 1) {
+    //     for(auto &i : TowerGroup->GetObjects()) {
+    //         auto tower = dynamic_cast<Tower*>(i);
+    //         tower->hp-=1000;
+    //     }
+    //     tick--;
+    // }
+    // // win
+    // if(redMainTower->hp <= 0) {
+    //     tick = 500;
+    //     AddNewObject(new Engine::Rectangle(halfW-800, halfH-500, 1600, 1000, al_map_rgba(255,255,255,100)));
+    //     turtle = new Engine::Image("loading/1.jpg", halfW-800, halfH-450, 1600, 900, 0, 0);
+    //     AddNewObject(turtle);
+    //     AudioHelper::StopSample(bgmInstance);
+    //     bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+    //     bgmInstance = AudioHelper::PlaySample("turtle.ogg", false, AudioHelper::BGMVolume);
+    // }
     
-    for(auto &i : TowerGroup->GetObjects()) {
-        auto tower = dynamic_cast<Tower*>(i);
-        if(tower->hp <= 0) {
-            if(tower->color == "Blue") {
-                blueMainTower->bmp = Engine::Resources::GetInstance().GetBitmap(
-                        "tower/"+blueMainTower->color+"MainTower.png", 
-                        blueMainTower->Size.x, blueMainTower->Size.y);
-                blueMainTower->enabled = true;
-            }
-            else {
-                redMainTower->bmp = Engine::Resources::GetInstance().GetBitmap(
-                        "tower/"+redMainTower->color+"MainTower.png", 
-                        redMainTower->Size.x, redMainTower->Size.y);
-                redMainTower->enabled = true;
-            }
-            RemoveObject(tower->GetObjectIterator());
-        }
-    }
+    // for(auto &i : TowerGroup->GetObjects()) {
+    //     auto tower = dynamic_cast<Tower*>(i);
+    //     if(tower->hp <= 0) {
+    //         if(tower->color == "Blue") {
+    //             blueMainTower->bmp = Engine::Resources::GetInstance().GetBitmap(
+    //                     "tower/"+blueMainTower->color+"MainTower.png", 
+    //                     blueMainTower->Size.x, blueMainTower->Size.y);
+    //             blueMainTower->enabled = true;
+    //         }
+    //         else {
+    //             redMainTower->bmp = Engine::Resources::GetInstance().GetBitmap(
+    //                     "tower/"+redMainTower->color+"MainTower.png", 
+    //                     redMainTower->Size.x, redMainTower->Size.y);
+    //             redMainTower->enabled = true;
+    //         }
+    //         RemoveObject(tower->GetObjectIterator());
+    //     }
+    // }
 }
 void PlayScene::Draw() const {
     IScene::Draw();
@@ -150,4 +159,19 @@ void PlayScene::initMapTileAndTileColor() {
     TileColor.insert({ TOWER,  al_map_rgb(170, 170, 170) });
     TileColor.insert({ ROCK,   al_map_rgb(140, 140, 130) });
     TileColor.insert({ CARD,   al_map_rgb(190, 160, 140) });
+}
+
+Card* PlayScene::getCardById(int id, float x, float y) {
+    if (id == 0)        return new Knight(x, y);
+    else if (id == 1)   return new Archers(x, y);
+    else if (id == 2)   return new Musketeer(x, y);
+    else if (id == 3)   return new Skeletons(x, y);
+    else if (id == 4)   return new Giant(x, y);
+    else if (id == 5)   return new Pekka(x, y);
+    else if (id == 6)   return new Wizard(x, y);
+    else if (id == 7)   return new HogRider(x, y);
+    else if (id == 8)   return new Barbarians(x, y);
+    else if (id == 9)   return new Zap(x, y);
+    else if (id == 10)  return new Poison(x, y);
+    else if (id == 11)  return new Heal(x, y);
 }

@@ -15,5 +15,6 @@ public:
     void Update(float deltaTime) override;
     void Draw() const override;
     void Terminate() override;
+    void OnKeyDown(int keyCode) override;
 };
 #endif // LOADSCENE_HPP

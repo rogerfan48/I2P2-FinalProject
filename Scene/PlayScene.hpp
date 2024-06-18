@@ -9,6 +9,7 @@
 
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
+#include "Card/Card.hpp"
 
 class PlayScene final : public Engine::IScene {
 private:
@@ -25,6 +26,7 @@ private:
     static std::map<int, ALLEGRO_COLOR> TileColor;
     static std::vector<std::string> MapTile;
     std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
+    UserData& userData = Engine::GameEngine::GetInstance().data.A;
     float tick;
 
 public:
@@ -36,6 +38,7 @@ public:
 
     Group* TileMapGroup;
     Group* TowerGroup;
+    Group* CardGroup;
 
     explicit PlayScene() = default;
 	void Initialize() override;
@@ -48,6 +51,7 @@ public:
 	void OnKeyDown(int keyCode) override;
 
     void initMapTileAndTileColor();
+    Card* getCardById(int id, float x, float y);
 };
 
 #endif // PLAYSCENE_HPP

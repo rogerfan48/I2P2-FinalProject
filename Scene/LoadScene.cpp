@@ -44,3 +44,6 @@ void LoadScene::Terminate() {
 	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     IScene::Terminate();
 }
+void LoadScene::OnKeyDown(int keyCode) {
+    if(keyCode == ALLEGRO_KEY_ENTER) Engine::GameEngine::GetInstance().ChangeScene("lobby");
+}

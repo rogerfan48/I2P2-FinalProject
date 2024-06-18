@@ -41,10 +41,14 @@ public:
     static const int CardHeight;
     static const int HeadDiameter;
     static const int diff;
+    static const int CardWidthP;
+    static const int CardHeightP;
+    static const int HeadDiameterP;
 
     int ID;
     bool hovered;
     bool selected;
+    bool inPlay;
 
     std::string Name;
     std::string Description;
@@ -68,6 +72,8 @@ public:
     int cost;
     Card(bool selected, int id, float x, float y, std::string Name, std::string Description,
         int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, int count, int cost);
+    Card(int id, float x, float y, std::string Name,
+        int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, int count, int cost);
 
     // Spell:
     int pt;    // atk or heal
@@ -76,6 +82,7 @@ public:
     float duration;
     float interval;
     Card(bool selected, int id, float x, float y, std::string Name, std::string Description, int pt, float radius, float duration, float interval, int atkTower=0);
+    Card(int id, float x, float y, std::string Name, int pt, float radius, float duration, float interval, int atkTower=0);
 
     void Draw() const override;
 	void OnMouseDown(int button, int mx, int my) override;

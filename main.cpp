@@ -1,6 +1,3 @@
-// [main.cpp]
-// This is the entry point of your game.
-// You can register your scenes here, and start the game.
 #include "Engine/GameEngine.hpp"
 #include "Engine/LOG.hpp"
 #include "Scene/LoadScene.hpp"

@@ -1,3 +1,6 @@
+#ifndef GAMEDATA_HPP
+#define GAMEDATA_HPP
+
 #include "UserData.hpp"
 
 class GameData {
@@ -7,3 +10,5 @@ public:
 
     GameData();
 };
+
+#endif // GAMEDATA_HPP
