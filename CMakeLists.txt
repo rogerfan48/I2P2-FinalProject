@@ -74,30 +74,30 @@ add_executable(
 
     Card/Card.cpp
     Card/Card.hpp
-    Card/Knight.cpp
-    Card/Knight.hpp
-    Card/Archers.cpp
-    Card/Archers.hpp
-    Card/Musketeer.cpp
-    Card/Musketeer.hpp
-    Card/Skeletons.cpp
-    Card/Skeletons.hpp
-    Card/Giant.cpp
-    Card/Giant.hpp
-    Card/Pekka.cpp
-    Card/Pekka.hpp
-    Card/Wizard.cpp
-    Card/Wizard.hpp
-    Card/HogRider.cpp
-    Card/HogRider.hpp
-    Card/Barbarians.cpp
-    Card/Barbarians.hpp
-    Card/Zap.cpp
-    Card/Zap.hpp
-    Card/Poison.cpp
-    Card/Poison.hpp
-    Card/Heal.cpp
-    Card/Heal.hpp
+    Card/Army/Knight.cpp
+    Card/Army/Knight.hpp
+    Card/Army/Archers.cpp
+    Card/Army/Archers.hpp
+    Card/Army/Musketeer.cpp
+    Card/Army/Musketeer.hpp
+    Card/Army/Skeletons.cpp
+    Card/Army/Skeletons.hpp
+    Card/Army/Giant.cpp
+    Card/Army/Giant.hpp
+    Card/Army/Pekka.cpp
+    Card/Army/Pekka.hpp
+    Card/Army/Wizard.cpp
+    Card/Army/Wizard.hpp
+    Card/Army/HogRider.cpp
+    Card/Army/HogRider.hpp
+    Card/Army/Barbarians.cpp
+    Card/Army/Barbarians.hpp
+    Card/Spell/Zap.cpp
+    Card/Spell/Zap.hpp
+    Card/Spell/Poison.cpp
+    Card/Spell/Poison.hpp
+    Card/Spell/Heal.cpp
+    Card/Spell/Heal.hpp
 
     Entity/Army/Army.cpp
     Entity/Army/Army.hpp

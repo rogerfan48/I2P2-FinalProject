@@ -1,4 +1,4 @@
-#include "Card.hpp"
+#include "Card/Card.hpp"
 
 class Wizard: public Card {
 public:

@@ -92,22 +92,22 @@ void PlayScene::Update(float deltaTime) {
     }
     // update tuetle
     if(tick > 500) {
-        turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string((int)((tick-500)*30+1)) + ".jpg", 1024, 576);
+        turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string((int)((tick-500)*30+1)) + ".jpg", 1600, 900);
         return;
     }
     // tower->hp --
     if(tick >= 1) {
         for(auto &i : TowerGroup->GetObjects()) {
             auto tower = dynamic_cast<Tower*>(i);
-            tower->hp-=500;
+            tower->hp-=1000;
         }
         tick--;
     }
     // win
     if(redMainTower->hp <= 0) {
         tick = 500;
-        AddNewObject(new Engine::Rectangle(halfW-600, halfH-400, 1200, 800, al_map_rgba(255,255,255,100)));
-        turtle = new Engine::Image("loading/1.jpg", halfW-512, halfH-288, 1024, 576, 0, 0);
+        AddNewObject(new Engine::Rectangle(halfW-800, halfH-500, 1600, 1000, al_map_rgba(255,255,255,100)));
+        turtle = new Engine::Image("loading/1.jpg", halfW-800, halfH-450, 1600, 900, 0, 0);
         AddNewObject(turtle);
         AudioHelper::StopSample(bgmInstance);
 	    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();

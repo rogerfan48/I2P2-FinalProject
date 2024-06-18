@@ -1,4 +1,4 @@
-#include "Card.hpp"
+#include "Card/Card.hpp"
 
 class Poison: public Card {
 public:
