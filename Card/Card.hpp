@@ -1,8 +1,9 @@
 #ifndef CARD_HPP
 #define CARD_HPP
 
-#include <string>
 #include <allegro5/color.h>
+#include <string>
+#include <vector>
 
 #include "Engine/GameEngine.hpp"
 #include "Engine/IControl.hpp"
@@ -21,6 +22,21 @@ class Card: public Engine::IObject, public Engine::IControl {
 protected:
 
 public:
+    const std::vector<std::string> IdToCard = {
+        "Knight",			// 0
+        "Archers",			// 1
+        "Musketeer",		// 2
+        "Skeletons",	// 3
+        "Giant",			// 4
+        "P.E.K.K.A.",		// 5
+        "Wizard",			// 6
+        "Hog Rider",		// 7
+        "Barbarians",	// 8
+        "Zap",				// 9
+        "Poison",			// 10
+        "Heal"				// 11
+    };
+
     static const int CardWidth;
     static const int CardHeight;
     static const int HeadDiameter;

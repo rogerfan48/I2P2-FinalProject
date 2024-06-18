@@ -50,9 +50,10 @@ void LobbyScene::Initialize() {
     AddNewObject(new Engine::Label("Battle", "recharge.otf", 60, halfW+(labelW+padding)/4+36, halfH/2+diff[1]+lhp/2+36, 0, 0, 0, 255, 0.5, 0.5));
 
     btn = new Engine::RectangleButton(halfW-labelW/2, halfH/2+diff[2], labelW, labelH, btnColor, btnColorHovered);
+    btn->Enabled = false;   // TEMP
     btn->SetOnClickCallback(std::bind(&LobbyScene::ScoreboardOnClick, this, 4));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("Dancing Turtle", "recharge.otf", 52, halfW, halfH/2+diff[2]+labelH/2, 0, 0, 0, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Scoreboard", "recharge.otf", 52, halfW, halfH/2+diff[2]+labelH/2, 0, 0, 0, 255, 0.5, 0.5));
 
     btn = new Engine::RectangleButton(halfW-labelW/2, halfH/2+diff[3], labelW, labelH, btnColor, btnColorHovered);
     btn->SetOnClickCallback(std::bind(&LobbyScene::SettingsOnClick, this, 5));
@@ -81,10 +82,8 @@ void LobbyScene::OnlinePlayOnClick(int stage) {
     Engine::GameEngine::GetInstance().ChangeScene("play");
 }
 void LobbyScene::ScoreboardOnClick(int stage) {
-    reloadBgm = true;
-    AudioHelper::StopSample(bgmLobby);
-	bgmLobby = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
-    Engine::GameEngine::GetInstance().ChangeScene("load");
+    reloadBgm = false;
+    Engine::GameEngine::GetInstance().ChangeScene("load");  // TEMP
 }
 void LobbyScene::SettingsOnClick(int stage) {
     reloadBgm = false;

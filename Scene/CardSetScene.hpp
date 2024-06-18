@@ -12,7 +12,7 @@ class CardSetScene final : public Engine::IScene {
 private:
 	std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
 public:
-    UserData& userData = Engine::GameEngine::GetInstance().userData;
+    UserData& userData = Engine::GameEngine::GetInstance().data.A;
     std::set<int> newCardSet;
 
     Group* CardGroup;

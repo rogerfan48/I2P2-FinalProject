@@ -26,8 +26,8 @@ private:
     static std::vector<std::string> MapTile;
     std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
     float tick;
-public:
 
+public:
     static const int BlockSize;
     static const int MapBlockWidth;
     static const int MapBlockHeight;
@@ -46,6 +46,8 @@ public:
 	void OnMouseMove(int mx, int my) override;
 	void OnMouseUp(int button, int mx, int my) override;
 	void OnKeyDown(int keyCode) override;
+
+    void initMapTileAndTileColor();
 };
 
 #endif // PLAYSCENE_HPP

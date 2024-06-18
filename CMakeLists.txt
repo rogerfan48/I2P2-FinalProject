@@ -40,6 +40,10 @@ add_executable(
     Engine/Resources.hpp
     Engine/Sprite.cpp
     Engine/Sprite.hpp
+    Engine/GameData.cpp
+    Engine/GameData.hpp
+    Engine/UserData.cpp
+    Engine/UserData.hpp
 
     UI/Component/Image.cpp
     UI/Component/Image.hpp

@@ -74,9 +74,6 @@ namespace Engine {
 
 		// Start the timer to update and draw the game.
 		al_start_timer(update_timer);
-
-		// !!!
-		userData.chosenCards = {0,1,2,3,4,5,9,10};
 	}
 	void GameEngine::startEventLoop() {
 		bool done = false;

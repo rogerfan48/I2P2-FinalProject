@@ -3,14 +3,9 @@
 #include <allegro5/allegro.h>
 #include <string>
 #include <unordered_map>
-#include <vector>
-#include <set>
 
 #include "Point.hpp"
-
-struct UserData {
-	std::set<int> chosenCards;
-};
+#include "GameData.hpp"
 
 /// All general classes are under this namespace for clarity.
 namespace Engine {
@@ -116,22 +111,7 @@ namespace Engine {
 		/// return: The Singleton instance of GameEngine.
 		static GameEngine& GetInstance();
 
-		// !!!
-		const std::vector<std::string> IdToCard = {
-			"Knight",			// 0
-			"Archers",			// 1
-			"Musketeer",		// 2
-			"Skeletons",	// 3
-			"Giant",			// 4
-			"P.E.K.K.A.",		// 5
-			"Wizard",			// 6
-			"Hog Rider",		// 7
-			"Barbarians",	// 8
-			"Zap",				// 9
-			"Poison",			// 10
-			"Heal"				// 11
-		};
-		UserData userData = UserData();
+		GameData data;
 	};
 }
 #endif // GAMEENGINE_HPP

@@ -29,33 +29,8 @@ void PlayScene::Initialize() {
     tick = 0;
     halfW = Engine::GameEngine::GetInstance().GetScreenSize().x / 2;
     halfH = Engine::GameEngine::GetInstance().GetScreenSize().y / 2;
-    MapTile.push_back("01010101010101044010101010101010");
-    MapTile.push_back("10101010101010144101010101010101");
-    MapTile.push_back("01010555010101044010101055501010");
-    MapTile.push_back("10133555333333322333333355533101");
-    MapTile.push_back("01030555010101044010101055503010");
-    MapTile.push_back("10131010101010144101010101013101");
-    MapTile.push_back("01030101010101044010101010103010");
-    MapTile.push_back("15555010101010144101010101055551");
-    MapTile.push_back("05555101010101044010101010155550");
-    MapTile.push_back("15555010101010144101010101055551");
-    MapTile.push_back("05555101010101044010101010155550");
-    MapTile.push_back("10131010101010144101010101013101");
-    MapTile.push_back("01030101010101044010101010103010");
-    MapTile.push_back("10131555101010144101010155513101");
-    MapTile.push_back("01033555333333322333333355533010");
-    MapTile.push_back("10101555101010144101010155510101");
-    MapTile.push_back("01010101010101044010101010101010");
-    MapTile.push_back("10101010101010144101010101010101");
-    TileColor.insert({ GRASS1, al_map_rgb(40, 180, 99) });
-    TileColor.insert({ GRASS2, al_map_rgb(39, 174, 96) });
-    TileColor.insert({ BRIDGE, al_map_rgb(230, 160, 80) });
-    TileColor.insert({ ROAD,   al_map_rgb(250, 190, 130) });
-    TileColor.insert({ RIVER,  al_map_rgb(70, 210, 240) });
-    TileColor.insert({ TOWER,  al_map_rgb(170, 170, 170) });
-    TileColor.insert({ ROCK,   al_map_rgb(140, 140, 130) });
-    TileColor.insert({ CARD,   al_map_rgb(190, 160, 140) });
-
+    
+    initMapTileAndTileColor();
     AddNewObject(TileMapGroup = new Group());
     TileMapGroup->AddNewObject(new Engine::Rectangle(0, 0, 2*MapDiff+MapBlockWidth*BlockSize, 2*MapDiff+MapBlockHeight*BlockSize, TileColor[ROCK]));
     TileMapGroup->AddNewObject(new Engine::Rectangle(0, 2*MapDiff+MapBlockHeight*BlockSize, 2*MapDiff+MapBlockWidth*BlockSize, CardSetHeight*BlockSize, TileColor[CARD]));
@@ -76,7 +51,6 @@ void PlayScene::Initialize() {
     TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+2*BlockSize));
     TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+13*BlockSize));
     TowerGroup->AddNewObject(blueMainTower = new MainTower("Blue", MapDiff+27*BlockSize, MapDiff+7*BlockSize));
-
 }
 void PlayScene::Terminate() {
     AudioHelper::StopSample(bgmInstance);
@@ -90,7 +64,7 @@ void PlayScene::Update(float deltaTime) {
     if(tick > 505) {
         Engine::GameEngine::GetInstance().ChangeScene("lobby");
     }
-    // update tuetle
+    // update turtle
     if(tick > 500) {
         turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string((int)((tick-500)*30+1)) + ".jpg", 1600, 900);
         return;
@@ -110,7 +84,7 @@ void PlayScene::Update(float deltaTime) {
         turtle = new Engine::Image("loading/1.jpg", halfW-800, halfH-450, 1600, 900, 0, 0);
         AddNewObject(turtle);
         AudioHelper::StopSample(bgmInstance);
-	    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+        bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
         bgmInstance = AudioHelper::PlaySample("turtle.ogg", false, AudioHelper::BGMVolume);
     }
     
@@ -147,4 +121,33 @@ void PlayScene::OnMouseUp(int button, int mx, int my) {
 }
 void PlayScene::OnKeyDown(int keyCode) {
     IScene::OnKeyDown(keyCode);
+}
+
+void PlayScene::initMapTileAndTileColor() {
+    MapTile.push_back("01010101010101044010101010101010");
+    MapTile.push_back("10101010101010144101010101010101");
+    MapTile.push_back("01010555010101044010101055501010");
+    MapTile.push_back("10133555333333322333333355533101");
+    MapTile.push_back("01030555010101044010101055503010");
+    MapTile.push_back("10131010101010144101010101013101");
+    MapTile.push_back("01030101010101044010101010103010");
+    MapTile.push_back("15555010101010144101010101055551");
+    MapTile.push_back("05555101010101044010101010155550");
+    MapTile.push_back("15555010101010144101010101055551");
+    MapTile.push_back("05555101010101044010101010155550");
+    MapTile.push_back("10131010101010144101010101013101");
+    MapTile.push_back("01030101010101044010101010103010");
+    MapTile.push_back("10131555101010144101010155513101");
+    MapTile.push_back("01033555333333322333333355533010");
+    MapTile.push_back("10101555101010144101010155510101");
+    MapTile.push_back("01010101010101044010101010101010");
+    MapTile.push_back("10101010101010144101010101010101");
+    TileColor.insert({ GRASS1, al_map_rgb(40, 180, 99) });
+    TileColor.insert({ GRASS2, al_map_rgb(39, 174, 96) });
+    TileColor.insert({ BRIDGE, al_map_rgb(230, 160, 80) });
+    TileColor.insert({ ROAD,   al_map_rgb(250, 190, 130) });
+    TileColor.insert({ RIVER,  al_map_rgb(70, 210, 240) });
+    TileColor.insert({ TOWER,  al_map_rgb(170, 170, 170) });
+    TileColor.insert({ ROCK,   al_map_rgb(140, 140, 130) });
+    TileColor.insert({ CARD,   al_map_rgb(190, 160, 140) });
 }
