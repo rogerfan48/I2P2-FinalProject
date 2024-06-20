@@ -10,6 +10,7 @@ public:
     std::set<int> chosenCards;
     std::vector<int> availableCards;
     std::queue<int> nextCardQueue;
+    float elixir;
 
     UserData();
     void initGame();

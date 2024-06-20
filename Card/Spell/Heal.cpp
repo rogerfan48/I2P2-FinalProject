@@ -2,12 +2,12 @@
 #include "Helper/Helper.hpp"
 
 Heal::Heal(bool selected, float x, float y): 
-    Card(selected, 11, x, y, "Heal", "Heal your troops to keep them in the fight!", 75, 3.5, 2, 0.5) {
+    Card(selected, 11, x, y, "Heal", "Heal your troops to keep them in the fight!", 75, 3.5, 2, 0.5, 0, 1) {
         fontDesc = Engine::Resources::GetInstance().GetFont("recharge.otf", 16);
         fontDescH = Engine::Resources::GetInstance().GetFont("recharge.otf", 17);
     }
 Heal::Heal(float x, float y): 
-    Card(11, x, y, "Heal", 75, 3.5, 2, 0.5) {
+    Card(11, x, y, "Heal", 75, 3.5, 2, 0.5, 0, 1) {
     }
 
 void Heal::Draw() const {

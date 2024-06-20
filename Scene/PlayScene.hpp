@@ -9,6 +9,8 @@
 
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
+#include "UI/Component/Rectangle.hpp"
+#include "UI/Component/Label.hpp"
 #include "Card/Card.hpp"
 
 class PlayScene final : public Engine::IScene {
@@ -26,9 +28,8 @@ private:
     static std::map<int, ALLEGRO_COLOR> TileColor;
     static std::vector<std::string> MapTile;
     std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
-    UserData& userData = Engine::GameEngine::GetInstance().data.A;
+    GameData& gameData = Engine::GameEngine::GetInstance().data;
     float tick;
-    float waterCount;
 public:
     static const int BlockSize;
     static const int MapBlockWidth;
@@ -39,6 +40,10 @@ public:
     Group* TileMapGroup;
     Group* TowerGroup;
     Group* CardGroup;
+    Group* ElixirGroup;
+        static const int ElixirProcessWidth;
+        Engine::Rectangle* elixirProcess;
+        std::vector<Engine::Label*> elixirNumber;
 
     explicit PlayScene() = default;
 	void Initialize() override;

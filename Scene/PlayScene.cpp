@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 
+#include "Engine/Allegro5Exception.hpp"
 #include "Engine/IScene.hpp"
 #include "Engine/GameEngine.hpp"
 #include "Engine/Group.hpp"
@@ -21,6 +22,7 @@ const int PlayScene::BlockSize = 50;
 const int PlayScene::MapBlockWidth = 32, PlayScene::MapBlockHeight = 18;
 const int PlayScene::CardSetHeight = 6;
 const int PlayScene::MapDiff = 100;
+const int PlayScene::ElixirProcessWidth = 800;
 
 std::map<int, ALLEGRO_COLOR> PlayScene::TileColor;
 std::vector<std::string> PlayScene::MapTile;
@@ -28,15 +30,13 @@ std::vector<std::string> PlayScene::MapTile;
 static int halfW, halfH;
 MainTower *redMainTower, *blueMainTower;
 static Engine::Image* turtle;
-static Engine::Label* waterNum;
-static Engine::Rectangle* waterColumn;
 
 void PlayScene::Initialize() {
-    tick = 0, waterCount = 0;
+    tick = 0;
     halfW = Engine::GameEngine::GetInstance().GetScreenSize().x / 2;
     halfH = Engine::GameEngine::GetInstance().GetScreenSize().y / 2;
 
-    userData.initGame();
+    gameData.A.initGame();
     
     initMapTileAndTileColor();
     AddNewObject(TileMapGroup = new Group());
@@ -62,12 +62,21 @@ void PlayScene::Initialize() {
 
     AddNewControlObject(CardGroup = new Group());
     for (int i=0; i<4; i++)
-        CardGroup->AddNewControlObject(getCardById(userData.availableCards[i], 100+400*i+10, 1100+10));
+        CardGroup->AddNewControlObject(getCardById(gameData.A.availableCards[i], 100+400*i+10, 1100+10));
 
-    AddNewObject(new Engine::Rectangle(1100,1020,550,60,al_map_rgb(0,0,0)));
-    AddNewObject(waterColumn = new Engine::Rectangle(1110,1030,530,40,al_map_rgb(255,0,255)));
-    AddNewObject(new Engine::Image("water.png",1050,960));
-    AddNewObject(waterNum = new Engine::Label(std::to_string((int)waterCount),"recharge.otf",30,1105,1050,0,0,0,255,0.5,0.5));
+    AddNewObject(ElixirGroup = new Group());
+    ElixirGroup->AddNewObject(new Engine::Rectangle(890, 1020, ElixirProcessWidth+10, 60, al_map_rgb(30, 30, 30)));
+    ElixirGroup->AddNewObject(new Engine::Rectangle(895, 1025, ElixirProcessWidth, 50, al_map_rgb(100, 100, 100)));
+    ElixirGroup->AddNewObject(elixirProcess = new Engine::Rectangle(895, 1025, ElixirProcessWidth, 50, al_map_rgb(255, 0, 255)));
+    for (int i=1; i<10; i++)
+        ElixirGroup->AddNewObject(new Engine::Rectangle(895+3.5+80*i, 1025, 5, 50, al_map_rgb(60, 60, 60)));
+    ElixirGroup->AddNewObject(new Engine::Image("elixir.png", 900-45, 1000+15, 70, 70));
+    elixirNumber.resize(5);
+    ElixirGroup->AddNewObject(elixirNumber[0] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893-2, 1050, 0, 0, 0, 255, 0.5, 0.5));
+    ElixirGroup->AddNewObject(elixirNumber[1] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893+2, 1050, 0, 0, 0, 255, 0.5, 0.5));
+    ElixirGroup->AddNewObject(elixirNumber[2] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050-2, 0, 0, 0, 255, 0.5, 0.5));
+    ElixirGroup->AddNewObject(elixirNumber[3] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050+2, 0, 0, 0, 255, 0.5, 0.5));
+    ElixirGroup->AddNewObject(elixirNumber[4] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050, 255, 255, 255, 255, 0.5, 0.5));
 }
 void PlayScene::Terminate() {
     AudioHelper::StopSample(bgmInstance);
@@ -76,8 +85,14 @@ void PlayScene::Terminate() {
 }
 void PlayScene::Update(float deltaTime) {
     IScene::Update(deltaTime);
-    tick += deltaTime, waterCount += deltaTime;
-    waterColumn->Size.x = (waterCount-(int)waterCount)*530, waterNum->Text = std::to_string((int)waterCount);
+    tick += deltaTime;
+
+    // Elixir:
+    gameData.A.elixir += deltaTime * gameData.elixirSpeed;
+    if (gameData.A.elixir > 10) gameData.A.elixir = 10;
+    elixirProcess->Size.x = (gameData.A.elixir)*ElixirProcessWidth/10;
+    for (auto i : elixirNumber) i->Text = std::to_string((int)gameData.A.elixir);
+
     // // time up
     // if(tick > 505) {
     //     Engine::GameEngine::GetInstance().ChangeScene("lobby");
@@ -183,4 +198,6 @@ Card* PlayScene::getCardById(int id, float x, float y) {
     else if (id == 9)   return new Zap(x, y);
     else if (id == 10)  return new Poison(x, y);
     else if (id == 11)  return new Heal(x, y);
+    Engine::Allegro5Exception("Card Id Error");
+    return nullptr;
 }

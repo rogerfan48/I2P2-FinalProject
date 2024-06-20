@@ -2,12 +2,12 @@
 #include "Helper/Helper.hpp"
 
 Poison::Poison(bool selected, float x, float y): 
-    Card(selected, 10, x, y, "Poison", "Covers the area in a deadly toxin.", 78, 4, 8, 1, 23) {
+    Card(selected, 10, x, y, "Poison", "Covers the area in a deadly toxin.", 78, 4, 8, 1, 23, 4) {
         fontDesc = Engine::Resources::GetInstance().GetFont("recharge.otf", 16);
         fontDescH = Engine::Resources::GetInstance().GetFont("recharge.otf", 17);
     }
 Poison::Poison(float x, float y): 
-    Card(10, x, y, "Poison", 78, 4, 8, 1, 23) {
+    Card(10, x, y, "Poison", 78, 4, 8, 1, 23, 4) {
     }
 
 void Poison::Draw() const {

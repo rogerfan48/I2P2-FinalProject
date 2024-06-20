@@ -44,6 +44,7 @@ public:
     static const int CardWidthP;
     static const int CardHeightP;
     static const int HeadDiameterP;
+    static const int ElixirWidth;
 
     int ID;
     bool hovered;
@@ -54,11 +55,15 @@ public:
     std::string Description;
     std::shared_ptr<ALLEGRO_BITMAP> bg;
     std::shared_ptr<ALLEGRO_BITMAP> head;
+    std::shared_ptr<ALLEGRO_BITMAP> elixir;
     std::shared_ptr<ALLEGRO_FONT> fontName;
     std::shared_ptr<ALLEGRO_FONT> fontDesc;
     std::shared_ptr<ALLEGRO_FONT> fontDescH;
     std::shared_ptr<ALLEGRO_FONT> fontBelow;
+    std::shared_ptr<ALLEGRO_FONT> fontElixirOuter;
+    std::shared_ptr<ALLEGRO_FONT> fontElixir;
     const ALLEGRO_COLOR White = al_map_rgb(255, 255, 255);
+    const ALLEGRO_COLOR Black = al_map_rgb(0, 0, 0);
 
     CARD_TYPE cardType;
     // Army:
@@ -81,8 +86,8 @@ public:
     float radius;
     float duration;
     float interval;
-    Card(bool selected, int id, float x, float y, std::string Name, std::string Description, int pt, float radius, float duration, float interval, int atkTower=0);
-    Card(int id, float x, float y, std::string Name, int pt, float radius, float duration, float interval, int atkTower=0);
+    Card(bool selected, int id, float x, float y, std::string Name, std::string Description, int pt, float radius, float duration, float interval, int atkTower, int cost);
+    Card(int id, float x, float y, std::string Name, int pt, float radius, float duration, float interval, int atkTower, int cost);
 
     void Draw() const override;
 	void OnMouseDown(int button, int mx, int my) override;
