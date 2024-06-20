@@ -10,6 +10,7 @@
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
 #include "UI/Component/Rectangle.hpp"
+#include "UI/Component/RectangleBorder.hpp"
 #include "UI/Component/Label.hpp"
 #include "Card/Card.hpp"
 
@@ -30,6 +31,8 @@ private:
     std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
     GameData& gameData = Engine::GameEngine::GetInstance().data;
     float tick;
+    Card* selectedCard;
+    Engine::Point mousePos;
 public:
     static const int BlockSize;
     static const int MapBlockWidth;
@@ -38,8 +41,13 @@ public:
     static const int MapDiff;
 
     Group* TileMapGroup;
+        Engine::Rectangle* prohibitedMask;
+        Engine::RectangleBorder* prohibitedMaskBorder;
+        Engine::Rectangle* placePreview;
+        Engine::RectangleBorder* placePreviewBorder;
     Group* TowerGroup;
     Group* CardGroup;
+        std::vector<Card*> cardPointer;
     Group* ElixirGroup;
         static const int ElixirProcessWidth;
         Engine::Rectangle* elixirProcess;
@@ -57,6 +65,10 @@ public:
 
     void initMapTileAndTileColor();
     Card* getCardById(int id, float x, float y);
+    Engine::Point pxToBlock(const Engine::Point& px) const;
+    Engine::Point blockToPx(const Engine::Point& block) const;
+    bool mouseInPlay();
+    bool mouseAtValid();
 };
 
 #endif // PLAYSCENE_HPP

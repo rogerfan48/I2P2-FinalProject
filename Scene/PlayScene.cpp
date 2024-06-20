@@ -1,5 +1,6 @@
 #include "PlayScene.hpp"
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
 #include <allegro5/bitmap.h>
 #include <allegro5/allegro_audio.h>
 #include <vector>
@@ -15,6 +16,7 @@
 #include "Tower/MainTower.hpp"
 #include "Tower/SideTower.hpp"
 #include "UI/Component/Rectangle.hpp"
+#include "UI/Component/RectangleBorder.hpp"
 #include "UI/Component/Label.hpp"
 #include "Card/AllCard.hpp"
 
@@ -37,6 +39,8 @@ void PlayScene::Initialize() {
     halfH = Engine::GameEngine::GetInstance().GetScreenSize().y / 2;
 
     gameData.A.initGame();
+    selectedCard = nullptr;
+    mousePos = Engine::GameEngine::GetInstance().GetMousePosition();
     
     initMapTileAndTileColor();
     AddNewObject(TileMapGroup = new Group());
@@ -50,6 +54,11 @@ void PlayScene::Initialize() {
         }
     }
 
+    AddNewObject(prohibitedMask = new Engine::Rectangle(2*BlockSize, 2*BlockSize, 17*BlockSize, 18*BlockSize, al_map_rgba(255, 0, 0, 80)));
+    AddNewObject(prohibitedMaskBorder = new Engine::RectangleBorder(2*BlockSize+5, 2*BlockSize+5, 17*BlockSize-10, 18*BlockSize-10, al_map_rgba(255, 0, 0, 180), 10));
+    prohibitedMask->Enable = false;
+    prohibitedMaskBorder->Enable = false;
+
     bgmInstance = AudioHelper::PlaySample("bgm/playBGMw321.ogg", false, AudioHelper::BGMVolume);
 
     AddNewObject(TowerGroup = new Group());
@@ -61,8 +70,11 @@ void PlayScene::Initialize() {
     TowerGroup->AddNewObject(blueMainTower = new MainTower("Blue", MapDiff+27*BlockSize, MapDiff+7*BlockSize));
 
     AddNewControlObject(CardGroup = new Group());
-    for (int i=0; i<4; i++)
-        CardGroup->AddNewControlObject(getCardById(gameData.A.availableCards[i], 100+400*i+10, 1100+10));
+    for (int i=0; i<4; i++) {
+        cardPointer.push_back(getCardById(gameData.A.availableCards[i], 100+400*i+10, 1100+10));
+        CardGroup->AddNewControlObject(cardPointer.back());
+    }
+    cardPointer[gameData.A.selectedCard]->selected = true;
 
     AddNewObject(ElixirGroup = new Group());
     ElixirGroup->AddNewObject(new Engine::Rectangle(890, 1020, ElixirProcessWidth+10, 60, al_map_rgb(30, 30, 30)));
@@ -77,12 +89,18 @@ void PlayScene::Initialize() {
     ElixirGroup->AddNewObject(elixirNumber[2] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050-2, 0, 0, 0, 255, 0.5, 0.5));
     ElixirGroup->AddNewObject(elixirNumber[3] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050+2, 0, 0, 0, 255, 0.5, 0.5));
     ElixirGroup->AddNewObject(elixirNumber[4] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050, 255, 255, 255, 255, 0.5, 0.5));
+
+    AddNewObject(placePreview = new Engine::Rectangle(0, 0, BlockSize, BlockSize, al_map_rgba(255, 255, 255, 80)));
+    AddNewObject(placePreviewBorder = new Engine::RectangleBorder(0, 0, BlockSize-6, BlockSize-6, al_map_rgba(255, 255, 255, 180), 6));
+    placePreview->Enable = false;
+    placePreviewBorder->Enable = false;
 }
 void PlayScene::Terminate() {
     AudioHelper::StopSample(bgmInstance);
 	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     IScene::Terminate();
 }
+
 void PlayScene::Update(float deltaTime) {
     IScene::Update(deltaTime);
     tick += deltaTime;
@@ -92,61 +110,34 @@ void PlayScene::Update(float deltaTime) {
     if (gameData.A.elixir > 10) gameData.A.elixir = 10;
     elixirProcess->Size.x = (gameData.A.elixir)*ElixirProcessWidth/10;
     for (auto i : elixirNumber) i->Text = std::to_string((int)gameData.A.elixir);
-
-    // // time up
-    // if(tick > 505) {
-    //     Engine::GameEngine::GetInstance().ChangeScene("lobby");
-    // }
-    // // update turtle
-    // if(tick > 500) {
-    //     turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string((int)((tick-500)*30+1)) + ".jpg", 1600, 900);
-    //     return;
-    // }
-    // // tower->hp --
-    // if(tick >= 1) {
-    //     for(auto &i : TowerGroup->GetObjects()) {
-    //         auto tower = dynamic_cast<Tower*>(i);
-    //         tower->hp-=1000;
-    //     }
-    //     tick--;
-    // }
-    // // win
-    // if(redMainTower->hp <= 0) {
-    //     tick = 500;
-    //     AddNewObject(new Engine::Rectangle(halfW-800, halfH-500, 1600, 1000, al_map_rgba(255,255,255,100)));
-    //     turtle = new Engine::Image("loading/1.jpg", halfW-800, halfH-450, 1600, 900, 0, 0);
-    //     AddNewObject(turtle);
-    //     AudioHelper::StopSample(bgmInstance);
-    //     bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
-    //     bgmInstance = AudioHelper::PlaySample("turtle.ogg", false, AudioHelper::BGMVolume);
-    // }
-    
-    // for(auto &i : TowerGroup->GetObjects()) {
-    //     auto tower = dynamic_cast<Tower*>(i);
-    //     if(tower->hp <= 0) {
-    //         if(tower->color == "Blue") {
-    //             blueMainTower->bmp = Engine::Resources::GetInstance().GetBitmap(
-    //                     "tower/"+blueMainTower->color+"MainTower.png", 
-    //                     blueMainTower->Size.x, blueMainTower->Size.y);
-    //             blueMainTower->enabled = true;
-    //         }
-    //         else {
-    //             redMainTower->bmp = Engine::Resources::GetInstance().GetBitmap(
-    //                     "tower/"+redMainTower->color+"MainTower.png", 
-    //                     redMainTower->Size.x, redMainTower->Size.y);
-    //             redMainTower->enabled = true;
-    //         }
-    //         RemoveObject(tower->GetObjectIterator());
-    //     }
-    // }
 }
+
 void PlayScene::Draw() const {
+    Engine::Point nowBlock(pxToBlock(mousePos));
     IScene::Draw();
 }
+
 void PlayScene::OnMouseDown(int button, int mx, int my) {
     IScene::OnMouseDown(button, mx, my);
 }
 void PlayScene::OnMouseMove(int mx, int my) {
+    mousePos = Engine::Point(mx, my);
+    Engine::Point nowBlock(pxToBlock(mousePos));
+    if (mouseInPlay()) {
+        prohibitedMask->Enable = true;
+        prohibitedMaskBorder->Enable = true;
+        if (mouseAtValid()) {
+            placePreview->Enable = true;
+            placePreviewBorder->Enable = true;
+            placePreview->Position = blockToPx(nowBlock);
+            placePreviewBorder->Position = Engine::Point(blockToPx(nowBlock).x+3, blockToPx(nowBlock).y+3);
+        }
+    } else {
+        prohibitedMask->Enable = false;
+        prohibitedMaskBorder->Enable = false;
+        placePreview->Enable = false;
+        placePreviewBorder->Enable = false;
+    }
     IScene::OnMouseMove(mx, my);
 }
 void PlayScene::OnMouseUp(int button, int mx, int my) {
@@ -200,4 +191,21 @@ Card* PlayScene::getCardById(int id, float x, float y) {
     else if (id == 11)  return new Heal(x, y);
     Engine::Allegro5Exception("Card Id Error");
     return nullptr;
+}
+
+Engine::Point PlayScene::pxToBlock(const Engine::Point& px) const {
+    return Engine::Point(int(px.x/BlockSize)-2, int(px.y/BlockSize)-2);
+}
+Engine::Point PlayScene::blockToPx(const Engine::Point& block) const {
+    return Engine::Point((block.x+2)*BlockSize, (block.y+2)*BlockSize);
+}
+
+bool PlayScene::mouseInPlay() {
+    Engine::Point nowBlock(pxToBlock(mousePos));
+    return (nowBlock.x>=0 && nowBlock.x<=31 && nowBlock.y>=0 && nowBlock.y<=17);
+}
+bool PlayScene::mouseAtValid() {
+    Engine::Point nowBlock(pxToBlock(mousePos));
+    if (MapTile[nowBlock.y][nowBlock.x] == TOWER) return false;
+    return (nowBlock.x>=17);
 }

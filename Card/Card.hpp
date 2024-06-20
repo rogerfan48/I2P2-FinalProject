@@ -20,7 +20,7 @@ enum CARD_TYPE {
 
 class Card: public Engine::IObject, public Engine::IControl {
 protected:
-
+    GameData& gameData = Engine::GameEngine::GetInstance().data;
 public:
     const std::vector<std::string> IdToCard = {
         "Knight",			// 0

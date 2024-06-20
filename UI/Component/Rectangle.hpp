@@ -10,6 +10,7 @@ namespace Engine {
 	/// A simple static rectangle object.
 	class Rectangle : public IObject {
 	public:
+		bool Enable;
 		// color
 		ALLEGRO_COLOR color;
 		/// Construct a rectangle object.

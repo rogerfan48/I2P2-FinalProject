@@ -11,6 +11,7 @@ public:
     std::vector<int> availableCards;
     std::queue<int> nextCardQueue;
     float elixir;
+    int selectedCard;
 
     UserData();
     void initGame();

@@ -146,6 +146,7 @@ void Card::Draw() const {
         }
     } else {
         if (!hovered) {
+            if (selected) al_draw_filled_rectangle(Position.x-5, Position.y-5, Position.x+Size.x+5, Position.y+Size.y+5, White);
             al_draw_scaled_bitmap(bg.get(), 0, 0, al_get_bitmap_width(bg.get()), al_get_bitmap_height(bg.get()),
                 Position.x, Position.y, Size.x, Size.y, 0);
             al_draw_scaled_bitmap(head.get(), 0, 0, al_get_bitmap_width(head.get()), al_get_bitmap_height(head.get()),
@@ -170,6 +171,7 @@ void Card::Draw() const {
         } else {
             Engine::Point nP(Position); nP.x-=diff; nP.y-=diff;
             Engine::Point nS(Size); nS.x+=2*diff; nS.y+=2*diff;
+            if (selected) al_draw_filled_rectangle(nP.x-5, nP.y-5, nP.x+nS.x+5, nP.y+nS.y+5, White);
             al_draw_scaled_bitmap(bg.get(), 0, 0, al_get_bitmap_width(bg.get()), al_get_bitmap_height(bg.get()),
                 nP.x, nP.y, nS.x, nS.y, 0);
             al_draw_scaled_bitmap(head.get(), 0, 0, al_get_bitmap_width(head.get()), al_get_bitmap_height(head.get()),
@@ -205,8 +207,12 @@ void Card::OnMouseDown(int button, int mx, int my) {
             CSC->saveButton->Enabled = (CSC->newCardSet.size()==8);
         }
     } else {
-        // PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetActiveScene());
-        // for (auto i : PS->CardGroup->GetObjects())
+        if ((button & 1) && hovered) {
+            PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+            gameData.A.selectedCard = (Position.x-110)/400;
+            for (auto i : PS->cardPointer) i->selected = false;
+            selected = true;
+        }
     }
 }
 void Card::OnMouseMove(int mx, int my) {

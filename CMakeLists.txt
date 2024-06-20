@@ -55,6 +55,8 @@ add_executable(
     UI/Component/Slider.hpp
     UI/Component/Rectangle.cpp
     UI/Component/Rectangle.hpp
+    UI/Component/RectangleBorder.cpp
+    UI/Component/RectangleBorder.hpp
     UI/Component/RectangleButton.cpp
     UI/Component/RectangleButton.hpp
 
@@ -103,6 +105,8 @@ add_executable(
     Card/Spell/Heal.cpp
     Card/Spell/Heal.hpp
 
+    Entity/Entity.cpp
+    Entity/Entity.hpp
     Entity/Army/Army.cpp
     Entity/Army/Army.hpp
     Entity/Spell/Spell.cpp
