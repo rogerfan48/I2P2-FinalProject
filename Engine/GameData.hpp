@@ -7,7 +7,7 @@ class GameData {
 public:
     UserData A;
     UserData B;
-    int elixirSpeed;
+    float elixirSpeed;
 
     GameData();
 };

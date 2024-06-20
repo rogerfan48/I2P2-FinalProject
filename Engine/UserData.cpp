@@ -5,7 +5,7 @@ UserData::UserData() {
     chosenCards = {0,1,2,3,4,5,9,10};
 }
 void UserData::initGame() {
-    elixir = 0;
+    elixir = 7;
     
     for (int i : chosenCards) {
         availableCards.push_back(i);
