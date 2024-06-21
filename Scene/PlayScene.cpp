@@ -35,6 +35,7 @@ MainTower *redMainTower, *blueMainTower;
 static Engine::Image* turtle;
 
 void PlayScene::Initialize() {
+    gameTime = 184;
     tick = 0;
     halfW = Engine::GameEngine::GetInstance().GetScreenSize().x / 2;
     halfH = Engine::GameEngine::GetInstance().GetScreenSize().y / 2;
@@ -103,10 +104,19 @@ void PlayScene::Initialize() {
     // MapBorderGroup->AddNewObject(new Engine::Rectangle(0, (MapBlockHeight+2)*BlockSize, 2*MapDiff+MapBlockWidth*BlockSize, 2*BlockSize, TileColor[ROCK]));
     // MapBorderGroup->AddNewObject(new Engine::Rectangle((MapBlockWidth+2)*BlockSize, 0, 2*BlockSize, 2*MapDiff+MapBlockHeight*BlockSize, TileColor[ROCK]));
 
+    AddNewObject(TimeDisplayGroup = new Group());
+    TimeDisplayGroup->AddNewObject(new Engine::Label("", "recharge.otf", 60, 220+3, 1050, 0, 0, 0, 255, 0.5, 0.5, 0));
+    TimeDisplayGroup->AddNewObject(new Engine::Label("", "recharge.otf", 60, 220-3, 1050, 0, 0, 0, 255, 0.5, 0.5, 0));
+    TimeDisplayGroup->AddNewObject(new Engine::Label("", "recharge.otf", 60, 220, 1050+3, 0, 0, 0, 255, 0.5, 0.5, 0));
+    TimeDisplayGroup->AddNewObject(new Engine::Label("", "recharge.otf", 60, 220, 1050-3, 0, 0, 0, 255, 0.5, 0.5, 0));
+    TimeDisplayGroup->AddNewObject(new Engine::Label("", "recharge.otf", 60, 220, 1050, 255, 255, 255, 255, 0.5, 0.5, 0));
+    isTimeShown = false;
+    timeShown = 181;
+
     AddNewObject(ElixirGroup = new Group());
     ElixirGroup->AddNewObject(new Engine::Rectangle(890, 1020, ElixirProcessWidth+10, 60, al_map_rgb(30, 30, 30)));
     ElixirGroup->AddNewObject(new Engine::Rectangle(895, 1025, ElixirProcessWidth, 50, al_map_rgb(100, 100, 100)));
-    ElixirGroup->AddNewObject(elixirProcess = new Engine::Rectangle(895, 1025, ElixirProcessWidth, 50, al_map_rgb(255, 0, 255)));
+    ElixirGroup->AddNewObject(elixirProcess = new Engine::Rectangle(895, 1025, ElixirProcessWidth*7/10+5, 50, al_map_rgb(255, 0, 255)));
     for (int i=1; i<10; i++)
         ElixirGroup->AddNewObject(new Engine::Rectangle(895+3.5+80*i, 1025, 5, 50, al_map_rgb(60, 60, 60)));
     ElixirGroup->AddNewObject(new Engine::Image("elixir.png", 900-45, 1000+15, 70, 70));
@@ -124,10 +134,35 @@ void PlayScene::Terminate() {
 }
 
 void PlayScene::Update(float deltaTime) {
+    gameTime -= deltaTime;
     IScene::Update(deltaTime);
     tick += deltaTime;
+    
+    // time:
+    if (gameTime < 181 && gameTime >= 0) {
+        if (!isTimeShown) {
+            for (auto i : TimeDisplayGroup->GetObjects()) {
+                Engine::Label* j = dynamic_cast<Engine::Label*>(i);
+                j->Enable = true;
+            }
+            isTimeShown = true;
+        }
+        if (timeShown > int(gameTime)) {
+            timeShown = int(gameTime);
+            for (auto i : TimeDisplayGroup->GetObjects()) {
+                Engine::Label* j = dynamic_cast<Engine::Label*>(i);
+                j->Text = timeString(gameTime);
+            }
+        }
+    } else if (isTimeShown) {
+        for (auto i : TimeDisplayGroup->GetObjects()) {
+            Engine::Label* j = dynamic_cast<Engine::Label*>(i);
+            j->Enable = false;
+        }
+    }
 
     // Elixir:
+    if (gameTime > 181) return;
     gameData.A.elixir += deltaTime * gameData.elixirSpeed;
     if (gameData.A.elixir > 10) gameData.A.elixir = 10;
     elixirProcess->Size.x = (gameData.A.elixir)*ElixirProcessWidth/10;
@@ -148,11 +183,11 @@ void PlayScene::Update(float deltaTime) {
 }
 
 void PlayScene::Draw() const {
-    Engine::Point nowBlock(pxToBlock(mousePos));
     IScene::Draw();
 }
 
 void PlayScene::OnMouseDown(int button, int mx, int my) {
+    if (gameTime >= 181) return;
     if ((button & 1) && selectedCard != nullptr && mouseInPlay() && mouseAtValid()) {
         if (gameData.A.elixir < selectedCard->cost) return;
         else gameData.A.elixir -= selectedCard->cost;
@@ -177,6 +212,7 @@ void PlayScene::OnMouseDown(int button, int mx, int my) {
     IScene::OnMouseDown(button, mx, my);
 }
 void PlayScene::OnMouseMove(int mx, int my) {
+    if (gameTime >= 181) return;
     mousePos = Engine::Point(mx, my);
     Engine::Point nowBlock(pxToBlock(mousePos));
     if (mouseInPlay()) {

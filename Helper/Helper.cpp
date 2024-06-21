@@ -2,6 +2,7 @@
 #include <allegro5/allegro.h>
 #include <allegro5/color.h>
 #include <cmath>
+#include <string>
 
 #include "Engine/Point.hpp"
 #include "Scene/PlayScene.hpp"
@@ -17,6 +18,11 @@ Engine::Point pxToBlock(const Engine::Point& px) {
 }
 Engine::Point blockToPx(const Engine::Point& block) {
     return Engine::Point((block.x+2)*PlayScene::BlockSize, (block.y+2)*PlayScene::BlockSize);
+}
+
+std::string timeString(float sec) {
+    if (int(sec)%60 < 10) return std::to_string(int(sec)/60)+" : 0"+std::to_string(int(sec)%60);
+    else return std::to_string(int(sec)/60)+" : "+std::to_string(int(sec)%60);
 }
 
 double findAngle(Engine::Point center, Engine::Point point) {

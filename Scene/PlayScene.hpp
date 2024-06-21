@@ -38,6 +38,8 @@ private:
     Engine::Point mousePos;
     int instanceIDCounter;
 public:
+    float gameTime;
+
     static const int BlockSize;
     static const int MapBlockWidth;
     static const int MapBlockHeight;
@@ -64,6 +66,9 @@ public:
     Group* B_ArmyGroup;
     Group* B_SpellGroup;
     // Group* MapBorderGroup;
+    Group* TimeDisplayGroup;
+        bool isTimeShown;
+        float timeShown;
     Group* ElixirGroup;
         static const int ElixirProcessWidth;
         Engine::Rectangle* elixirProcess;
