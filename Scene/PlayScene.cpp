@@ -20,6 +20,7 @@
 #include "UI/Component/RectangleBorder.hpp"
 #include "UI/Component/Label.hpp"
 #include "Card/AllCard.hpp"
+#include "Entity/Army/Army.hpp"
 
 const int PlayScene::BlockSize = 50;
 const int PlayScene::MapBlockWidth = 32, PlayScene::MapBlockHeight = 18;
@@ -32,6 +33,7 @@ std::vector<std::string> PlayScene::MapTile;
 
 static int halfW, halfH;
 MainTower *redMainTower, *blueMainTower;
+SideTower *redUpperTower, *redBelowTower, *blueUpperTower, *blueBelowTower;
 static Engine::Image* turtle;
 
 void PlayScene::Initialize() {
@@ -81,11 +83,11 @@ void PlayScene::Initialize() {
     AddNewObject(B_SpellGroup = new Group());
 
     AddNewObject(TowerGroup = new Group());
-    TowerGroup->AddNewObject(new SideTower("Red", MapDiff+5*BlockSize, MapDiff+2*BlockSize));
-    TowerGroup->AddNewObject(new SideTower("Red", MapDiff+5*BlockSize, MapDiff+13*BlockSize));
+    TowerGroup->AddNewObject(redUpperTower = new SideTower("Red", MapDiff+5*BlockSize, MapDiff+2*BlockSize));
+    TowerGroup->AddNewObject(redBelowTower = new SideTower("Red", MapDiff+5*BlockSize, MapDiff+13*BlockSize));
     TowerGroup->AddNewObject(redMainTower = new MainTower("Red", MapDiff+BlockSize, MapDiff+7*BlockSize));
-    TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+2*BlockSize));
-    TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+13*BlockSize));
+    TowerGroup->AddNewObject(blueUpperTower = new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+2*BlockSize));
+    TowerGroup->AddNewObject(blueBelowTower = new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+13*BlockSize));
     TowerGroup->AddNewObject(blueMainTower = new MainTower("Blue", MapDiff+27*BlockSize, MapDiff+7*BlockSize));
 
     AddNewObject(A_ArmyGroup = new Group());
@@ -126,6 +128,10 @@ void PlayScene::Initialize() {
     ElixirGroup->AddNewObject(elixirNumber[2] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050-2, 0, 0, 0, 255, 0.5, 0.5));
     ElixirGroup->AddNewObject(elixirNumber[3] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050+2, 0, 0, 0, 255, 0.5, 0.5));
     ElixirGroup->AddNewObject(elixirNumber[4] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050, 255, 255, 255, 255, 0.5, 0.5));
+
+    // test : but why it can't use.
+    B_ArmyGroup->AddNewObject(new Army(1,1,700,600,"Archers",1,500,1,1,1,1,1,0.7,1));
+    // test
 }
 void PlayScene::Terminate() {
     AudioHelper::StopSample(bgmInstance);
