@@ -1,10 +1,19 @@
+#include <cmath>
 #include "Helper.hpp"
+#include "Engine/Point.hpp"
+#include "allegro5/allegro.h"
 #include "Scene/PlayScene.hpp"
 
 std::string floatToStr(float num) {
     char buffer[10];
     std::snprintf(buffer, sizeof(buffer), "%.1f", num);
     return std::string(buffer);
+}
+double findAngle(Engine::Point center, Engine::Point point) {
+    if (center.y <= point.y) 
+        return acos((point.x - center.x) / (center - point).Magnitude());
+    else
+        return acos((center.x - point.x) / (center - point).Magnitude()) + ALLEGRO_PI;
 }
 
 Engine::Point pxToBlock(const Engine::Point& px) {

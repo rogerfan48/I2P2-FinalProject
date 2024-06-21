@@ -62,6 +62,7 @@ public:
         static const int ElixirProcessWidth;
         Engine::Rectangle* elixirProcess;
         std::vector<Engine::Label*> elixirNumber;
+    Group* WeaponGroup;
 
     explicit PlayScene() = default;
 	void Initialize() override;

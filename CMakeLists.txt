@@ -114,6 +114,9 @@ add_executable(
     Entity/Spell/Spell.cpp
     Entity/Spell/Spell.hpp
 
+    Weapon/Bullet.cpp
+    Weapon/Bullet.hpp
+
     Helper/Helper.cpp
     Helper/Helper.hpp
 )
