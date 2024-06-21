@@ -9,7 +9,6 @@ class Bullet : public Engine::Sprite {
 protected:
 	float speed;
 	float damage;
-	PlayScene* getPlayScene();
 	virtual void OnExplode();
 public:
 	Army* target = nullptr;

@@ -15,6 +15,7 @@
 #include "UI/Component/RectangleBorder.hpp"
 #include "UI/Component/Label.hpp"
 #include "Card/Card.hpp"
+#include "Weapon/Bullet.hpp"
 
 class PlayScene final : public Engine::IScene {
 private:

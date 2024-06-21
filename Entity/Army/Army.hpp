@@ -27,7 +27,6 @@ public:
         int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, float picRadiusBk);
 
     void Draw() const override;
-    void beTargeted(Bullet* bullet);
 };
 
 #endif // ARMY_HPP

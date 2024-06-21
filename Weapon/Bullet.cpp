@@ -10,9 +10,6 @@
 #include "Engine/Sprite.hpp"
 #include "Helper/Helper.hpp"
 
-PlayScene* Bullet::getPlayScene() {
-	return dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetActiveScene());
-}
 void Bullet::OnExplode(){
 	//
 }
@@ -21,19 +18,17 @@ Bullet::Bullet(std::string img, float speed, float damage, Engine::Point positio
 	Rotation = findAngle(position, target->Position);
 	Velocity.x = cos(Rotation) * speed, Velocity.y = sin(Rotation) * speed * (-1);
 	CollisionRadius = 4;
-	target->beTargeted(this);  // 
 }
 void Bullet::Update(float deltaTime) {
 	Sprite::Update(deltaTime);
-	PlayScene* scene = getPlayScene();
+	PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetActiveScene());
 	if (!target) {
 		static float tick = 255;
 		tick -= deltaTime;
 		if (tick > 0) {
 			Tint = al_map_rgba(255, 255, 255, tick);
-		}
-		else {
-			getPlayScene()->WeaponGroup->RemoveObject(objectIterator);
+		} else {
+			PS->WeaponGroup->RemoveObject(objectIterator);
 		}
 		return;
 	}
@@ -42,7 +37,7 @@ void Bullet::Update(float deltaTime) {
 	if ((Position - target->Position).Magnitude() <= CollisionRadius) {
 			OnExplode();
 			target->hp -= damage;
-			getPlayScene()->WeaponGroup->RemoveObject(objectIterator);
+			PS->WeaponGroup->RemoveObject(objectIterator);
 			return;
 		}
 }

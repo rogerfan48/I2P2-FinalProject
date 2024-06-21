@@ -1,10 +1,10 @@
 #include "Army.hpp"
 #include <allegro5/allegro.h>
 
+#include "Engine/IObject.hpp"
 #include "Engine/Point.hpp"
 #include "Helper/Helper.hpp"
 #include "Scene/PlayScene.hpp"
-#include "Weapon/Bullet.hpp"
 
 Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
     int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, float picRadiusBk): 
@@ -19,7 +19,4 @@ Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
 void Army::Draw() const {
     al_draw_scaled_bitmap(head.get(), 0, 0, al_get_bitmap_width(head.get()), al_get_bitmap_height(head.get()),
         Position.x-picRadiusPx, Position.y-picRadiusPx, 2*picRadiusPx, 2*picRadiusPx, 0);
-}
-void beTargeted(Bullet* bullet) {
-
 }
