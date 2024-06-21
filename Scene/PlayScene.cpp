@@ -13,6 +13,7 @@
 #include "Engine/Group.hpp"
 #include "Engine/AudioHelper.hpp"
 #include "Engine/Resources.hpp"
+#include "Helper/Helper.hpp"
 #include "Tower/MainTower.hpp"
 #include "Tower/SideTower.hpp"
 #include "UI/Component/Rectangle.hpp"
@@ -40,6 +41,7 @@ void PlayScene::Initialize() {
 
     gameData.A.initGame();
     selectedCard = nullptr;
+    instanceIDCounter = 0;
     mousePos = Engine::GameEngine::GetInstance().GetMousePosition();
     
     initMapTileAndTileColor();
@@ -81,6 +83,8 @@ void PlayScene::Initialize() {
     TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+2*BlockSize));
     TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+13*BlockSize));
     TowerGroup->AddNewObject(blueMainTower = new MainTower("Blue", MapDiff+27*BlockSize, MapDiff+7*BlockSize));
+
+    AddNewObject(A_ArmyGroup = new Group());
 
     AddNewObject(placePreview = new Engine::Rectangle(0, 0, BlockSize, BlockSize, al_map_rgba(255, 255, 255, 80)));
     AddNewObject(placePreviewBorder = new Engine::RectangleBorder(0, 0, BlockSize-6, BlockSize-6, al_map_rgba(255, 255, 255, 220), 6));
@@ -132,6 +136,27 @@ void PlayScene::Draw() const {
 }
 
 void PlayScene::OnMouseDown(int button, int mx, int my) {
+    if ((button & 1) && selectedCard != nullptr && mouseInPlay() && mouseAtValid()) {
+        if (gameData.A.elixir < selectedCard->cost) return;
+        else gameData.A.elixir -= selectedCard->cost;
+        Engine::Point nowBlock(pxToBlock(mousePos));
+        if (selectedCard->cardType == ARMY) {
+            std::cout << "1" << std::endl;
+            A_ArmyGroup->AddNewObject(selectedCard->placeArmy(instanceIDCounter++, nowBlock.x, nowBlock.y));
+        } else {
+
+        }
+        gameData.A.nextCardQueue.push(selectedCard->ID);
+        int pos;
+        for (int i=0; i<4; i++) if (cardPointer[i] == selectedCard) pos = i;
+        CardGroup->RemoveControlObject(selectedCard->GetControlIterator(), selectedCard->GetObjectIterator());
+        gameData.A.availableCards[pos] = gameData.A.nextCardQueue.front();
+        gameData.A.nextCardQueue.pop();
+        cardPointer[pos] = getCardById(gameData.A.availableCards[pos], 100+400*pos+10, 1100+10);
+        CardGroup->AddNewControlObject(cardPointer[pos]);
+        cardPointer[pos]->selected = true;
+        selectedCard = cardPointer[pos];
+    }
     IScene::OnMouseDown(button, mx, my);
 }
 void PlayScene::OnMouseMove(int mx, int my) {
@@ -226,13 +251,6 @@ Card* PlayScene::getCardById(int id, float x, float y) {
     else if (id == 11)  return new Heal(x, y);
     Engine::Allegro5Exception("Card Id Error");
     return nullptr;
-}
-
-Engine::Point PlayScene::pxToBlock(const Engine::Point& px) const {
-    return Engine::Point(int(px.x/BlockSize)-2, int(px.y/BlockSize)-2);
-}
-Engine::Point PlayScene::blockToPx(const Engine::Point& block) const {
-    return Engine::Point((block.x+2)*BlockSize, (block.y+2)*BlockSize);
 }
 
 bool PlayScene::mouseInPlay() {

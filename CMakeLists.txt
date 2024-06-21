@@ -109,8 +109,6 @@ add_executable(
     Card/Spell/Heal.cpp
     Card/Spell/Heal.hpp
 
-    Entity/Entity.cpp
-    Entity/Entity.hpp
     Entity/Army/Army.cpp
     Entity/Army/Army.hpp
     Entity/Spell/Spell.cpp

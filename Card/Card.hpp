@@ -11,6 +11,8 @@
 #include "Engine/Resources.hpp"
 #include "Engine/IScene.hpp"
 #include "Scene/CardSetScene.hpp"
+#include "Entity/Army/Army.hpp"
+#include "Entity/Spell/Spell.hpp"
 
 enum CARD_TYPE {
     ARMY, SPELL
@@ -88,6 +90,9 @@ public:
     float interval;
     Card(bool selected, int id, float x, float y, std::string Name, std::string Description, int pt, float radius, float duration, float interval, int atkTower, int cost);
     Card(int id, float x, float y, std::string Name, int pt, float radius, float duration, float interval, int atkTower, int cost);
+
+    virtual Army* placeArmy(int instanceID, float xB, float yB);
+    virtual Spell* placeSpell(int instanceID, float xB, float yB);
 
     void Draw() const override;
 	void OnMouseDown(int button, int mx, int my) override;

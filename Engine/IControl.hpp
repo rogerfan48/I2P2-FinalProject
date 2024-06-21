@@ -20,6 +20,7 @@ namespace Engine {
 		IControl(const IControl& other) = default;
 		/// Copy assignment operator does not add a new instance to scene, they are still the same object.
 		IControl& operator=(IControl const&) = default;
+		std::list<std::pair<bool, IControl*>>::iterator GetControlIterator() const;
 		/// Delegated from scene when keyboard key down.
 		/// keyCode: The keycode of pressed key.
 		virtual void OnKeyDown(int keyCode);

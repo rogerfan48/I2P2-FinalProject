@@ -34,6 +34,7 @@ private:
     GameData& gameData = Engine::GameEngine::GetInstance().data;
     float tick;
     Engine::Point mousePos;
+    int instanceIDCounter;
 public:
     static const int BlockSize;
     static const int MapBlockWidth;
@@ -54,6 +55,8 @@ public:
         Engine::Circle* radiusPreview;
         Engine::CircleBorder* radiusPreviewBorder;
     Group* TowerGroup;
+    Group* A_ArmyGroup;
+    Group* A_SpellGroup;
     // Group* MapBorderGroup;
     Group* ElixirGroup;
         static const int ElixirProcessWidth;
@@ -72,8 +75,6 @@ public:
 
     void initMapTileAndTileColor();
     Card* getCardById(int id, float x, float y);
-    Engine::Point pxToBlock(const Engine::Point& px) const;
-    Engine::Point blockToPx(const Engine::Point& block) const;
     bool mouseInPlay();
     bool mouseAtValid();
 };
