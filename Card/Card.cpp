@@ -212,6 +212,7 @@ void Card::OnMouseDown(int button, int mx, int my) {
             gameData.A.selectedCard = (Position.x-110)/400;
             for (auto i : PS->cardPointer) i->selected = false;
             selected = true;
+            PS->selectedCard = this;
         }
     }
 }

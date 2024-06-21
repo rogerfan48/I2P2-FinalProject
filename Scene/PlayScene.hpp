@@ -9,6 +9,8 @@
 
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
+#include "UI/Component/Circle.hpp"
+#include "UI/Component/CircleBorder.hpp"
 #include "UI/Component/Rectangle.hpp"
 #include "UI/Component/RectangleBorder.hpp"
 #include "UI/Component/Label.hpp"
@@ -31,7 +33,6 @@ private:
     std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
     GameData& gameData = Engine::GameEngine::GetInstance().data;
     float tick;
-    Card* selectedCard;
     Engine::Point mousePos;
 public:
     static const int BlockSize;
@@ -43,11 +44,17 @@ public:
     Group* TileMapGroup;
         Engine::Rectangle* prohibitedMask;
         Engine::RectangleBorder* prohibitedMaskBorder;
+    Group* CardGroup;
+        Card* selectedCard;
+        std::vector<Card*> cardPointer;
+    // Preview:
         Engine::Rectangle* placePreview;
         Engine::RectangleBorder* placePreviewBorder;
+        Engine::Label* placeReviewName;
+        Engine::Circle* radiusPreview;
+        Engine::CircleBorder* radiusPreviewBorder;
     Group* TowerGroup;
-    Group* CardGroup;
-        std::vector<Card*> cardPointer;
+    // Group* MapBorderGroup;
     Group* ElixirGroup;
         static const int ElixirProcessWidth;
         Engine::Rectangle* elixirProcess;

@@ -11,11 +11,12 @@ namespace Engine {
 	/// A simple static text object.
 	class Label : public IObject {
 	protected:
-		// Smart pointer to font.
-		std::shared_ptr<ALLEGRO_FONT> font;
 	public:
+		bool Enable;
 		// Text to draw.
 		std::string Text;
+		// Smart pointer to font.
+		std::shared_ptr<ALLEGRO_FONT> font;
 		// Text's color.
 		ALLEGRO_COLOR Color;
 		/// Construct a label object.

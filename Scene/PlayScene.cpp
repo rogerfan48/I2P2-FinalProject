@@ -61,6 +61,19 @@ void PlayScene::Initialize() {
 
     bgmInstance = AudioHelper::PlaySample("bgm/playBGMw321.ogg", false, AudioHelper::BGMVolume);
 
+    AddNewControlObject(CardGroup = new Group());
+    for (int i=0; i<4; i++) {
+        cardPointer.push_back(getCardById(gameData.A.availableCards[i], 100+400*i+10, 1100+10));
+        CardGroup->AddNewControlObject(cardPointer.back());
+    }
+    cardPointer[gameData.A.selectedCard]->selected = true;
+    selectedCard = cardPointer[gameData.A.selectedCard];
+
+    AddNewObject(radiusPreview = new Engine::Circle(0, 0, 0, al_map_rgba(255, 255, 255, 40)));
+    AddNewObject(radiusPreviewBorder = new Engine::CircleBorder(0, 0, 0, al_map_rgba(255, 255, 255, 160), 6));
+    radiusPreview->Enable = false;
+    radiusPreviewBorder->Enable = false;
+
     AddNewObject(TowerGroup = new Group());
     TowerGroup->AddNewObject(new SideTower("Red", MapDiff+5*BlockSize, MapDiff+2*BlockSize));
     TowerGroup->AddNewObject(new SideTower("Red", MapDiff+5*BlockSize, MapDiff+13*BlockSize));
@@ -69,12 +82,18 @@ void PlayScene::Initialize() {
     TowerGroup->AddNewObject(new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+13*BlockSize));
     TowerGroup->AddNewObject(blueMainTower = new MainTower("Blue", MapDiff+27*BlockSize, MapDiff+7*BlockSize));
 
-    AddNewControlObject(CardGroup = new Group());
-    for (int i=0; i<4; i++) {
-        cardPointer.push_back(getCardById(gameData.A.availableCards[i], 100+400*i+10, 1100+10));
-        CardGroup->AddNewControlObject(cardPointer.back());
-    }
-    cardPointer[gameData.A.selectedCard]->selected = true;
+    AddNewObject(placePreview = new Engine::Rectangle(0, 0, BlockSize, BlockSize, al_map_rgba(255, 255, 255, 80)));
+    AddNewObject(placePreviewBorder = new Engine::RectangleBorder(0, 0, BlockSize-6, BlockSize-6, al_map_rgba(255, 255, 255, 220), 6));
+    AddNewObject(placeReviewName = new Engine::Label("", "recharge.otf", 28, 0, 0, 255, 255, 255, 255));
+    placePreview->Enable = false;
+    placePreviewBorder->Enable = false;
+    placeReviewName->Enable = false;
+
+    // AddNewObject(MapBorderGroup = new Group());
+    // MapBorderGroup->AddNewObject(new Engine::Rectangle(0, 0, 2*MapDiff+MapBlockWidth*BlockSize, 2*BlockSize, TileColor[ROCK]));
+    // MapBorderGroup->AddNewObject(new Engine::Rectangle(0, 0, 2*BlockSize, 2*MapDiff+MapBlockHeight*BlockSize, TileColor[ROCK]));
+    // MapBorderGroup->AddNewObject(new Engine::Rectangle(0, (MapBlockHeight+2)*BlockSize, 2*MapDiff+MapBlockWidth*BlockSize, 2*BlockSize, TileColor[ROCK]));
+    // MapBorderGroup->AddNewObject(new Engine::Rectangle((MapBlockWidth+2)*BlockSize, 0, 2*BlockSize, 2*MapDiff+MapBlockHeight*BlockSize, TileColor[ROCK]));
 
     AddNewObject(ElixirGroup = new Group());
     ElixirGroup->AddNewObject(new Engine::Rectangle(890, 1020, ElixirProcessWidth+10, 60, al_map_rgb(30, 30, 30)));
@@ -89,11 +108,6 @@ void PlayScene::Initialize() {
     ElixirGroup->AddNewObject(elixirNumber[2] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050-2, 0, 0, 0, 255, 0.5, 0.5));
     ElixirGroup->AddNewObject(elixirNumber[3] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050+2, 0, 0, 0, 255, 0.5, 0.5));
     ElixirGroup->AddNewObject(elixirNumber[4] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050, 255, 255, 255, 255, 0.5, 0.5));
-
-    AddNewObject(placePreview = new Engine::Rectangle(0, 0, BlockSize, BlockSize, al_map_rgba(255, 255, 255, 80)));
-    AddNewObject(placePreviewBorder = new Engine::RectangleBorder(0, 0, BlockSize-6, BlockSize-6, al_map_rgba(255, 255, 255, 180), 6));
-    placePreview->Enable = false;
-    placePreviewBorder->Enable = false;
 }
 void PlayScene::Terminate() {
     AudioHelper::StopSample(bgmInstance);
@@ -131,12 +145,33 @@ void PlayScene::OnMouseMove(int mx, int my) {
             placePreviewBorder->Enable = true;
             placePreview->Position = blockToPx(nowBlock);
             placePreviewBorder->Position = Engine::Point(blockToPx(nowBlock).x+3, blockToPx(nowBlock).y+3);
+            placeReviewName->Enable = true;
+            placeReviewName->Text = selectedCard->Name;
+            placeReviewName->Position = Engine::Point(blockToPx(nowBlock).x+BlockSize/2-al_get_text_width(placeReviewName->font.get(), placeReviewName->Text.c_str())/2, blockToPx(nowBlock).y-32);
+            if (selectedCard->cardType == SPELL) {
+                radiusPreview->Enable = true;
+                radiusPreviewBorder->Enable = true;
+                radiusPreview->Position = radiusPreviewBorder->Position = Engine::Point(blockToPx(nowBlock).x+BlockSize/2, blockToPx(nowBlock).y+BlockSize/2);
+                radiusPreview->Size = radiusPreviewBorder->Size = Engine::Point(selectedCard->radius*BlockSize-3, selectedCard->radius*BlockSize-3);
+            } else {
+                radiusPreview->Enable = false;
+                radiusPreviewBorder->Enable = false;
+            }
+        } else {
+            placePreview->Enable = false;
+            placePreviewBorder->Enable = false;
+            placeReviewName->Enable = false;
+            radiusPreview->Enable = false;
+            radiusPreviewBorder->Enable = false;
         }
     } else {
         prohibitedMask->Enable = false;
         prohibitedMaskBorder->Enable = false;
         placePreview->Enable = false;
         placePreviewBorder->Enable = false;
+        placeReviewName->Enable = false;
+        radiusPreview->Enable = false;
+        radiusPreviewBorder->Enable = false;
     }
     IScene::OnMouseMove(mx, my);
 }
@@ -206,6 +241,6 @@ bool PlayScene::mouseInPlay() {
 }
 bool PlayScene::mouseAtValid() {
     Engine::Point nowBlock(pxToBlock(mousePos));
-    if (MapTile[nowBlock.y][nowBlock.x] == TOWER) return false;
+    if (MapTile[nowBlock.y][nowBlock.x] == TOWER+'0') return false;
     return (nowBlock.x>=17);
 }

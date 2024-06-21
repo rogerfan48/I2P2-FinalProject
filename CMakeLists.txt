@@ -45,6 +45,10 @@ add_executable(
     Engine/UserData.cpp
     Engine/UserData.hpp
 
+    UI/Component/Circle.cpp
+    UI/Component/Circle.hpp
+    UI/Component/CircleBorder.cpp
+    UI/Component/CircleBorder.hpp
     UI/Component/Image.cpp
     UI/Component/Image.hpp
     UI/Component/ImageButton.cpp
