@@ -1,6 +1,8 @@
 #ifndef SPELL_HPP
 #define SPELL_HPP
 
+#include <allegro5/color.h>
+
 #include "Engine/GameEngine.hpp"
 #include "Engine/IControl.hpp"
 #include "Engine/IObject.hpp"
@@ -14,19 +16,19 @@ public:
     std::string Name;
     std::string Description;
     std::shared_ptr<ALLEGRO_BITMAP> head;
+    ALLEGRO_COLOR color;
 
     // Spell:
     int pt;    // atk or heal
     int atkTower;
     float radius;
-    float duration;
+    float time, duration;
     float interval;
-    Spell(bool selected, int id, float x, float y, std::string Name, std::string Description, int pt, float radius, float duration, float interval, int atkTower, int cost);
-    Spell(int id, float x, float y, std::string Name, int pt, float radius, float duration, float interval, int atkTower, int cost);
+    Spell(int id, int instanceID, float xB, float yB, std::string Name, 
+        int pt, float radius, float duration, float interval, int atkTower, ALLEGRO_COLOR color);
 
     void Draw() const override;
-	void OnMouseDown(int button, int mx, int my) override;
-	void OnMouseMove(int mx, int my) override;
+    void Update(float deltaTime) override;
 };
 
 #endif // SPELL_HPP

@@ -58,6 +58,8 @@ public:
     Group* TowerGroup;
     Group* A_ArmyGroup;
     Group* A_SpellGroup;
+    Group* B_ArmyGroup;
+    Group* B_SpellGroup;
     // Group* MapBorderGroup;
     Group* ElixirGroup;
         static const int ElixirProcessWidth;

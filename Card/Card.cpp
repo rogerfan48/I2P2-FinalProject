@@ -220,5 +220,5 @@ void Card::OnMouseMove(int mx, int my) {
 	hovered = Engine::Collider::IsPointInRect(Engine::Point(mx, my), Position, Size);
 }
 
-Army* Card::placeArmy(int instanceID, float xB, float yB) {}
-Spell* Card::placeSpell(int instanceID, float xB, float yB) {}
+Army* Card::placeArmy(int instanceID, float xB, float yB) { return nullptr; }
+Spell* Card::placeSpell(int instanceID, float xB, float yB) { return nullptr; }

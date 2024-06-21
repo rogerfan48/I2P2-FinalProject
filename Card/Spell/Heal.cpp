@@ -1,5 +1,8 @@
 #include "Heal.hpp"
+#include <allegro5/color.h>
+
 #include "Helper/Helper.hpp"
+#include "Entity/Spell/Spell.hpp"
 
 Heal::Heal(bool selected, float x, float y): 
     Card(selected, 11, x, y, "Heal", "Heal your troops to keep them in the fight!", 75, 3.5, 2, 0.5, 0, 1) {
@@ -40,4 +43,8 @@ void Heal::Draw() const {
         }
 
     }
+}
+
+Spell* Heal::placeSpell(int instanceID, float xB, float yB) {
+    return new Spell(ID, instanceID, xB, yB, Name, pt, radius, duration, interval, atkTower, al_map_rgb(255, 220, 0));
 }

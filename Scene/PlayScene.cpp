@@ -76,6 +76,8 @@ void PlayScene::Initialize() {
     radiusPreview->Enable = false;
     radiusPreviewBorder->Enable = false;
 
+    AddNewObject(A_SpellGroup = new Group());
+
     AddNewObject(TowerGroup = new Group());
     TowerGroup->AddNewObject(new SideTower("Red", MapDiff+5*BlockSize, MapDiff+2*BlockSize));
     TowerGroup->AddNewObject(new SideTower("Red", MapDiff+5*BlockSize, MapDiff+13*BlockSize));
@@ -128,6 +130,12 @@ void PlayScene::Update(float deltaTime) {
     if (gameData.A.elixir > 10) gameData.A.elixir = 10;
     elixirProcess->Size.x = (gameData.A.elixir)*ElixirProcessWidth/10;
     for (auto i : elixirNumber) i->Text = std::to_string((int)gameData.A.elixir);
+
+    // Spell timeout:
+    for (auto i : A_SpellGroup->GetObjects()) {
+        Spell* j = dynamic_cast<Spell*>(i);
+        if (j->time < 0) A_SpellGroup->RemoveObject(i->GetObjectIterator());
+    }
 }
 
 void PlayScene::Draw() const {
@@ -141,10 +149,9 @@ void PlayScene::OnMouseDown(int button, int mx, int my) {
         else gameData.A.elixir -= selectedCard->cost;
         Engine::Point nowBlock(pxToBlock(mousePos));
         if (selectedCard->cardType == ARMY) {
-            std::cout << "1" << std::endl;
             A_ArmyGroup->AddNewObject(selectedCard->placeArmy(instanceIDCounter++, nowBlock.x, nowBlock.y));
         } else {
-
+            A_SpellGroup->AddNewObject(selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y));
         }
         gameData.A.nextCardQueue.push(selectedCard->ID);
         int pos;

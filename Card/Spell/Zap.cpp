@@ -1,5 +1,7 @@
 #include "Zap.hpp"
+
 #include "Helper/Helper.hpp"
+#include "Entity/Spell/Spell.hpp"
 
 Zap::Zap(bool selected, float x, float y): 
     Card(selected, 9, x, y, "Zap", "Zaps enemies and briefly stunning them.", 192, 2.5, 0.5, 1, 58, 2) { // 1 > 0.5 ∴ only run one time
@@ -39,4 +41,8 @@ void Zap::Draw() const {
             al_draw_text(fontDescH.get(), White, nP.x+220, nP.y+210+6, 0, ("Dur.: "+floatToStr(duration)).c_str());
         }
     }
+}
+
+Spell* Zap::placeSpell(int instanceID, float xB, float yB) {
+    return new Spell(ID, instanceID, xB, yB, Name, pt, radius, duration, interval, atkTower, al_map_rgb(0, 140, 255));
 }

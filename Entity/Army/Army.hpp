@@ -17,6 +17,7 @@ public:
     float picRadiusPx;
 
     // Army:
+    float stunned;
     int hp, hpMax;
     int atk;
     float coolDown;

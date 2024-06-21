@@ -1,5 +1,7 @@
 #include "Poison.hpp"
+
 #include "Helper/Helper.hpp"
+#include "Entity/Spell/Spell.hpp"
 
 Poison::Poison(bool selected, float x, float y): 
     Card(selected, 10, x, y, "Poison", "Covers the area in a deadly toxin.", 78, 4, 8, 1, 23, 4) {
@@ -39,4 +41,8 @@ void Poison::Draw() const {
             al_draw_text(fontDescH.get(), White, nP.x+220, nP.y+210+6, 0, ("Dur.: "+floatToStr(duration)).c_str());
         }
     }
+}
+
+Spell* Poison::placeSpell(int instanceID, float xB, float yB) {
+    return new Spell(ID, instanceID, xB, yB, Name, pt, radius, duration, interval, atkTower, al_map_rgb(150, 50, 30));
 }

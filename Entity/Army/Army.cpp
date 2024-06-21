@@ -1,7 +1,6 @@
 #include "Army.hpp"
 #include <allegro5/allegro.h>
 
-#include "Engine/IObject.hpp"
 #include "Engine/Point.hpp"
 #include "Helper/Helper.hpp"
 #include "Scene/PlayScene.hpp"
@@ -9,7 +8,7 @@
 Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
     int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, float picRadiusBk): 
         IObject(xB, yB), ID(id), instanceID(instanceID), Name(Name), 
-        hp(hp), hpMax(hp), atk(atk), coolDown(coolDown), speed(speed), speedOri(speed), atkRadius(atkRadius), detectRadius(detectRadius), picRadiusPx(picRadiusBk*PlayScene::BlockSize) {
+        hp(hp), hpMax(hp), atk(atk), coolDown(coolDown), speed(speed), speedOri(speed), atkRadius(atkRadius), detectRadius(detectRadius), picRadiusPx(picRadiusBk*PlayScene::BlockSize), stunned(0) {
             Position = blockToPx(Engine::Point(xB, yB));
             Position.x += PlayScene::BlockSize/2;
             Position.y += PlayScene::BlockSize/2;
