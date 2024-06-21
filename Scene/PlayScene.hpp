@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
@@ -57,6 +58,8 @@ public:
         Engine::CircleBorder* radiusPreviewBorder;
     Group* TowerGroup;
     Group* A_ArmyGroup;
+        std::map<int, Army*> A_ArmyPtrMap;
+        std::set<int> A_ToBeDead;
     Group* A_SpellGroup;
     Group* B_ArmyGroup;
     Group* B_SpellGroup;

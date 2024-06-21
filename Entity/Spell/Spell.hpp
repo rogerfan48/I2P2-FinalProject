@@ -17,13 +17,15 @@ public:
     std::string Description;
     std::shared_ptr<ALLEGRO_BITMAP> head;
     ALLEGRO_COLOR color;
+    bool ready;
+    float readyFlash;
 
     // Spell:
     int pt;    // atk or heal
     int atkTower;
     float radius;
     float time, duration;
-    float interval;
+    float span, interval;
     Spell(int id, int instanceID, float xB, float yB, std::string Name, 
         int pt, float radius, float duration, float interval, int atkTower, ALLEGRO_COLOR color);
 

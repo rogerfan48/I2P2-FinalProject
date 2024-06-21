@@ -77,6 +77,7 @@ void PlayScene::Initialize() {
     radiusPreviewBorder->Enable = false;
 
     AddNewObject(A_SpellGroup = new Group());
+    AddNewObject(B_SpellGroup = new Group());
 
     AddNewObject(TowerGroup = new Group());
     TowerGroup->AddNewObject(new SideTower("Red", MapDiff+5*BlockSize, MapDiff+2*BlockSize));
@@ -87,6 +88,7 @@ void PlayScene::Initialize() {
     TowerGroup->AddNewObject(blueMainTower = new MainTower("Blue", MapDiff+27*BlockSize, MapDiff+7*BlockSize));
 
     AddNewObject(A_ArmyGroup = new Group());
+    AddNewObject(B_ArmyGroup = new Group());
 
     AddNewObject(placePreview = new Engine::Rectangle(0, 0, BlockSize, BlockSize, al_map_rgba(255, 255, 255, 80)));
     AddNewObject(placePreviewBorder = new Engine::RectangleBorder(0, 0, BlockSize-6, BlockSize-6, al_map_rgba(255, 255, 255, 220), 6));
@@ -136,6 +138,13 @@ void PlayScene::Update(float deltaTime) {
         Spell* j = dynamic_cast<Spell*>(i);
         if (j->time < 0) A_SpellGroup->RemoveObject(i->GetObjectIterator());
     }
+
+    // ToBeDead:
+    for (int i : A_ToBeDead) {
+        A_ArmyGroup->RemoveObject(A_ArmyPtrMap[i]->GetObjectIterator());
+        A_ArmyPtrMap.erase(i);
+    }
+    A_ToBeDead.clear();
 }
 
 void PlayScene::Draw() const {
@@ -149,7 +158,8 @@ void PlayScene::OnMouseDown(int button, int mx, int my) {
         else gameData.A.elixir -= selectedCard->cost;
         Engine::Point nowBlock(pxToBlock(mousePos));
         if (selectedCard->cardType == ARMY) {
-            A_ArmyGroup->AddNewObject(selectedCard->placeArmy(instanceIDCounter++, nowBlock.x, nowBlock.y));
+            A_ArmyPtrMap.insert({instanceIDCounter, selectedCard->placeArmy(instanceIDCounter, nowBlock.x, nowBlock.y)});
+            A_ArmyGroup->AddNewObject(A_ArmyPtrMap[instanceIDCounter++]);
         } else {
             A_SpellGroup->AddNewObject(selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y));
         }

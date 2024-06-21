@@ -31,9 +31,9 @@ void Heal::Draw() const {
     } else {
         if (!hovered) {
             al_draw_text(fontDesc.get(), White, Position.x+220, Position.y+90, 0,  ("Atk: "+std::to_string(pt)).c_str());
-            al_draw_text(fontDesc.get(), White, Position.x+220, Position.y+130, 0, ("Radius: "+floatToStr(radius)).c_str());
-            al_draw_text(fontDesc.get(), White, Position.x+220, Position.y+170, 0, ("Duration: "+floatToStr(duration)).c_str());
-            al_draw_text(fontDesc.get(), White, Position.x+220, Position.y+210, 0, ("Interval: "+floatToStr(interval)).c_str());
+            al_draw_text(fontDesc.get(), White, Position.x+220, Position.y+130, 0, ("Rad.: "+floatToStr(radius)).c_str());
+            al_draw_text(fontDesc.get(), White, Position.x+220, Position.y+170, 0, ("Dur.: "+floatToStr(duration)).c_str());
+            al_draw_text(fontDesc.get(), White, Position.x+220, Position.y+210, 0, ("Int.: "+floatToStr(interval)).c_str());
         } else {
             Engine::Point nP(Position); nP.x-=diff; nP.y-=diff;
             al_draw_text(fontDescH.get(), White, nP.x+220, nP.y+90, 0,  ("Atk: "+std::to_string(pt)).c_str());

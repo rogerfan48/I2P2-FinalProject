@@ -19,3 +19,15 @@ void Army::Draw() const {
     al_draw_scaled_bitmap(head.get(), 0, 0, al_get_bitmap_width(head.get()), al_get_bitmap_height(head.get()),
         Position.x-picRadiusPx, Position.y-picRadiusPx, 2*picRadiusPx, 2*picRadiusPx, 0);
 }
+
+void Army::Healed(float pt) {
+    if (hp+pt > hpMax) hp = hpMax;
+    else hp += pt;
+}
+void Army::Damaged(float pt) {
+    hp -= pt;
+    if (hp < 0) {
+        PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+        PS->A_ToBeDead.insert(ID);
+    }
+}

@@ -27,6 +27,9 @@ public:
     Army(int id, int instanceID, float xB, float yB, std::string Name,
         int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, float picRadiusBk);
 
+    void Healed(float pt);
+    void Damaged(float pt);
+    
     void Draw() const override;
 };
 
