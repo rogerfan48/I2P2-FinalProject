@@ -12,5 +12,5 @@ void Archers::Draw() const {
 }
 
 Army* Archers::placeArmy(int instanceID, float xB, float yB) {
-    return new Army(ID, instanceID, xB, yB, Name, hp, atk, coolDown, speed, atkRadius, detectRadius, 0.7);
+    return new Army(ID, instanceID, xB, yB, Name, 1, hp, atk, coolDown, speed, atkRadius, detectRadius, 0.7);
 }

@@ -92,6 +92,7 @@ public:
     Card* getCardById(int id, float x, float y);
     bool mouseInPlay();
     bool mouseAtValid();
+    void launchBullet(Bullet*);
 };
 
 #endif // PLAYSCENE_HPP

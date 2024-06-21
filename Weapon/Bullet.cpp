@@ -10,15 +10,13 @@
 #include "Engine/Sprite.hpp"
 #include "Helper/Helper.hpp"
 
-void Bullet::OnExplode(){
-	//
-}
-Bullet::Bullet(std::string img, float speed, float damage, Engine::Point position, Army* target) :
-	Sprite(img, position.x, position.y), speed(speed), damage(damage), target(target) {
-	Rotation = findAngle(position, target->Position);
+Bullet::Bullet(std::string img, float speed, float damage, float x, float y, float w, float h, Army* target, bool isRange) :
+	Sprite(img, x, y, w, h), speed(speed), damage(damage), target(target), isRange(isRange) {
+	Rotation = findAngle(Position, target->Position);
 	Velocity.x = cos(Rotation) * speed, Velocity.y = sin(Rotation) * speed * (-1);
 	CollisionRadius = 4;
 }
+
 void Bullet::Update(float deltaTime) {
 	Sprite::Update(deltaTime);
 	PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetActiveScene());
@@ -33,11 +31,16 @@ void Bullet::Update(float deltaTime) {
 		return;
 	}
 	Rotation = findAngle(Position, target->Position);
-	Velocity.x = cos(Rotation) * speed, Velocity.y = sin(Rotation) * speed * -1;
+	Velocity.x = cos(Rotation) * speed;
+	Velocity.y = sin(Rotation) * speed * -1;
 	if ((Position - target->Position).Magnitude() <= CollisionRadius) {
-			OnExplode();
-			target->hp -= damage;
-			PS->WeaponGroup->RemoveObject(objectIterator);
-			return;
-		}
+		OnExplode();
+		target->Damaged(damage);
+		PS->WeaponGroup->RemoveObject(objectIterator);
+		return;
+	}
+}
+
+void Bullet::OnExplode() {
+	//
 }

@@ -328,3 +328,7 @@ bool PlayScene::mouseAtValid() {
     if (MapTile[nowBlock.y][nowBlock.x] == TOWER+'0') return false;
     return (nowBlock.x>=17);
 }
+
+void PlayScene::launchBullet(Bullet* bullet) {
+    WeaponGroup->AddNewObject(bullet);
+}
