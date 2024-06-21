@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <queue>
 
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
@@ -62,7 +63,9 @@ public:
     Group* A_ArmyGroup;
         std::map<int, Army*> A_ArmyPtrMap;
         std::set<int> A_ToBeDead;
+        std::queue<std::pair<float, Army*>> A_ArmyToBeDeployed;
     Group* A_SpellGroup;
+        std::queue<std::pair<float, Spell*>> A_SpellToBeDeployed;
     Group* B_ArmyGroup;
     Group* B_SpellGroup;
     // Group* MapBorderGroup;

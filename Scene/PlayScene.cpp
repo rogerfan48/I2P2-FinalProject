@@ -161,6 +161,17 @@ void PlayScene::Update(float deltaTime) {
         }
     }
 
+    // ToBeDeployed:
+    if (!A_ArmyToBeDeployed.empty() && A_ArmyToBeDeployed.front().first > gameTime) {
+        A_ArmyGroup->AddNewObject(A_ArmyToBeDeployed.front().second);
+        A_ArmyToBeDeployed.pop();
+    }
+    if (!A_SpellToBeDeployed.empty() && A_SpellToBeDeployed.front().first > gameTime) {
+        A_SpellGroup->AddNewObject(A_SpellToBeDeployed.front().second);
+        A_SpellToBeDeployed.pop();
+    }
+
+
     // Elixir:
     if (gameTime > 181) return;
     gameData.A.elixir += deltaTime * gameData.elixirSpeed;
@@ -194,9 +205,11 @@ void PlayScene::OnMouseDown(int button, int mx, int my) {
         Engine::Point nowBlock(pxToBlock(mousePos));
         if (selectedCard->cardType == ARMY) {
             A_ArmyPtrMap.insert({instanceIDCounter, selectedCard->placeArmy(instanceIDCounter, nowBlock.x, nowBlock.y)});
-            A_ArmyGroup->AddNewObject(A_ArmyPtrMap[instanceIDCounter++]);
+            A_ArmyToBeDeployed.push({gameTime-0.5, A_ArmyPtrMap[instanceIDCounter++]});
+            // A_ArmyGroup->AddNewObject(A_ArmyPtrMap[instanceIDCounter++]);
         } else {
-            A_SpellGroup->AddNewObject(selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y));
+            A_SpellToBeDeployed.push({gameTime-0.5, selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y)});
+            // A_SpellGroup->AddNewObject(selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y));
         }
         gameData.A.nextCardQueue.push(selectedCard->ID);
         int pos;
