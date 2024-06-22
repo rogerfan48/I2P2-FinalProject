@@ -10,14 +10,21 @@
 Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
     bool bullet, int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, float picRadiusBk, int faction, bool isTower): 
         IObject(xB, yB), ID(id), instanceID(instanceID), Name(Name), 
-        fireBullet(bullet), hp(hp), hpMax(hp), atk(atk), coolDown(coolDown), speed(speed), speedOri(speed), atkRadius(atkRadius), detectRadius(detectRadius), picRadiusPx(picRadiusBk*PlayScene::BlockSize),
-        stunned(0), countDown(0), target(nullptr), faction(faction), isTower(isTower) {
+        fireBullet(bullet), hp(hp), hpMax(hp), atk(atk), coolDown(coolDown), speedOri(speed), atkRadius(atkRadius*PlayScene::BlockSize), detectRadius(detectRadius*PlayScene::BlockSize),
+        picRadiusPx(picRadiusBk*PlayScene::BlockSize), stunned(0), countDown(0), target(nullptr), faction(faction), isTower(isTower) {
             if (!isTower) {
                 Position = blockToMiddlePx(Engine::Point(xB, yB));
                 head = Engine::Resources::GetInstance().GetBitmap("card/"+Name+".png");
                 side = whichSide(Position);
             } else if (id==-1) Position = blockToPx(Engine::Point(xB, yB));
             else Position = blockToMiddlePx(Engine::Point(xB, yB));
+            switch (int(speed)) {
+                case (1): this->speed = 40; break;
+                case (2): this->speed = 60; break;
+                case (3): this->speed = 80; break;
+                case (4): this->speed = 100; break;
+                case (5): this->speed = 120; break;
+            }
         }
 
 void Army::Draw() const {
@@ -43,33 +50,11 @@ void Army::Update(float deltaTime) {
             }
         } else {
             target->beTargeted.erase(this);
-            towardWhere();
+            towardWhere(deltaTime);
         }
     } else {
-        towardWhere();
+        towardWhere(deltaTime);
     }
-
-
-    // target = searchTarget();
-    // if (countDown < 0) {
-    //     if (target) {
-    //         if ((target->Position-Position).Magnitude() <= atkRadius) {
-    //             countDown = coolDown;
-    //             if (Name == "Archers") PS->launchBullet(new Bullet("bullet/arrow.png", 800, atk, Position.x, Position.y, 10, 30, target));
-    //             else if (Name == "Musketeer") PS->launchBullet(new Bullet("bullet/bullet.png", 1000, atk, Position.x, Position.y, 20, 20, target));
-    //             else /* Wizard */ PS->launchBullet(new Bullet("bullet/fire.png", 600, atk, Position.x, Position.y, 20, 20, target, true));
-    //         } else {
-    //             target->beTargeted.erase(this);
-    //             go();
-    //         }
-    //     } else {
-    //         go();
-    //     }
-    // } else if (target) {
-    //     target->beTargeted.erase(this);
-    //     go();
-    // } else go();
-
 }
 
 void Army::Healed(float pt) {
@@ -83,93 +68,52 @@ void Army::Damaged(float pt) {
     }
 }
 
-void Army::towardWhere() {
+void Army::towardWhere(float deltaTime) {
     target = searchTarget();
     if (target) {   // towardArmy
-        std::cout<<"there is a target."<<target->side<<std::endl;   // for debug
         if (side == target->side) {
-            Position.x += cos(findAngle(Position, target->Position)) * speed;
-            Position.y += sin(findAngle(Position, target->Position)) * speed;
-        } else if (side < target->side) {     // TODO: Side nine case
-            go();
+            Position.x += cos(findAngle(Position, target->Position)) * speed * deltaTime;
+            Position.y += sin(findAngle(Position, target->Position)) * speed * deltaTime;
+        } else if (side < target->side) {
+            go(deltaTime);
         } else {
-            go(true);
+            go(deltaTime, true);
         }
     } else {
-        go();
+        go(deltaTime);
     }
     side = whichSide(Position);
 }
-void Army::go(bool mirror) {
+
+void Army::go(float deltaTime, bool mirror) {
     Engine::Point blockPosition = pxToBlock(Position);
     if (mirror) {       // 鏡射
         switch (map[(int)blockPosition.y][(int)blockPosition.x]) {
-            case U:  Position.y -= speed; break;
-            case D:  Position.y += speed; break;
-            case L:  Position.x += speed; break;
-            case R:  Position.x -= speed; break;
-            case UL: Position.x += cos(45) * speed, Position.y -= sin(45) * speed; break;
-            case UR: Position.x -= cos(45) * speed, Position.y -= sin(45) * speed; break;
-            case DL: Position.x += cos(45) * speed, Position.y += sin(45) * speed; break;
-            case DR: Position.x -= cos(45) * speed, Position.y += sin(45) * speed; break;
+            case U:  Position.y -= speed * deltaTime; break;
+            case D:  Position.y += speed * deltaTime; break;
+            case L:  Position.x += speed * deltaTime; break;
+            case R:  Position.x -= speed * deltaTime; break;
+            case UL: Position.x += cos(45) * speed * deltaTime, Position.y -= sin(45) * speed * deltaTime; break;
+            case UR: Position.x -= cos(45) * speed * deltaTime, Position.y -= sin(45) * speed * deltaTime; break;
+            case DL: Position.x += cos(45) * speed * deltaTime, Position.y += sin(45) * speed * deltaTime; break;
+            case DR: Position.x -= cos(45) * speed * deltaTime, Position.y += sin(45) * speed * deltaTime; break;
             default: ;
         }
     } else {
         switch (map[(int)blockPosition.y][(int)blockPosition.x]) {
-            case U:  Position.y -= speed; break;
-            case D:  Position.y += speed; break;
-            case L:  Position.x -= speed; break;
-            case R:  Position.x += speed; break;
-            case UL: Position.x -= cos(45) * speed, Position.y -= sin(45) * speed; break;
-            case UR: Position.x += cos(45) * speed, Position.y -= sin(45) * speed; break;
-            case DL: Position.x -= cos(45) * speed, Position.y += sin(45) * speed; break;
-            case DR: Position.x += cos(45) * speed, Position.y += sin(45) * speed; break;
+            case U:  Position.y -= speed * deltaTime; break;
+            case D:  Position.y += speed * deltaTime; break;
+            case L:  Position.x -= speed * deltaTime; break;
+            case R:  Position.x += speed * deltaTime; break;
+            case UL: Position.x -= cos(45) * speed * deltaTime, Position.y -= sin(45) * speed * deltaTime; break;
+            case UR: Position.x += cos(45) * speed * deltaTime, Position.y -= sin(45) * speed * deltaTime; break;
+            case DL: Position.x -= cos(45) * speed * deltaTime, Position.y += sin(45) * speed * deltaTime; break;
+            case DR: Position.x += cos(45) * speed * deltaTime, Position.y += sin(45) * speed * deltaTime; break;
             default: ;
         }
     }
 }
-// void Army::go() {
-//     if (target) {
-//         target->beTargeted.insert(this);
-//         if (Position.x <= 975 && Position.x >= 825 && 
-//                 ((Position.y >= 250 && Position.y <= 300) || (Position.y >= 800 && Position.y <= 850))) {
-//             Position.x -= speed;
-//         } else if (Position.x >= 975 && target->Position.x < 975) {
-//             goToBridge();
-//         } else {
-//             Position.x += cos(findAngle(Position, target->Position)) * speed;
-//             Position.y += sin(findAngle(Position, target->Position)) * speed;
-//         }
-//     } else {
-//         if (Position.x <= 980 && Position.x >= 825 &&       // 提前 5 格判斷, 猜測bug原因爲float不夠精準導致findAngle()分母為0
-//                 ((Position.y >= 250 && Position.y <= 300) || (Position.y >= 800 && Position.y <= 850))) {
-//             Position.x -= speed;    // 遇橋直走
-//         } else if (Position.x >= 950) {
-//             goToBridge();
-//         } else {
-//             goToTower();
-//         }
-//     }
-// }
-// void Army::goToBridge() {
-//     if (Position.y <= PlayScene::MapDiff + PlayScene::BlockSize * PlayScene::MapBlockHeight / 2) {
-//         Position.x += cos(findAngle(Position, Engine::Point(975, 275))) * speed;
-//         Position.y += sin(findAngle(Position, Engine::Point(975, 275))) * speed;
-//     } else {
-//         Position.x += cos(findAngle(Position, Engine::Point(975, 825))) * speed;
-//         Position.y += sin(findAngle(Position, Engine::Point(975, 825))) * speed;
-//     }
-// }
-// void Army::goToTower() {
-//     if(Position.x<=530) return; // have moved to tower  // 完成Tower轉Army即可刪除
-//     if (Position.y <= PlayScene::MapDiff + PlayScene::BlockSize * PlayScene::MapBlockHeight / 2) {
-//         Position.x += cos(findAngle(Position, Engine::Point(525, 275))) * speed;
-//         Position.y += sin(findAngle(Position, Engine::Point(525, 275))) * speed;
-//     } else {
-//         Position.x += cos(findAngle(Position, Engine::Point(525, 825))) * speed;
-//         Position.y += sin(findAngle(Position, Engine::Point(525, 825))) * speed;
-//     }
-// }
+
 Army* Army::searchTarget() {
     PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
     float shortestDistance = 10000;

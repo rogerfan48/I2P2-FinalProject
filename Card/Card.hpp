@@ -18,7 +18,7 @@ enum CARD_TYPE {
     ARMY, SPELL
 };
 // temp:
-// speed: very slow:0, slow:1, median:2, fast:3, very fast:4
+// speed: very slow:1, slow:2, median:3, fast:4, very fast:5
 
 class Card: public Engine::IObject, public Engine::IControl {
 protected:

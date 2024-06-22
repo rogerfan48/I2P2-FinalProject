@@ -63,8 +63,8 @@ public:
     
     void Healed(float pt);
     void Damaged(float pt);
-    void towardWhere();
-    void go(bool mirror = false);
+    void towardWhere(float deltaTime);
+    void go(float deltaTime, bool mirror = false);
     Army* searchTarget();
 };
 
