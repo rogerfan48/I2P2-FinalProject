@@ -336,7 +336,6 @@ bool PlayScene::mouseAtValid(bool isArmy) {
     Engine::Point nowBlock(pxToBlock(mousePos));
     if (MapTile[nowBlock.y][nowBlock.x] == TOWER+'0') return false;
     if (isArmy) return (nowBlock.x>=17);
-    if (MapTile[nowBlock.y][nowBlock.x] == RIVER+'0') return false;
     return true;
 }
 
