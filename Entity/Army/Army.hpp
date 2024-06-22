@@ -39,6 +39,8 @@ protected:
     ALLEGRO_COLOR redCdColor = al_map_rgb(165, 40, 255);
 public:
     const static int towerDetectRadiusRevision = 20;
+    const static int collisionAdjustmentLength = 200;
+    constexpr static float collisionAdjustmentAngle = 0.6;
 
     int ID;
     int instanceID;
@@ -49,6 +51,10 @@ public:
     std::shared_ptr<ALLEGRO_BITMAP> head;
     float picRadiusPx;
     int side;       // 0: blue, 1: bridge, 2: red
+    float previousMoveAngle;
+
+    bool needForcedMove;
+    float forceMoveAngle;
 
     std::set<Army*> beTargeted;
     Army* target;
@@ -73,6 +79,8 @@ public:
     void towardWhere(float deltaTime);
     void go(float deltaTime, bool mirror = false);
     Army* searchTarget();
+    void setForceMove(float forceMoveAngle);
+    void checkCollision(float deltaTime, Army* entity);
 };
 
 #endif // ARMY_HPP
