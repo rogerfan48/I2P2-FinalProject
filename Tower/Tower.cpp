@@ -8,9 +8,9 @@
 
 Tower::Tower(int id, int instanceID, float xB, float yB, int hp, int atk, float cd, float atkRadius, float picRadiusBk, int faction, bool enabled):
 	Army(id, instanceID, xB, yB, "Tower", true, hp, atk, cd, 0, atkRadius, 0, picRadiusBk, faction, 1), enabled(enabled) {}
-void Tower::Update(float deltaTime) {
-	// if(hp <= hpMax * 0.2) bloodColor = al_map_rgb(255, 0, 0), textColor = al_map_rgb(255, 255, 255);
-}
+
+void Tower::Update(float deltaTime) {}
+
 void Tower::Draw() const {
 	if (enabled) {
 		al_draw_scaled_bitmap(towerImage.get(), 0, 0, al_get_bitmap_width(towerImage.get()), al_get_bitmap_height(towerImage.get()),

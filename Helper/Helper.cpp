@@ -30,9 +30,9 @@ std::string timeString(float sec) {
 
 double findAngle(Engine::Point center, Engine::Point point) {
     if (center.y >= point.y) 
-        return acos((point.x - center.x) / (center - point).Magnitude());
+        return std::acos((point.x - center.x) / (center - point).Magnitude());
     else
-        return acos((center.x - point.x) / (center - point).Magnitude()) + ALLEGRO_PI;
+        return std::acos((center.x - point.x) / (center - point).Magnitude()) + ALLEGRO_PI;
 }
 
 // 0: blue, 1: bridge, 2: red

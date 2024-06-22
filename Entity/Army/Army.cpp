@@ -44,12 +44,13 @@ void Army::Update(float deltaTime) {
 
     if (target) {
         if ((!(target->isTower) && (target->Position-Position).Magnitude() <= atkRadius) ||
-            (target->isTower && (target->Position-Position).Magnitude() <= atkRadius + target->picRadiusPx)) {
+            (target->isTower && (target->Position-Position).Magnitude() <= atkRadius + target->picRadiusPx-20)) {
             if (countDown < 0) {    // fire
                 countDown = coolDown;
                 if (Name == "Archers") PS->launchBullet(new Bullet("bullet/arrow.png", 800, atk, Position.x, Position.y, 30, 15, target));
                 else if (Name == "Musketeer") PS->launchBullet(new Bullet("bullet/bullet.png", 1000, atk, Position.x, Position.y, 20, 20, target));
-                else /* Wizard */ PS->launchBullet(new Bullet("bullet/fire.png", 600, atk, Position.x, Position.y, 20, 20, target, true));
+                else if (Name == "Wizard") PS->launchBullet(new Bullet("bullet/fire.png", 600, atk, Position.x, Position.y, 20, 20, target, true));
+                else target->Damaged(atk);
             } else {
                 // just stay
             }
@@ -70,11 +71,16 @@ void Army::Damaged(float pt) {
     if (hp < 0) {
         PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
         if (faction) {
-            for(auto i:PS->WeaponGroup->GetObjects()){
-                Bullet* temp=dynamic_cast<Bullet*>(i);
-                if(temp->target==this) temp->target=nullptr;
+            for (auto i : beTargeted) {
+                Army* j = dynamic_cast<Army*>(i);
+                j->target = nullptr;
             }
-            PS->B_ArmyGroup->RemoveObject(objectIterator);
+            for (auto i : PS->WeaponGroup->GetObjects()) {
+                Bullet* j = dynamic_cast<Bullet*>(i);
+                if (j->target == this) j->target = nullptr;
+            }
+            if (!isTower) PS->B_ArmyGroup->RemoveObject(objectIterator);
+            else PS->B_TowerGroup->RemoveObject(objectIterator);
             PS->B_ArmyGroup->AddNewObject(new Army(1,1,13,8,"Archers",1,500,1,1,1,1,1,0.7,1));
         } else PS->A_ToBeDead.insert(ID);
     }
@@ -84,8 +90,8 @@ void Army::towardWhere(float deltaTime) {
     target = searchTarget();
     if (target) {   // towardArmy
         if (side == target->side) {
-            Position.x += cos(findAngle(Position, target->Position)) * speed * deltaTime;
-            Position.y += sin(findAngle(Position, target->Position)) * speed * deltaTime;
+            Position.x += std::cos(findAngle(Position, target->Position)) * speed * deltaTime;
+            Position.y -= std::sin(findAngle(Position, target->Position)) * speed * deltaTime;
         } else if (side < target->side) {
             go(deltaTime);
         } else {
@@ -105,10 +111,10 @@ void Army::go(float deltaTime, bool mirror) {
             case D:  Position.y += speed * deltaTime; break;
             case L:  Position.x += speed * deltaTime; break;
             case R:  Position.x -= speed * deltaTime; break;
-            case UL: Position.x += cos(45) * speed * deltaTime, Position.y -= sin(45) * speed * deltaTime; break;
-            case UR: Position.x -= cos(45) * speed * deltaTime, Position.y -= sin(45) * speed * deltaTime; break;
-            case DL: Position.x += cos(45) * speed * deltaTime, Position.y += sin(45) * speed * deltaTime; break;
-            case DR: Position.x -= cos(45) * speed * deltaTime, Position.y += sin(45) * speed * deltaTime; break;
+            case UL: Position.x += std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y -= std::sin(ALLEGRO_PI/4) * speed * deltaTime; break;
+            case UR: Position.x -= std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y -= std::sin(ALLEGRO_PI/4) * speed * deltaTime; break;
+            case DL: Position.x += std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y += std::sin(ALLEGRO_PI/4) * speed * deltaTime; break;
+            case DR: Position.x -= std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y += std::sin(ALLEGRO_PI/4) * speed * deltaTime; break;
             default: ;
         }
     } else {
@@ -117,10 +123,10 @@ void Army::go(float deltaTime, bool mirror) {
             case D:  Position.y += speed * deltaTime; break;
             case L:  Position.x -= speed * deltaTime; break;
             case R:  Position.x += speed * deltaTime; break;
-            case UL: Position.x -= cos(45) * speed * deltaTime, Position.y -= sin(45) * speed * deltaTime; break;
-            case UR: Position.x += cos(45) * speed * deltaTime, Position.y -= sin(45) * speed * deltaTime; break;
-            case DL: Position.x -= cos(45) * speed * deltaTime, Position.y += sin(45) * speed * deltaTime; break;
-            case DR: Position.x += cos(45) * speed * deltaTime, Position.y += sin(45) * speed * deltaTime; break;
+            case UL: Position.x -= std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y -= std::sin(ALLEGRO_PI/4) * speed * deltaTime; break;
+            case UR: Position.x += std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y -= std::sin(ALLEGRO_PI/4) * speed * deltaTime; break;
+            case DL: Position.x -= std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y += std::sin(ALLEGRO_PI/4) * speed * deltaTime; break;
+            case DR: Position.x += std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y += std::sin(ALLEGRO_PI/4) * speed * deltaTime; break;
             default: ;
         }
     }
@@ -140,8 +146,8 @@ Army* Army::searchTarget() {
         }
     }
     for (auto i : PS->B_TowerGroup->GetObjects()) {
-        Tower* j = dynamic_cast<Tower*>(i);
-        dist = (j->Position-Position).Magnitude()-j->picRadiusPx;
+        Army* j = dynamic_cast<Army*>(i);
+        dist = (j->Position-Position).Magnitude()-j->picRadiusPx-20;
         if (dist < shortestDistance) {
             shortestDistance = dist;
             tmpTarget = j;
