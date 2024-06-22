@@ -1,20 +1,9 @@
 #include <allegro5/color.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
-#include <allegro5/allegro_ttf.h>
-#include <cmath>
-#include <utility>
-#include <algorithm>
-#include <string>
 
 #include "Engine/GameEngine.hpp"
-#include "Engine/Group.hpp"
-#include "Engine/IObject.hpp"
-#include "Engine/IScene.hpp"
-#include "Scene/PlayScene.hpp"
-#include "Engine/Point.hpp"
 #include "Engine/Resources.hpp"
-#include "UI/Component/Image.hpp"
 #include "Tower.hpp"
 
 Tower::Tower(int id, int instanceID, float xB, float yB, int hp, int atk, float cd, float atkRadius, float picRadiusBk, int faction, bool enabled):

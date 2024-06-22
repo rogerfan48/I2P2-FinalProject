@@ -1,5 +1,7 @@
 #include "SideTower.hpp"
 
+#include "Engine/Resources.hpp"
+
 const int SideTower::SideTowerMaxHp = 3052;
 const int SideTower::SideTowerAtk = 109;
 const float SideTower::SideTowerCoolDown = 0.8;

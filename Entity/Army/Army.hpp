@@ -1,6 +1,7 @@
 #ifndef ARMY_HPP
 #define ARMY_HPP
 
+#include <allegro5/color.h>
 #include <set>
 
 #include "Engine/GameEngine.hpp"
@@ -32,6 +33,8 @@ static Direction map[18][32] = {
 class Army: public Engine::IObject {
 protected:
     GameData& gameData = Engine::GameEngine::GetInstance().data;
+    ALLEGRO_COLOR blueBlood = al_map_rgb(20, 140, 255);
+    ALLEGRO_COLOR redBlood = al_map_rgb(255, 100, 100);
 public:
     int ID;
     int instanceID;

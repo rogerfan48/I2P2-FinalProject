@@ -1,5 +1,6 @@
 #include "Army.hpp"
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
 #include <algorithm>
 
 #include "Engine/Point.hpp"
@@ -31,6 +32,8 @@ Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
 void Army::Draw() const {
     al_draw_scaled_bitmap(head.get(), 0, 0, al_get_bitmap_width(head.get()), al_get_bitmap_height(head.get()),
         Position.x-picRadiusPx, Position.y-picRadiusPx, 2*picRadiusPx, 2*picRadiusPx, 0);
+    al_draw_circle(Position.x, Position.y, picRadiusPx, al_map_rgb(30, 30, 30), 10);
+    al_draw_arc(Position.x, Position.y, picRadiusPx, -1.57, (hp/hpMax)*6.28, (faction?redBlood:blueBlood), 6);
 }
 void Army::Update(float deltaTime) {
     // test

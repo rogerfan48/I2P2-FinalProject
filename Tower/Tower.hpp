@@ -1,16 +1,12 @@
 #ifndef TOWER_HPP
 #define TOWER_HPP
-#include <allegro5/base.h>
-#include <list>
-#include <string>
 
-#include "Engine/Sprite.hpp"
-#include "Scene/PlayScene.hpp"
+#include <allegro5/color.h>
 #include "Entity/Army/Army.hpp"
 
 class Tower: public Army {
 protected:
-    ALLEGRO_COLOR blueBlood = al_map_rgb(0, 180, 255);
+    ALLEGRO_COLOR blueBlood = al_map_rgb(20, 140, 255);
     ALLEGRO_COLOR redBlood = al_map_rgb(255, 100, 100);
     ALLEGRO_COLOR White = al_map_rgb(255, 255, 255);
     ALLEGRO_COLOR Black = al_map_rgb(0, 0, 0);
