@@ -47,7 +47,7 @@ void Army::Update(float deltaTime) {
             (target->isTower && (target->Position-Position).Magnitude() <= atkRadius + target->picRadiusPx)) {
             if (countDown < 0) {    // fire
                 countDown = coolDown;
-                if (Name == "Archers") PS->launchBullet(new Bullet("bullet/arrow.png", 800, atk, Position.x, Position.y, 10, 30, target));
+                if (Name == "Archers") PS->launchBullet(new Bullet("bullet/arrow.png", 800, atk, Position.x, Position.y, 30, 15, target));
                 else if (Name == "Musketeer") PS->launchBullet(new Bullet("bullet/bullet.png", 1000, atk, Position.x, Position.y, 20, 20, target));
                 else /* Wizard */ PS->launchBullet(new Bullet("bullet/fire.png", 600, atk, Position.x, Position.y, 20, 20, target, true));
             } else {
@@ -69,7 +69,14 @@ void Army::Damaged(float pt) {
     hp -= pt;
     if (hp < 0) {
         PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
-        PS->A_ToBeDead.insert(ID);
+        if (faction) {
+            for(auto i:PS->WeaponGroup->GetObjects()){
+                Bullet* temp=dynamic_cast<Bullet*>(i);
+                if(temp->target==this) temp->target=nullptr;
+            }
+            PS->B_ArmyGroup->RemoveObject(objectIterator);
+            PS->B_ArmyGroup->AddNewObject(new Army(1,1,13,8,"Archers",1,500,1,1,1,1,1,0.7,1));
+        } else PS->A_ToBeDead.insert(ID);
     }
 }
 

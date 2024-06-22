@@ -14,7 +14,7 @@ Bullet::Bullet(std::string img, float speed, float damage, float x, float y, flo
 	Sprite(img, x, y, w, h), speed(speed), damage(damage), target(target), isRange(isRange) {
 	Rotation = findAngle(Position, target->Position);
 	Velocity.x = cos(Rotation) * speed, Velocity.y = sin(Rotation) * speed * (-1);
-	CollisionRadius = 4;
+	CollisionRadius = 25;
 }
 
 void Bullet::Update(float deltaTime) {
@@ -32,7 +32,7 @@ void Bullet::Update(float deltaTime) {
 	}
 	Rotation = findAngle(Position, target->Position);
 	Velocity.x = cos(Rotation) * speed;
-	Velocity.y = sin(Rotation) * speed * -1;
+	Velocity.y = sin(Rotation) * speed * (-1);
 	if ((Position - target->Position).Magnitude() <= CollisionRadius) {
 		OnExplode();
 		target->Damaged(damage);

@@ -98,6 +98,8 @@ void PlayScene::Initialize() {
     placePreview->Enable = false;
     placePreviewBorder->Enable = false;
     placeReviewName->Enable = false;
+    
+    AddNewObject(WeaponGroup  = new Group());
 
     // AddNewObject(MapBorderGroup = new Group());
     // MapBorderGroup->AddNewObject(new Engine::Rectangle(0, 0, 2*MapDiff+MapBlockWidth*BlockSize, 2*BlockSize, TileColor[ROCK]));
@@ -175,7 +177,6 @@ void PlayScene::Update(float deltaTime) {
         A_SpellGroup->AddNewObject(A_SpellToBeDeployed.front().second);
         A_SpellToBeDeployed.pop();
     }
-
 
     // Elixir:
     if (gameTime > 181) return;
