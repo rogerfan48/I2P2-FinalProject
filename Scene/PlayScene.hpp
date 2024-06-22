@@ -59,13 +59,14 @@ public:
         Engine::Label* placeReviewName;
         Engine::Circle* radiusPreview;
         Engine::CircleBorder* radiusPreviewBorder;
-    Group* TowerGroup;
+    Group* A_TowerGroup;
     Group* A_ArmyGroup;
         std::map<int, Army*> A_ArmyPtrMap;
         std::set<int> A_ToBeDead;
         std::queue<std::pair<float, Army*>> A_ArmyToBeDeployed;
     Group* A_SpellGroup;
         std::queue<std::pair<float, Spell*>> A_SpellToBeDeployed;
+    Group* B_TowerGroup;
     Group* B_ArmyGroup;
     Group* B_SpellGroup;
     // Group* MapBorderGroup;

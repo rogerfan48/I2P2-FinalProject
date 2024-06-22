@@ -80,13 +80,14 @@ void PlayScene::Initialize() {
     AddNewObject(A_SpellGroup = new Group());
     AddNewObject(B_SpellGroup = new Group());
 
-    AddNewObject(TowerGroup = new Group());
-    TowerGroup->AddNewObject(new MainTower(-1, 0, 29, 9, 0));
-    TowerGroup->AddNewObject(new SideTower(-2, 1, 25, 3, 0));
-    TowerGroup->AddNewObject(new SideTower(-2, 2, 25,14, 0));
-    TowerGroup->AddNewObject(new MainTower(-1, 0,  3, 9, 1));
-    TowerGroup->AddNewObject(new SideTower(-2, 1,  6, 3, 1));
-    TowerGroup->AddNewObject(new SideTower(-2, 2,  6,14, 1));
+    AddNewObject(A_TowerGroup = new Group());
+    A_TowerGroup->AddNewObject(new MainTower(-1, 0, 29, 9, 0));
+    A_TowerGroup->AddNewObject(new SideTower(-2, 1, 25, 3, 0));
+    A_TowerGroup->AddNewObject(new SideTower(-2, 2, 25,14, 0));
+    AddNewObject(B_TowerGroup = new Group());
+    B_TowerGroup->AddNewObject(new MainTower(-1, 0,  3, 9, 1));
+    B_TowerGroup->AddNewObject(new SideTower(-2, 1,  6, 3, 1));
+    B_TowerGroup->AddNewObject(new SideTower(-2, 2,  6,14, 1));
 
     AddNewObject(A_ArmyGroup = new Group());
     AddNewObject(B_ArmyGroup = new Group());

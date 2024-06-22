@@ -6,16 +6,17 @@
 #include "Engine/LOG.hpp"
 #include "Helper/Helper.hpp"
 #include "Scene/PlayScene.hpp"
+#include "Tower/Tower.hpp"
 
 Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
     bool bullet, int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, float picRadiusBk, int faction, bool isTower): 
         IObject(xB, yB), ID(id), instanceID(instanceID), Name(Name), 
         fireBullet(bullet), hp(hp), hpMax(hp), atk(atk), coolDown(coolDown), speedOri(speed), atkRadius(atkRadius*PlayScene::BlockSize), detectRadius(detectRadius*PlayScene::BlockSize),
         picRadiusPx(picRadiusBk*PlayScene::BlockSize), stunned(0), countDown(0), target(nullptr), faction(faction), isTower(isTower) {
+            side = whichSide(Position);
             if (!isTower) {
                 Position = blockToMiddlePx(Engine::Point(xB, yB));
                 head = Engine::Resources::GetInstance().GetBitmap("card/"+Name+".png");
-                side = whichSide(Position);
             } else if (id==-1) Position = blockToPx(Engine::Point(xB, yB));
             else Position = blockToMiddlePx(Engine::Point(xB, yB));
             switch (int(speed)) {
@@ -39,7 +40,8 @@ void Army::Update(float deltaTime) {
     countDown -= deltaTime;
 
     if (target) {
-        if ((target->Position-Position).Magnitude() <= atkRadius) {
+        if ((!(target->isTower) && (target->Position-Position).Magnitude() <= atkRadius) ||
+            (target->isTower && (target->Position-Position).Magnitude() <= atkRadius + target->picRadiusPx)) {
             if (countDown < 0) {    // fire
                 countDown = coolDown;
                 if (Name == "Archers") PS->launchBullet(new Bullet("bullet/arrow.png", 800, atk, Position.x, Position.y, 10, 30, target));
@@ -127,6 +129,17 @@ Army* Army::searchTarget() {
             tmpTarget = j;
         }
     }
-    if (shortestDistance < detectRadius) return tmpTarget;
+    for (auto i : PS->B_TowerGroup->GetObjects()) {
+        Tower* j = dynamic_cast<Tower*>(i);
+        dist = (j->Position-Position).Magnitude()-j->picRadiusPx;
+        if (dist < shortestDistance) {
+            shortestDistance = dist;
+            tmpTarget = j;
+        }
+    }
+    if (shortestDistance < detectRadius) {
+        tmpTarget->beTargeted.insert(this);
+        return tmpTarget;
+    }
     else return nullptr;
 }
