@@ -6,10 +6,10 @@
 class SideTower: public Tower {
 public:
     static const int SideTowerMaxHp;
+    static const int SideTowerAtk;
     static const float SideTowerCoolDown;
-    // color: Blue/Red
-    // x, y: left-up position
-    SideTower(std::string color, float x, float y);
+
+    SideTower(int id, int instanceID, float xB, float yB, int faction);
 };
 
 #endif // SIDETOWER_HPP

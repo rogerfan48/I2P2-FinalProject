@@ -1,18 +1,18 @@
-#include <allegro5/base.h>
-#include <cmath>
-#include <string>
-#include <iostream>
-
-#include "Engine/AudioHelper.hpp"
-#include "Engine/Group.hpp"
 #include "MainTower.hpp"
-#include "Scene/PlayScene.hpp"
-#include "Engine/Point.hpp"
+
+#include "Engine/Resources.hpp"
 
 const int MainTower::MainTowerMaxHp = 4824;
-const float MainTower::MainTowerCoolDown = 1.0;
+const int MainTower::MainTowerAtk = 109;
+const float MainTower::MainTowerCoolDown = 1;
 
-MainTower::MainTower(std::string color, float x, float y) :
-    Tower("tower/"+color+"SleepMainTower.png", x, y, 4*PlayScene::BlockSize, 4*PlayScene::BlockSize, MainTowerMaxHp, MainTowerCoolDown) {
-        enabled = false, Tower::color = color;
-}
+MainTower::MainTower(int id, int instanceID, float xB, float yB, int faction):
+    Tower(id, instanceID, xB, yB, MainTowerMaxHp, MainTowerAtk, MainTowerCoolDown, 7, 2, faction, false) {
+        if (faction) {
+            towerImage = Engine::Resources::GetInstance().GetBitmap("tower/RedMainTower.png");
+            sleepTowerImage = Engine::Resources::GetInstance().GetBitmap("tower/RedSleepMainTower.png");
+        } else {
+            towerImage = Engine::Resources::GetInstance().GetBitmap("tower/BlueMainTower.png");
+            sleepTowerImage = Engine::Resources::GetInstance().GetBitmap("tower/BlueSleepMainTower.png");
+        }
+    }

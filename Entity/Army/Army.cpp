@@ -12,11 +12,12 @@ Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
         IObject(xB, yB), ID(id), instanceID(instanceID), Name(Name), 
         fireBullet(bullet), hp(hp), hpMax(hp), atk(atk), coolDown(coolDown), speed(speed), speedOri(speed), atkRadius(atkRadius), detectRadius(detectRadius), picRadiusPx(picRadiusBk*PlayScene::BlockSize),
         stunned(0), countDown(0), target(nullptr), faction(faction), isTower(isTower) {
-            Position = blockToPx(Engine::Point(xB, yB));
-            Position.x += PlayScene::BlockSize/2;
-            Position.y += PlayScene::BlockSize/2;
-            head = Engine::Resources::GetInstance().GetBitmap("card/"+Name+".png");
-            side = whichSide(Position);
+            if (!isTower) {
+                Position = blockToMiddlePx(Engine::Point(xB, yB));
+                head = Engine::Resources::GetInstance().GetBitmap("card/"+Name+".png");
+                side = whichSide(Position);
+            } else if (id==-1) Position = blockToPx(Engine::Point(xB, yB));
+            else Position = blockToMiddlePx(Engine::Point(xB, yB));
         }
 
 void Army::Draw() const {

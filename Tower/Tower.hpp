@@ -6,20 +6,19 @@
 
 #include "Engine/Sprite.hpp"
 #include "Scene/PlayScene.hpp"
+#include "Entity/Army/Army.hpp"
 
-class Tower: public Engine::Image {
+class Tower: public Army {
 protected:
-    float maxHp;
-    float CoolDown;
-    PlayScene* getPlayScene();
-    ALLEGRO_COLOR bloodColor = al_map_rgb(0, 255, 0), textColor = al_map_rgb(255, 255, 255);
+    ALLEGRO_COLOR blueBlood = al_map_rgb(0, 180, 255);
+    ALLEGRO_COLOR redBlood = al_map_rgb(255, 100, 100);
+    ALLEGRO_COLOR White = al_map_rgb(255, 255, 255);
+    ALLEGRO_COLOR Black = al_map_rgb(0, 0, 0);
+    std::shared_ptr<ALLEGRO_BITMAP> towerImage;
+    std::shared_ptr<ALLEGRO_BITMAP> sleepTowerImage;
 public:
-    float hp;
-    bool enabled = true;
-    // color: Blue/Red
-    std::string color;
-    // Army* target = nullptr;
-    Tower(std::string imgTower, float x, float y, float w, float h, int hp, float coolDown);
+    bool enabled;
+    Tower(int id, int instanceID, float xB, float yB, int hp, int atk, float cd, float atkRadius, float picRadiusBk, int faction, bool enabled=true);
     void Update(float deltaTime) override;
     void Draw() const override;
 };

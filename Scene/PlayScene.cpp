@@ -32,8 +32,6 @@ std::map<int, ALLEGRO_COLOR> PlayScene::TileColor;
 std::vector<std::string> PlayScene::MapTile;
 
 static int halfW, halfH;
-MainTower *redMainTower, *blueMainTower;
-SideTower *redUpperTower, *redBelowTower, *blueUpperTower, *blueBelowTower;
 static Engine::Image* turtle;
 
 void PlayScene::Initialize() {
@@ -44,7 +42,7 @@ void PlayScene::Initialize() {
 
     gameData.A.initGame();
     selectedCard = nullptr;
-    instanceIDCounter = 0;
+    instanceIDCounter = 3;  // 0: Main Tower, 1: Upper Tower, 2: Lower Tower
     mousePos = Engine::GameEngine::GetInstance().GetMousePosition();
     
     initMapTileAndTileColor();
@@ -83,12 +81,12 @@ void PlayScene::Initialize() {
     AddNewObject(B_SpellGroup = new Group());
 
     AddNewObject(TowerGroup = new Group());
-    TowerGroup->AddNewObject(redUpperTower = new SideTower("Red", MapDiff+5*BlockSize, MapDiff+2*BlockSize));
-    TowerGroup->AddNewObject(redBelowTower = new SideTower("Red", MapDiff+5*BlockSize, MapDiff+13*BlockSize));
-    TowerGroup->AddNewObject(redMainTower = new MainTower("Red", MapDiff+BlockSize, MapDiff+7*BlockSize));
-    TowerGroup->AddNewObject(blueUpperTower = new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+2*BlockSize));
-    TowerGroup->AddNewObject(blueBelowTower = new SideTower("Blue", MapDiff+24*BlockSize, MapDiff+13*BlockSize));
-    TowerGroup->AddNewObject(blueMainTower = new MainTower("Blue", MapDiff+27*BlockSize, MapDiff+7*BlockSize));
+    TowerGroup->AddNewObject(new MainTower(-1, 0, 29, 9, 0));
+    TowerGroup->AddNewObject(new SideTower(-2, 1, 25, 3, 0));
+    TowerGroup->AddNewObject(new SideTower(-2, 2, 25,14, 0));
+    TowerGroup->AddNewObject(new MainTower(-1, 0,  3, 9, 1));
+    TowerGroup->AddNewObject(new SideTower(-2, 1,  6, 3, 1));
+    TowerGroup->AddNewObject(new SideTower(-2, 2,  6,14, 1));
 
     AddNewObject(A_ArmyGroup = new Group());
     AddNewObject(B_ArmyGroup = new Group());

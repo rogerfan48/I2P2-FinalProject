@@ -1,18 +1,14 @@
-#include <allegro5/base.h>
-#include <cmath>
-#include <string>
-#include <iostream>
-
-#include "Engine/AudioHelper.hpp"
-#include "Engine/Group.hpp"
 #include "SideTower.hpp"
-#include "Scene/PlayScene.hpp"
-#include "Engine/Point.hpp"
 
 const int SideTower::SideTowerMaxHp = 3052;
+const int SideTower::SideTowerAtk = 109;
 const float SideTower::SideTowerCoolDown = 0.8;
 
-SideTower::SideTower(std::string color, float x, float y) :
-    Tower("tower/"+color+"SideTower.png", x, y, 3*PlayScene::BlockSize, 3*PlayScene::BlockSize, SideTowerMaxHp, SideTowerCoolDown) {
-        Tower::color = color;
-}
+SideTower::SideTower(int id, int instanceID, float xB, float yB, int faction):
+    Tower(id, instanceID, xB, yB, SideTowerMaxHp, SideTowerAtk, SideTowerCoolDown, 7.5, 1.5, faction) {
+        if (faction) {
+            towerImage = Engine::Resources::GetInstance().GetBitmap("tower/RedSideTower.png");
+        } else {
+            towerImage = Engine::Resources::GetInstance().GetBitmap("tower/BlueSideTower.png");
+        }
+    }
