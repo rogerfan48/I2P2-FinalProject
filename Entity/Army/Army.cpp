@@ -8,10 +8,10 @@
 #include "Scene/PlayScene.hpp"
 
 Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
-    bool bullet, int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, float picRadiusBk, int faction): 
+    bool bullet, int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, float picRadiusBk, int faction, bool isTower): 
         IObject(xB, yB), ID(id), instanceID(instanceID), Name(Name), 
         fireBullet(bullet), hp(hp), hpMax(hp), atk(atk), coolDown(coolDown), speed(speed), speedOri(speed), atkRadius(atkRadius), detectRadius(detectRadius), picRadiusPx(picRadiusBk*PlayScene::BlockSize),
-        stunned(0), countDown(0), target(nullptr), faction(faction) {
+        stunned(0), countDown(0), target(nullptr), faction(faction), isTower(isTower) {
             Position = blockToPx(Engine::Point(xB, yB));
             Position.x += PlayScene::BlockSize/2;
             Position.y += PlayScene::BlockSize/2;
@@ -28,25 +28,46 @@ void Army::Update(float deltaTime) {
     // test
     PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
     countDown -= deltaTime;
-    target = searchTarget();
-    if (countDown < 0) {
-        if (target) {
-            if ((target->Position-Position).Magnitude() <= atkRadius) {
+
+    if (target) {
+        if ((target->Position-Position).Magnitude() <= atkRadius) {
+            if (countDown < 0) {    // fire
                 countDown = coolDown;
                 if (Name == "Archers") PS->launchBullet(new Bullet("bullet/arrow.png", 800, atk, Position.x, Position.y, 10, 30, target));
                 else if (Name == "Musketeer") PS->launchBullet(new Bullet("bullet/bullet.png", 1000, atk, Position.x, Position.y, 20, 20, target));
                 else /* Wizard */ PS->launchBullet(new Bullet("bullet/fire.png", 600, atk, Position.x, Position.y, 20, 20, target, true));
             } else {
-                target->beTargeted.erase(this);
-                go();
+                // just stay
             }
         } else {
-            go();
+            target->beTargeted.erase(this);
+            towardWhere();
         }
-    } else if (target) {
-        target->beTargeted.erase(this);
-        go();
-    } else go();
+    } else {
+        towardWhere();
+    }
+
+
+    // target = searchTarget();
+    // if (countDown < 0) {
+    //     if (target) {
+    //         if ((target->Position-Position).Magnitude() <= atkRadius) {
+    //             countDown = coolDown;
+    //             if (Name == "Archers") PS->launchBullet(new Bullet("bullet/arrow.png", 800, atk, Position.x, Position.y, 10, 30, target));
+    //             else if (Name == "Musketeer") PS->launchBullet(new Bullet("bullet/bullet.png", 1000, atk, Position.x, Position.y, 20, 20, target));
+    //             else /* Wizard */ PS->launchBullet(new Bullet("bullet/fire.png", 600, atk, Position.x, Position.y, 20, 20, target, true));
+    //         } else {
+    //             target->beTargeted.erase(this);
+    //             go();
+    //         }
+    //     } else {
+    //         go();
+    //     }
+    // } else if (target) {
+    //     target->beTargeted.erase(this);
+    //     go();
+    // } else go();
+
 }
 
 void Army::Healed(float pt) {
@@ -57,6 +78,21 @@ void Army::Damaged(float pt) {
     if (hp < 0) {
         PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
         PS->A_ToBeDead.insert(ID);
+    }
+}
+
+void Army::towardWhere() {
+    target = searchTarget();
+    int mySide = whichSide(Position);
+    if (target) {   // towardArmy
+        int targetSide = whichSide(target->Position);
+        if (mySide == targetSide) {
+            // towardDirectly
+        } else if (1) {     // TODO: Side nine case
+            // ..
+        }
+    } else {
+        // ..
     }
 }
 void Army::go() {

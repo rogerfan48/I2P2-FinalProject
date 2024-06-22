@@ -14,6 +14,7 @@ public:
     int ID;
     int instanceID;
     int faction;    // 0 for blue, 1 for red
+    bool isTower;
     std::string Name;
     std::string Description;
     std::shared_ptr<ALLEGRO_BITMAP> head;
@@ -32,13 +33,14 @@ public:
     float atkRadius;
     float detectRadius;
     Army(int id, int instanceID, float xB, float yB, std::string Name,
-        bool bullet, int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, float picRadiusBk, int faction = 0);
+        bool bullet, int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, float picRadiusBk, int faction=0, bool isTower=false);
 
     void Draw() const override;
     void Update(float deltaTime) override;
     
     void Healed(float pt);
     void Damaged(float pt);
+    void towardWhere();
     void go();
     void goToBridge();
     void goToTower();

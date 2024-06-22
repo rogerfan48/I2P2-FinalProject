@@ -19,6 +19,9 @@ Engine::Point pxToBlock(const Engine::Point& px) {
 Engine::Point blockToPx(const Engine::Point& block) {
     return Engine::Point((block.x+2)*PlayScene::BlockSize, (block.y+2)*PlayScene::BlockSize);
 }
+Engine::Point blockToMiddlePx(const Engine::Point& block) {
+    return Engine::Point((block.x+2.5)*PlayScene::BlockSize, (block.y+2.5)*PlayScene::BlockSize);
+}
 
 std::string timeString(float sec) {
     if (int(sec)%60 < 10) return std::to_string(int(sec)/60)+" : 0"+std::to_string(int(sec)%60);
@@ -30,4 +33,12 @@ double findAngle(Engine::Point center, Engine::Point point) {
         return acos((point.x - center.x) / (center - point).Magnitude());
     else
         return acos((center.x - point.x) / (center - point).Magnitude()) + ALLEGRO_PI;
+}
+
+// 0: blue, 1: red, 2: bridge
+int whichSide(Engine::Point pos) {
+    Engine::Point nB = pxToBlock(pos);
+    if (nB.x > 16) return 0;
+    else if (nB.x < 15) return 1;
+    else return 2;
 }
