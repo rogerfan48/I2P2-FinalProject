@@ -7,9 +7,7 @@
 #include "Tower.hpp"
 
 Tower::Tower(int id, int instanceID, float xB, float yB, int hp, int atk, float cd, float atkRadius, float picRadiusBk, int faction, bool enabled):
-	Army(id, instanceID, xB, yB, "Tower", true, hp, atk, cd, 0, atkRadius, 0, picRadiusBk, faction, 1), enabled(enabled) {}
-
-void Tower::Update(float deltaTime) {}
+	Army(id, instanceID, xB, yB, "Tower", true, hp, atk, cd, 0, atkRadius, atkRadius, picRadiusBk, faction, 1), enabled(enabled) {}
 
 void Tower::Draw() const {
 	if (enabled) {

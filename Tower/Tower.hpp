@@ -15,7 +15,6 @@ protected:
 public:
     bool enabled;
     Tower(int id, int instanceID, float xB, float yB, int hp, int atk, float cd, float atkRadius, float picRadiusBk, int faction, bool enabled=true);
-    void Update(float deltaTime) override;
     void Draw() const override;
 };
 

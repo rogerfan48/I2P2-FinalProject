@@ -36,6 +36,8 @@ protected:
     ALLEGRO_COLOR blueBlood = al_map_rgb(20, 140, 255);
     ALLEGRO_COLOR redBlood = al_map_rgb(255, 100, 100);
 public:
+    const static int towerDetectRadiusRevision = 20;
+
     int ID;
     int instanceID;
     int faction;    // 0 for blue, 1 for red

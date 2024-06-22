@@ -47,6 +47,12 @@ void Spell::Update(float deltaTime) {
                     j->Damaged(pt);
                 }
             }
+            for (auto i : PS->B_TowerGroup->GetObjects()) {
+                Army* j = dynamic_cast<Army*>(i);
+                if ((this->Position - j->Position).Magnitude() < this->radius + j->picRadiusPx - Army::towerDetectRadiusRevision) {
+                    j->Damaged(atkTower);
+                }
+            }
         }
         ready = false;
     }

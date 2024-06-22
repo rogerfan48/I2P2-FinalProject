@@ -78,6 +78,7 @@ public:
         Engine::Rectangle* elixirProcess;
         std::vector<Engine::Label*> elixirNumber;
     Group* WeaponGroup;
+        std::set<Bullet*> WeaponToBeDelete;
 
     explicit PlayScene() = default;
 	void Initialize() override;

@@ -14,7 +14,6 @@ Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
         IObject(xB, yB), ID(id), instanceID(instanceID), Name(Name), 
         fireBullet(bullet), hp(hp), hpMax(hp), atk(atk), coolDown(coolDown), speedOri(speed), atkRadius(atkRadius*PlayScene::BlockSize), detectRadius(detectRadius*PlayScene::BlockSize),
         picRadiusPx(picRadiusBk*PlayScene::BlockSize), stunned(0), countDown(0), target(nullptr), faction(faction), isTower(isTower) {
-            side = whichSide(Position);
             if (!isTower) {
                 Position = blockToMiddlePx(Engine::Point(xB, yB));
                 head = Engine::Resources::GetInstance().GetBitmap("card/"+Name+".png");
@@ -27,6 +26,7 @@ Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
                 case (4): this->speed = 100; break;
                 case (5): this->speed = 120; break;
             }
+            side = whichSide(Position);
         }
 
 void Army::Draw() const {
@@ -36,19 +36,22 @@ void Army::Draw() const {
     al_draw_arc(Position.x, Position.y, picRadiusPx, -1.57, (hp/hpMax)*6.28, (faction?redBlood:blueBlood), 6);
 }
 void Army::Update(float deltaTime) {
+    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+    if (PS->gameTime > 181) return;
     // test
     if(faction) return;
     // test
-    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
     countDown -= deltaTime;
+
+    if (isTower && !dynamic_cast<Tower*>(this)->enabled) return;
 
     if (target) {
         if ((!(target->isTower) && (target->Position-Position).Magnitude() <= atkRadius) ||
-            (target->isTower && (target->Position-Position).Magnitude() <= atkRadius + target->picRadiusPx-20)) {
+            (target->isTower && (target->Position-Position).Magnitude() <= atkRadius + target->picRadiusPx - towerDetectRadiusRevision)) {
             if (countDown < 0) {    // fire
                 countDown = coolDown;
-                if (Name == "Archers") PS->launchBullet(new Bullet("bullet/arrow.png", 800, atk, Position.x, Position.y, 30, 15, target));
-                else if (Name == "Musketeer") PS->launchBullet(new Bullet("bullet/bullet.png", 1000, atk, Position.x, Position.y, 20, 20, target));
+                if (Name == "Archers" || ID==-2) PS->launchBullet(new Bullet("bullet/arrow.png", 800, atk, Position.x, Position.y, 30, 15, target));
+                else if (Name == "Musketeer" || ID==-1) PS->launchBullet(new Bullet("bullet/bullet.png", 1000, atk, Position.x, Position.y, 20, 20, target));
                 else if (Name == "Wizard") PS->launchBullet(new Bullet("bullet/fire.png", 600, atk, Position.x, Position.y, 20, 20, target, true));
                 else target->Damaged(atk);
             } else {
@@ -68,16 +71,14 @@ void Army::Healed(float pt) {
 }
 void Army::Damaged(float pt) {
     hp -= pt;
-    if (hp < 0) {
+    if (isTower && !dynamic_cast<Tower*>(this)->enabled) dynamic_cast<Tower*>(this)->enabled = true;
+    if (hp < 1) {
         PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
         if (faction) {
-            for (auto i : beTargeted) {
-                Army* j = dynamic_cast<Army*>(i);
-                j->target = nullptr;
-            }
+            for (auto i : beTargeted) i->target = nullptr;
             for (auto i : PS->WeaponGroup->GetObjects()) {
                 Bullet* j = dynamic_cast<Bullet*>(i);
-                if (j->target == this) j->target = nullptr;
+                if (j->target == this) PS->WeaponToBeDelete.insert(j);
             }
             if (!isTower) PS->B_ArmyGroup->RemoveObject(objectIterator);
             else PS->B_TowerGroup->RemoveObject(objectIterator);
@@ -147,7 +148,7 @@ Army* Army::searchTarget() {
     }
     for (auto i : PS->B_TowerGroup->GetObjects()) {
         Army* j = dynamic_cast<Army*>(i);
-        dist = (j->Position-Position).Magnitude()-j->picRadiusPx-20;
+        dist = (j->Position-Position).Magnitude()-j->picRadiusPx - towerDetectRadiusRevision;
         if (dist < shortestDistance) {
             shortestDistance = dist;
             tmpTarget = j;
