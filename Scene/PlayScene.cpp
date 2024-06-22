@@ -81,13 +81,15 @@ void PlayScene::Initialize() {
     AddNewObject(B_SpellGroup = new Group());
 
     AddNewObject(A_TowerGroup = new Group());
-    A_TowerGroup->AddNewObject(new MainTower(-1, 0, 29, 9, 0));
-    A_TowerGroup->AddNewObject(new SideTower(-2, 1, 25, 3, 0));
-    A_TowerGroup->AddNewObject(new SideTower(-2, 2, 25,14, 0));
+    A_TowerPtrMap.insert({0, new MainTower(-1, 0, 29, 9, 0)});
+    A_TowerPtrMap.insert({1, new SideTower(-2, 1, 25, 3, 0)});
+    A_TowerPtrMap.insert({2, new SideTower(-2, 2, 25,14, 0)});
+    for (int i=0; i<3; i++) A_TowerGroup->AddNewObject(A_TowerPtrMap[i]);
     AddNewObject(B_TowerGroup = new Group());
-    B_TowerGroup->AddNewObject(new MainTower(-1, 0,  3, 9, 1));
-    B_TowerGroup->AddNewObject(new SideTower(-2, 1,  6, 3, 1));
-    B_TowerGroup->AddNewObject(new SideTower(-2, 2,  6,14, 1));
+    B_TowerPtrMap.insert({0, new MainTower(-1, 0,  3, 9, 1)});
+    B_TowerPtrMap.insert({1, new SideTower(-2, 1,  6, 3, 1)});
+    B_TowerPtrMap.insert({2, new SideTower(-2, 2,  6,14, 1)});
+    for (int i=0; i<3; i++) B_TowerGroup->AddNewObject(B_TowerPtrMap[i]);
 
     AddNewObject(A_ArmyGroup = new Group());
     AddNewObject(B_ArmyGroup = new Group());
@@ -131,7 +133,9 @@ void PlayScene::Initialize() {
     ElixirGroup->AddNewObject(elixirNumber[4] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050, 255, 255, 255, 255, 0.5, 0.5));
 
     // test : but why it can't use.
-    B_ArmyGroup->AddNewObject(new Army(1,1,25,6,"Archers",1,500,1,1,1,1,1,0.7,1));
+    B_ArmyPtrMap.insert({1, new Army(5,1,2,2,"P.E.K.K.A.",0,3760, 816, 1.8, 2, 1.2, 5,0.7,1)});
+    B_ArmyToBeDeployed.push({gameTime-0.5, B_ArmyPtrMap[1]});
+    
     // test
 }
 void PlayScene::Terminate() {
@@ -141,10 +145,13 @@ void PlayScene::Terminate() {
 }
 
 void PlayScene::Update(float deltaTime) {
+    if (tick > 500.3) gameTime = 10000;
     gameTime -= deltaTime;
-    IScene::Update(deltaTime);
     tick += deltaTime;
     
+    if (gameTime >= 181) return;
+    IScene::Update(deltaTime);
+
     // time:
     if (gameTime < 181 && gameTime >= 0) {
         if (!isTimeShown) {
@@ -177,9 +184,16 @@ void PlayScene::Update(float deltaTime) {
         A_SpellGroup->AddNewObject(A_SpellToBeDeployed.front().second);
         A_SpellToBeDeployed.pop();
     }
+    if (!B_ArmyToBeDeployed.empty() && B_ArmyToBeDeployed.front().first > gameTime) {
+        B_ArmyGroup->AddNewObject(B_ArmyToBeDeployed.front().second);
+        B_ArmyToBeDeployed.pop();
+    }
+    if (!B_SpellToBeDeployed.empty() && B_SpellToBeDeployed.front().first > gameTime) {
+        B_SpellGroup->AddNewObject(B_SpellToBeDeployed.front().second);
+        B_SpellToBeDeployed.pop();
+    }
 
     // Elixir:
-    if (gameTime > 181) return;
     gameData.A.elixir += deltaTime * gameData.elixirSpeed;
     if (gameData.A.elixir > 10) gameData.A.elixir = 10;
     elixirProcess->Size.x = (gameData.A.elixir)*ElixirProcessWidth/10;
@@ -190,13 +204,32 @@ void PlayScene::Update(float deltaTime) {
         Spell* j = dynamic_cast<Spell*>(i);
         if (j->time < 0) A_SpellGroup->RemoveObject(i->GetObjectIterator());
     }
+    for (auto i : B_SpellGroup->GetObjects()) {
+        Spell* j = dynamic_cast<Spell*>(i);
+        if (j->time < 0) A_SpellGroup->RemoveObject(i->GetObjectIterator());
+    }
 
-    // ToBeDead:
+    // ToBeDead/ToBeRemoved:
     for (int i : A_ToBeDead) {
         A_ArmyGroup->RemoveObject(A_ArmyPtrMap[i]->GetObjectIterator());
         A_ArmyPtrMap.erase(i);
     }
     A_ToBeDead.clear();
+    for (int i : B_ToBeDead) {
+        B_ArmyGroup->RemoveObject(B_ArmyPtrMap[i]->GetObjectIterator());
+        B_ArmyPtrMap.erase(i);
+    }
+    B_ToBeDead.clear();
+    for (int i : A_TowerToBeRemoved) {
+        A_TowerGroup->RemoveObject(A_TowerPtrMap[i]->GetObjectIterator());
+        A_TowerPtrMap.erase(i);
+    }
+    A_TowerToBeRemoved.clear();
+    for (int i : B_TowerToBeRemoved) {
+        B_TowerGroup->RemoveObject(B_TowerPtrMap[i]->GetObjectIterator());
+        B_TowerPtrMap.erase(i);
+    }
+    B_TowerToBeRemoved.clear();
 
     // WeaponToBeDelete
     for (auto i : WeaponToBeDelete) {
@@ -209,6 +242,7 @@ void PlayScene::Draw() const {
     IScene::Draw();
 }
 
+// TODO: TO PLACE B, follow the steps like below A_ArmyPtrMap/A_ArmyToBeDeployed/A_SpellToBeDeployed
 void PlayScene::OnMouseDown(int button, int mx, int my) {
     if (gameTime >= 181) return;
     if ((button & 1) && selectedCard != nullptr && mouseInPlay() && 
@@ -219,10 +253,8 @@ void PlayScene::OnMouseDown(int button, int mx, int my) {
             if (selectedCard->cardType == ARMY) {
                 A_ArmyPtrMap.insert({instanceIDCounter, selectedCard->placeArmy(instanceIDCounter, nowBlock.x, nowBlock.y)});
                 A_ArmyToBeDeployed.push({gameTime-0.5, A_ArmyPtrMap[instanceIDCounter++]});
-                // A_ArmyGroup->AddNewObject(A_ArmyPtrMap[instanceIDCounter++]);
             } else {
                 A_SpellToBeDeployed.push({gameTime-0.5, selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y)});
-                // A_SpellGroup->AddNewObject(selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y));
             }
             gameData.A.nextCardQueue.push(selectedCard->ID);
             int pos;
@@ -347,3 +379,6 @@ bool PlayScene::mouseAtValid() {
 void PlayScene::launchBullet(Bullet* bullet) {
     WeaponGroup->AddNewObject(bullet);
 }
+
+void PlayScene::showWinAnimation() {}
+void PlayScene::showLoseAnimation() {}

@@ -40,12 +40,9 @@ void Army::Draw() const {
 void Army::Update(float deltaTime) {
     PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
     if (PS->gameTime > 181) return;
-    // test
-    if(faction) return;
-    // test
-    countDown = std::max(countDown-deltaTime, 0.f);
-
     if (isTower && !dynamic_cast<Tower*>(this)->enabled) return;
+
+    countDown = std::max(countDown-deltaTime, 0.f);
 
     if (needForcedMove) {
         Position.x += std::cos(forceMoveAngle) * collisionAdjustmentLength * deltaTime;
@@ -83,16 +80,27 @@ void Army::Damaged(float pt) {
     if (isTower && !dynamic_cast<Tower*>(this)->enabled) dynamic_cast<Tower*>(this)->enabled = true;
     if (hp < 1) {
         PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+        if (isTower && ID==-1) {
+            PS->tick = 500;
+            if (faction) PS->showWinAnimation();
+            else PS->showLoseAnimation();
+        }
+        if (isTower && ID==-2) {
+            if (faction) PS->B_TowerPtrMap[0]->enabled = true;
+            else PS->A_TowerPtrMap[0]->enabled = true;
+        }
+        for (auto i : beTargeted) i->target = nullptr;
+        for (auto i : PS->WeaponGroup->GetObjects()) {
+            Bullet* j = dynamic_cast<Bullet*>(i);
+            if (j->target == this) PS->WeaponToBeDelete.insert(j);
+        }
         if (faction) {
-            for (auto i : beTargeted) i->target = nullptr;
-            for (auto i : PS->WeaponGroup->GetObjects()) {
-                Bullet* j = dynamic_cast<Bullet*>(i);
-                if (j->target == this) PS->WeaponToBeDelete.insert(j);
-            }
-            if (!isTower) PS->B_ArmyGroup->RemoveObject(objectIterator);
-            else PS->B_TowerGroup->RemoveObject(objectIterator);
-            PS->B_ArmyGroup->AddNewObject(new Army(1,1,13,6,"Archers",1,500,1,1,1,1,1,0.7,1));
-        } else PS->A_ToBeDead.insert(ID);
+            if (!isTower) PS->B_ToBeDead.insert(instanceID);
+            else PS->B_TowerToBeRemoved.insert(instanceID);
+        } else {
+            if (!isTower) PS->A_ToBeDead.insert(instanceID);
+            else PS->A_TowerToBeRemoved.insert(instanceID);
+        }
     }
 }
 
@@ -110,7 +118,8 @@ void Army::towardWhere(float deltaTime) {
             go(deltaTime, true);
         }
     } else {
-        go(deltaTime);
+        if (faction) go(deltaTime, true);
+        else go(deltaTime);
     }
 
     if (!isTower) {
@@ -135,7 +144,7 @@ void Army::towardWhere(float deltaTime) {
 void Army::go(float deltaTime, bool mirror) {
     Engine::Point blockPosition = pxToBlock(Position);
     if (mirror) {       // 鏡射
-        switch (map[(int)blockPosition.y][(int)blockPosition.x]) {
+        switch (map[(int)blockPosition.y][31-(int)blockPosition.x]) {
             case U:  Position.y -= speed * deltaTime; previousMoveAngle = ALLEGRO_PI/2; break;
             case D:  Position.y += speed * deltaTime; previousMoveAngle = ALLEGRO_PI*3/2; break;
             case L:  Position.x += speed * deltaTime; previousMoveAngle = ALLEGRO_PI; break;
@@ -152,14 +161,18 @@ void Army::go(float deltaTime, bool mirror) {
         }
     } else {
         switch (map[(int)blockPosition.y][(int)blockPosition.x]) {
-            case U:  Position.y -= speed * deltaTime; break;
-            case D:  Position.y += speed * deltaTime; break;
-            case L:  Position.x -= speed * deltaTime; break;
-            case R:  Position.x += speed * deltaTime; break;
-            case UL: Position.x -= std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y -= std::sin(ALLEGRO_PI/4) * speed * deltaTime; break;
-            case UR: Position.x += std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y -= std::sin(ALLEGRO_PI/4) * speed * deltaTime; break;
-            case DL: Position.x -= std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y += std::sin(ALLEGRO_PI/4) * speed * deltaTime; break;
-            case DR: Position.x += std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y += std::sin(ALLEGRO_PI/4) * speed * deltaTime; break;
+            case U:  Position.y -= speed * deltaTime; previousMoveAngle = ALLEGRO_PI/2; break;
+            case D:  Position.y += speed * deltaTime; previousMoveAngle = ALLEGRO_PI*3/2; break;
+            case L:  Position.x -= speed * deltaTime; previousMoveAngle = ALLEGRO_PI; break;
+            case R:  Position.x += speed * deltaTime; previousMoveAngle = 0; break;
+            case UL: Position.x -= std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y -= std::sin(ALLEGRO_PI/4) * speed * deltaTime; 
+                previousMoveAngle = ALLEGRO_PI*3/4; break;
+            case UR: Position.x += std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y -= std::sin(ALLEGRO_PI/4) * speed * deltaTime; 
+                previousMoveAngle = ALLEGRO_PI/4;break;
+            case DL: Position.x -= std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y += std::sin(ALLEGRO_PI/4) * speed * deltaTime; 
+                previousMoveAngle = ALLEGRO_PI*5/4; break;
+            case DR: Position.x += std::cos(ALLEGRO_PI/4) * speed * deltaTime, Position.y += std::sin(ALLEGRO_PI/4) * speed * deltaTime; 
+                previousMoveAngle = ALLEGRO_PI*7/4; break;
             default: ;
         }
     }
@@ -170,21 +183,41 @@ Army* Army::searchTarget() {
     float shortestDistance = 10000;
     float dist;
     Army* tmpTarget;
-    if (ID!=4 && ID!=7)
-        for (auto i : PS->B_ArmyGroup->GetObjects()) {
+    if (faction) {
+        if (ID!=4 && ID!=7)
+            for (auto i : PS->A_ArmyGroup->GetObjects()) {
+                Army* j = dynamic_cast<Army*>(i);
+                dist = (j->Position-Position).Magnitude();
+                if (dist < shortestDistance) {
+                    shortestDistance = dist;
+                    tmpTarget = j;
+                }
+            }
+        for (auto i : PS->A_TowerGroup->GetObjects()) {
             Army* j = dynamic_cast<Army*>(i);
-            dist = (j->Position-Position).Magnitude();
+            dist = (j->Position-Position).Magnitude()-j->picRadiusPx - towerDetectRadiusRevision;
             if (dist < shortestDistance) {
                 shortestDistance = dist;
                 tmpTarget = j;
             }
         }
-    for (auto i : PS->B_TowerGroup->GetObjects()) {
-        Army* j = dynamic_cast<Army*>(i);
-        dist = (j->Position-Position).Magnitude()-j->picRadiusPx - towerDetectRadiusRevision;
-        if (dist < shortestDistance) {
-            shortestDistance = dist;
-            tmpTarget = j;
+    } else {
+        if (ID!=4 && ID!=7)
+            for (auto i : PS->B_ArmyGroup->GetObjects()) {
+                Army* j = dynamic_cast<Army*>(i);
+                dist = (j->Position-Position).Magnitude();
+                if (dist < shortestDistance) {
+                    shortestDistance = dist;
+                    tmpTarget = j;
+                }
+            }
+        for (auto i : PS->B_TowerGroup->GetObjects()) {
+            Army* j = dynamic_cast<Army*>(i);
+            dist = (j->Position-Position).Magnitude()-j->picRadiusPx - towerDetectRadiusRevision;
+            if (dist < shortestDistance) {
+                shortestDistance = dist;
+                tmpTarget = j;
+            }
         }
     }
     if (shortestDistance < detectRadius || ID==4) {
