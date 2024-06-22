@@ -61,7 +61,7 @@ void Army::Update(float deltaTime) {
                 countDown = coolDown;
                 if (Name == "Archers" || ID==-2) PS->launchBullet(new Bullet("bullet/arrow.png", 800, atk, Position.x, Position.y, 30, 15, target));
                 else if (Name == "Musketeer" || ID==-1) PS->launchBullet(new Bullet("bullet/bullet.png", 1000, atk, Position.x, Position.y, 20, 20, target));
-                else if (Name == "Wizard") PS->launchBullet(new Bullet("bullet/fire.png", 600, atk, Position.x, Position.y, 20, 20, target, true));
+                else if (Name == "Wizard") PS->launchBullet(new Bullet("bullet/fire.png", 600, atk, Position.x, Position.y, 35, 35, target, true));
                 else target->Damaged(atk);
             } else {
                 // just stay
@@ -80,11 +80,32 @@ void Army::Healed(float pt) {
     hp = std::min(hp + pt, hpMax);
 }
 
-void Army::Damaged(float pt) {
-    hp -= pt;
+void Army::Damaged(float pt, bool isRange) {
+    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+    if (isRange) {
+        if (faction) {
+            for (auto i : PS->B_ArmyGroup->GetObjects()) {
+                Army* j = dynamic_cast<Army*>(i);
+                if ((j->Position-Position).Magnitude()-j->picRadiusPx/2 < rangedBulletDetectRadius) j->Damaged(pt);
+            }
+            for (auto i : PS->B_TowerGroup->GetObjects()) {
+                Army* j = dynamic_cast<Army*>(i);
+                if ((j->Position-Position).Magnitude()-j->picRadiusPx < rangedBulletDetectRadius) j->Damaged(pt);
+            }
+        } else {
+            for (auto i : PS->A_ArmyGroup->GetObjects()) {
+                Army* j = dynamic_cast<Army*>(i);
+                if ((j->Position-Position).Magnitude()-j->picRadiusPx/2 < rangedBulletDetectRadius) j->Damaged(pt);
+            }
+            for (auto i : PS->A_TowerGroup->GetObjects()) {
+                Army* j = dynamic_cast<Army*>(i);
+                if ((j->Position-Position).Magnitude()-j->picRadiusPx < rangedBulletDetectRadius) j->Damaged(pt);
+            }
+        }
+    } else hp -= pt;
+
     if (isTower && !dynamic_cast<Tower*>(this)->enabled) dynamic_cast<Tower*>(this)->enabled = true;
     if (hp < 1) {
-        PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
         if (isTower && ID==-1) {
             PS->tick = 500;
             if (faction) PS->showWinAnimation();

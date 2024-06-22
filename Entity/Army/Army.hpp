@@ -41,6 +41,7 @@ public:
     const static int towerDetectRadiusRevision = 20;
     const static int collisionAdjustmentLength = 200;
     constexpr static float collisionAdjustmentAngle = 0.6;
+    const static int rangedBulletDetectRadius = 50;
 
     int ID;
     int instanceID;
@@ -75,7 +76,7 @@ public:
     void Update(float deltaTime) override;
     
     void Healed(float pt);
-    void Damaged(float pt);
+    void Damaged(float pt, bool isRange=false);
     void towardWhere(float deltaTime);
     void go(float deltaTime, bool mirror = false);
     Army* searchTarget();

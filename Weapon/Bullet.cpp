@@ -25,7 +25,7 @@ void Bullet::Update(float deltaTime) {
 	Velocity.y = sin(Rotation) * speed * (-1);
 	if ((Position - target->Position).Magnitude() <= CollisionRadius) {
 		OnExplode();
-		target->Damaged(damage);
+		target->Damaged(damage, isRange);
 		PS->WeaponToBeDelete.insert(this);
 		return;
 	}

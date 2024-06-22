@@ -135,6 +135,10 @@ void PlayScene::Initialize() {
     // test : but why it can't use.
     B_ArmyPtrMap.insert({1, new Army(5,1,2,2,"P.E.K.K.A.",0,3760, 816, 1.8, 2, 1.2, 5,0.7,1)});
     B_ArmyToBeDeployed.push({gameTime-0.5, B_ArmyPtrMap[1]});
+    for (int i=2; i<17; i++) {
+        B_ArmyPtrMap.insert({i, new Army(3, i, 2, 16, "Skeletons", 0, 81, 81, 1, 4, 1.2, 5, 0.5, 1)});
+        B_ArmyToBeDeployed.push({gameTime-0.5, B_ArmyPtrMap[i]});
+    }
     
     // test
 }
