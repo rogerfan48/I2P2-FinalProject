@@ -35,10 +35,10 @@ double findAngle(Engine::Point center, Engine::Point point) {
         return acos((center.x - point.x) / (center - point).Magnitude()) + ALLEGRO_PI;
 }
 
-// 0: blue, 1: red, 2: bridge
+// 0: blue, 1: bridge, 2: red
 int whichSide(Engine::Point pos) {
     Engine::Point nB = pxToBlock(pos);
     if (nB.x > 16) return 0;
-    else if (nB.x < 15) return 1;
-    else return 2;
+    else if (nB.x < 15) return 2;
+    else return 1;
 }

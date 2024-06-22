@@ -16,6 +16,7 @@ Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
             Position.x += PlayScene::BlockSize/2;
             Position.y += PlayScene::BlockSize/2;
             head = Engine::Resources::GetInstance().GetBitmap("card/"+Name+".png");
+            side = whichSide(Position);
         }
 
 void Army::Draw() const {
@@ -83,60 +84,90 @@ void Army::Damaged(float pt) {
 
 void Army::towardWhere() {
     target = searchTarget();
-    int mySide = whichSide(Position);
     if (target) {   // towardArmy
-        int targetSide = whichSide(target->Position);
-        if (mySide == targetSide) {
-            // towardDirectly
-        } else if (1) {     // TODO: Side nine case
-            // ..
-        }
-    } else {
-        // ..
-    }
-}
-void Army::go() {
-    if (target) {
-        target->beTargeted.insert(this);
-        if (Position.x <= 975 && Position.x >= 825 && 
-                ((Position.y >= 250 && Position.y <= 300) || (Position.y >= 800 && Position.y <= 850))) {
-            Position.x -= speed;
-        } else if (Position.x >= 975 && target->Position.x < 975) {
-            goToBridge();
-        } else {
+        if (side == target->side) {
             Position.x += cos(findAngle(Position, target->Position)) * speed;
             Position.y += sin(findAngle(Position, target->Position)) * speed;
-        }
-    } else {
-        if (Position.x <= 980 && Position.x >= 825 &&       // 提前 5 格判斷, 猜測bug原因爲float不夠精準導致findAngle()分母為0
-                ((Position.y >= 250 && Position.y <= 300) || (Position.y >= 800 && Position.y <= 850))) {
-            Position.x -= speed;    // 遇橋直走
-        } else if (Position.x >= 950) {
-            goToBridge();
+        } else if (side < target->side) {     // TODO: Side nine case
+            go();
         } else {
-            goToTower();
+            go(true);
+        }
+    } else {
+        go();
+    }
+    side = whichSide(Position);
+}
+void Army::go(bool mirror) {
+    Engine::Point blockPosition = pxToBlock(Position);
+    if (mirror) {       // 鏡射
+        switch (map[(int)blockPosition.x][(int)blockPosition.y]) {
+            case U:  Position.y -= speed; break;
+            case D:  Position.y += speed; break;
+            case L:  Position.x += speed; break;
+            case R:  Position.x -= speed; break;
+            case UL: Position.x += cos(45) * speed, Position.y -= sin(45) * speed; break;
+            case UR: Position.x -= cos(45) * speed, Position.y -= sin(45) * speed; break;
+            case DL: Position.x += cos(45) * speed, Position.y += sin(45) * speed; break;
+            case DR: Position.x -= cos(45) * speed, Position.y += sin(45) * speed; break;
+            default: ;
+        }
+    } else {
+        switch (map[(int)blockPosition.x][(int)blockPosition.y]) {
+            case U:  Position.y -= speed; break;
+            case D:  Position.y += speed; break;
+            case L:  Position.x -= speed; break;
+            case R:  Position.x += speed; break;
+            case UL: Position.x -= cos(45) * speed, Position.y -= sin(45) * speed; break;
+            case UR: Position.x += cos(45) * speed, Position.y -= sin(45) * speed; break;
+            case DL: Position.x -= cos(45) * speed, Position.y += sin(45) * speed; break;
+            case DR: Position.x += cos(45) * speed, Position.y += sin(45) * speed; break;
+            default: ;
         }
     }
 }
-void Army::goToBridge() {
-    if (Position.y <= PlayScene::MapDiff + PlayScene::BlockSize * PlayScene::MapBlockHeight / 2) {
-        Position.x += cos(findAngle(Position, Engine::Point(975, 275))) * speed;
-        Position.y += sin(findAngle(Position, Engine::Point(975, 275))) * speed;
-    } else {
-        Position.x += cos(findAngle(Position, Engine::Point(975, 825))) * speed;
-        Position.y += sin(findAngle(Position, Engine::Point(975, 825))) * speed;
-    }
-}
-void Army::goToTower() {
-    if(Position.x<=530) return; // have moved to tower  // 完成Tower轉Army即可刪除
-    if (Position.y <= PlayScene::MapDiff + PlayScene::BlockSize * PlayScene::MapBlockHeight / 2) {
-        Position.x += cos(findAngle(Position, Engine::Point(525, 275))) * speed;
-        Position.y += sin(findAngle(Position, Engine::Point(525, 275))) * speed;
-    } else {
-        Position.x += cos(findAngle(Position, Engine::Point(525, 825))) * speed;
-        Position.y += sin(findAngle(Position, Engine::Point(525, 825))) * speed;
-    }
-}
+// void Army::go() {
+//     if (target) {
+//         target->beTargeted.insert(this);
+//         if (Position.x <= 975 && Position.x >= 825 && 
+//                 ((Position.y >= 250 && Position.y <= 300) || (Position.y >= 800 && Position.y <= 850))) {
+//             Position.x -= speed;
+//         } else if (Position.x >= 975 && target->Position.x < 975) {
+//             goToBridge();
+//         } else {
+//             Position.x += cos(findAngle(Position, target->Position)) * speed;
+//             Position.y += sin(findAngle(Position, target->Position)) * speed;
+//         }
+//     } else {
+//         if (Position.x <= 980 && Position.x >= 825 &&       // 提前 5 格判斷, 猜測bug原因爲float不夠精準導致findAngle()分母為0
+//                 ((Position.y >= 250 && Position.y <= 300) || (Position.y >= 800 && Position.y <= 850))) {
+//             Position.x -= speed;    // 遇橋直走
+//         } else if (Position.x >= 950) {
+//             goToBridge();
+//         } else {
+//             goToTower();
+//         }
+//     }
+// }
+// void Army::goToBridge() {
+//     if (Position.y <= PlayScene::MapDiff + PlayScene::BlockSize * PlayScene::MapBlockHeight / 2) {
+//         Position.x += cos(findAngle(Position, Engine::Point(975, 275))) * speed;
+//         Position.y += sin(findAngle(Position, Engine::Point(975, 275))) * speed;
+//     } else {
+//         Position.x += cos(findAngle(Position, Engine::Point(975, 825))) * speed;
+//         Position.y += sin(findAngle(Position, Engine::Point(975, 825))) * speed;
+//     }
+// }
+// void Army::goToTower() {
+//     if(Position.x<=530) return; // have moved to tower  // 完成Tower轉Army即可刪除
+//     if (Position.y <= PlayScene::MapDiff + PlayScene::BlockSize * PlayScene::MapBlockHeight / 2) {
+//         Position.x += cos(findAngle(Position, Engine::Point(525, 275))) * speed;
+//         Position.y += sin(findAngle(Position, Engine::Point(525, 275))) * speed;
+//     } else {
+//         Position.x += cos(findAngle(Position, Engine::Point(525, 825))) * speed;
+//         Position.y += sin(findAngle(Position, Engine::Point(525, 825))) * speed;
+//     }
+// }
 Army* Army::searchTarget() {
     PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
     float shortestDistance = 10000;

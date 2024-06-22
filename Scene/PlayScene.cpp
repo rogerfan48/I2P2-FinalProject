@@ -130,7 +130,7 @@ void PlayScene::Initialize() {
     ElixirGroup->AddNewObject(elixirNumber[4] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050, 255, 255, 255, 255, 0.5, 0.5));
 
     // test : but why it can't use.
-    // B_ArmyGroup->AddNewObject(new Army(1,1,25,8,"Archers",1,500,1,1,1,1,1,0.7,1));
+    B_ArmyGroup->AddNewObject(new Army(1,1,25,8,"Archers",1,500,1,1,1,1,1,0.7,1));
     // test
 }
 void PlayScene::Terminate() {
