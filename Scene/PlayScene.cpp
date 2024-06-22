@@ -205,29 +205,30 @@ void PlayScene::Draw() const {
 
 void PlayScene::OnMouseDown(int button, int mx, int my) {
     if (gameTime >= 181) return;
-    if ((button & 1) && selectedCard != nullptr && mouseInPlay() && mouseAtValid()) {
-        if (gameData.A.elixir < selectedCard->cost) return;
-        else gameData.A.elixir -= selectedCard->cost;
-        Engine::Point nowBlock(pxToBlock(mousePos));
-        if (selectedCard->cardType == ARMY) {
-            A_ArmyPtrMap.insert({instanceIDCounter, selectedCard->placeArmy(instanceIDCounter, nowBlock.x, nowBlock.y)});
-            A_ArmyToBeDeployed.push({gameTime-0.5, A_ArmyPtrMap[instanceIDCounter++]});
-            // A_ArmyGroup->AddNewObject(A_ArmyPtrMap[instanceIDCounter++]);
-        } else {
-            A_SpellToBeDeployed.push({gameTime-0.5, selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y)});
-            // A_SpellGroup->AddNewObject(selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y));
+    if ((button & 1) && selectedCard != nullptr && mouseInPlay() && 
+        ((selectedCard->cardType==ARMY && mouseAtValid(true)) || (selectedCard->cardType==SPELL && mouseAtValid(false)))) {
+            if (gameData.A.elixir < selectedCard->cost) return;
+            else gameData.A.elixir -= selectedCard->cost;
+            Engine::Point nowBlock(pxToBlock(mousePos));
+            if (selectedCard->cardType == ARMY) {
+                A_ArmyPtrMap.insert({instanceIDCounter, selectedCard->placeArmy(instanceIDCounter, nowBlock.x, nowBlock.y)});
+                A_ArmyToBeDeployed.push({gameTime-0.5, A_ArmyPtrMap[instanceIDCounter++]});
+                // A_ArmyGroup->AddNewObject(A_ArmyPtrMap[instanceIDCounter++]);
+            } else {
+                A_SpellToBeDeployed.push({gameTime-0.5, selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y)});
+                // A_SpellGroup->AddNewObject(selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y));
+            }
+            gameData.A.nextCardQueue.push(selectedCard->ID);
+            int pos;
+            for (int i=0; i<4; i++) if (cardPointer[i] == selectedCard) pos = i;
+            CardGroup->RemoveControlObject(selectedCard->GetControlIterator(), selectedCard->GetObjectIterator());
+            gameData.A.availableCards[pos] = gameData.A.nextCardQueue.front();
+            gameData.A.nextCardQueue.pop();
+            cardPointer[pos] = getCardById(gameData.A.availableCards[pos], 100+400*pos+10, 1100+10);
+            CardGroup->AddNewControlObject(cardPointer[pos]);
+            cardPointer[pos]->selected = true;
+            selectedCard = cardPointer[pos];
         }
-        gameData.A.nextCardQueue.push(selectedCard->ID);
-        int pos;
-        for (int i=0; i<4; i++) if (cardPointer[i] == selectedCard) pos = i;
-        CardGroup->RemoveControlObject(selectedCard->GetControlIterator(), selectedCard->GetObjectIterator());
-        gameData.A.availableCards[pos] = gameData.A.nextCardQueue.front();
-        gameData.A.nextCardQueue.pop();
-        cardPointer[pos] = getCardById(gameData.A.availableCards[pos], 100+400*pos+10, 1100+10);
-        CardGroup->AddNewControlObject(cardPointer[pos]);
-        cardPointer[pos]->selected = true;
-        selectedCard = cardPointer[pos];
-    }
     IScene::OnMouseDown(button, mx, my);
 }
 void PlayScene::OnMouseMove(int mx, int my) {
@@ -235,9 +236,11 @@ void PlayScene::OnMouseMove(int mx, int my) {
     mousePos = Engine::Point(mx, my);
     Engine::Point nowBlock(pxToBlock(mousePos));
     if (mouseInPlay()) {
-        prohibitedMask->Enable = true;
-        prohibitedMaskBorder->Enable = true;
-        if (mouseAtValid()) {
+        if (selectedCard->cardType == ARMY) {
+            prohibitedMask->Enable = true;
+            prohibitedMaskBorder->Enable = true;
+        }
+        if ((selectedCard->cardType==ARMY && mouseAtValid(true)) || (selectedCard->cardType==SPELL && mouseAtValid(false))) {
             placePreview->Enable = true;
             placePreviewBorder->Enable = true;
             placePreview->Position = blockToPx(nowBlock);
@@ -329,10 +332,12 @@ bool PlayScene::mouseInPlay() {
     Engine::Point nowBlock(pxToBlock(mousePos));
     return (nowBlock.x>=0 && nowBlock.x<=31 && nowBlock.y>=0 && nowBlock.y<=17);
 }
-bool PlayScene::mouseAtValid() {
+bool PlayScene::mouseAtValid(bool isArmy) {
     Engine::Point nowBlock(pxToBlock(mousePos));
     if (MapTile[nowBlock.y][nowBlock.x] == TOWER+'0') return false;
-    return (nowBlock.x>=17);
+    if (isArmy) return (nowBlock.x>=17);
+    if (MapTile[nowBlock.y][nowBlock.x] == RIVER+'0') return false;
+    return true;
 }
 
 void PlayScene::launchBullet(Bullet* bullet) {

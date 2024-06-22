@@ -91,7 +91,7 @@ public:
     void initMapTileAndTileColor();
     Card* getCardById(int id, float x, float y);
     bool mouseInPlay();
-    bool mouseAtValid();
+    bool mouseAtValid(bool isArmy);
     void launchBullet(Bullet*);
 };
 
