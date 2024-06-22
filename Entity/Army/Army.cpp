@@ -85,6 +85,7 @@ void Army::Damaged(float pt) {
 void Army::towardWhere() {
     target = searchTarget();
     if (target) {   // towardArmy
+        std::cout<<"there is a target."<<target->side<<std::endl;   // for debug
         if (side == target->side) {
             Position.x += cos(findAngle(Position, target->Position)) * speed;
             Position.y += sin(findAngle(Position, target->Position)) * speed;
@@ -101,7 +102,7 @@ void Army::towardWhere() {
 void Army::go(bool mirror) {
     Engine::Point blockPosition = pxToBlock(Position);
     if (mirror) {       // 鏡射
-        switch (map[(int)blockPosition.x][(int)blockPosition.y]) {
+        switch (map[(int)blockPosition.y][(int)blockPosition.x]) {
             case U:  Position.y -= speed; break;
             case D:  Position.y += speed; break;
             case L:  Position.x += speed; break;
@@ -113,7 +114,7 @@ void Army::go(bool mirror) {
             default: ;
         }
     } else {
-        switch (map[(int)blockPosition.x][(int)blockPosition.y]) {
+        switch (map[(int)blockPosition.y][(int)blockPosition.x]) {
             case U:  Position.y -= speed; break;
             case D:  Position.y += speed; break;
             case L:  Position.x -= speed; break;
