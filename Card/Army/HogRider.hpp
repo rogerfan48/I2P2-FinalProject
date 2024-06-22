@@ -7,5 +7,5 @@ public:
     HogRider(bool selected, float x, float y);
     HogRider(float x, float y);
     void Draw() const override;
-    Army* placeArmy(int instanceID, float xB, float yB) override;
+    void placeArmy(float xB, float yB) override;
 };

@@ -22,6 +22,10 @@
 
 class PlayScene final : public Engine::IScene {
 private:
+    std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
+    GameData& gameData = Engine::GameEngine::GetInstance().data;
+    Engine::Point mousePos;
+public:
     enum TILE_TYPE {
         GRASS1, // 0
         GRASS2, // 1
@@ -34,13 +38,10 @@ private:
     };
     static std::map<int, ALLEGRO_COLOR> TileColor;
     static std::vector<std::string> MapTile;
-    std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
-    GameData& gameData = Engine::GameEngine::GetInstance().data;
-    Engine::Point mousePos;
-    int instanceIDCounter;
-public:
+    
     float tick;
     float gameTime;
+    int instanceIDCounter;
 
     static const int BlockSize;
     static const int MapBlockWidth;

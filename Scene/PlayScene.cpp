@@ -251,8 +251,7 @@ void PlayScene::OnMouseDown(int button, int mx, int my) {
             else gameData.A.elixir -= selectedCard->cost;
             Engine::Point nowBlock(pxToBlock(mousePos));
             if (selectedCard->cardType == ARMY) {
-                A_ArmyPtrMap.insert({instanceIDCounter, selectedCard->placeArmy(instanceIDCounter, nowBlock.x, nowBlock.y)});
-                A_ArmyToBeDeployed.push({gameTime-0.5, A_ArmyPtrMap[instanceIDCounter++]});
+                selectedCard->placeArmy(nowBlock.x, nowBlock.y);
             } else {
                 A_SpellToBeDeployed.push({gameTime-0.5, selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y)});
             }

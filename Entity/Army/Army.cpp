@@ -49,6 +49,11 @@ void Army::Update(float deltaTime) {
         Position.y -= std::sin(forceMoveAngle) * collisionAdjustmentLength * deltaTime;
     }
 
+    Engine::Point nowBlock(pxToBlock(Position));
+    if (PS->MapTile[Position.y][Position.x] == PlayScene::RIVER) {
+        go(deltaTime);
+        return;
+    }
     if (target) {
         if ((!(target->isTower) && (target->Position-Position).Magnitude() <= atkRadius) ||
             (target->isTower && (target->Position-Position).Magnitude() <= atkRadius + target->picRadiusPx - towerDetectRadiusRevision)) {

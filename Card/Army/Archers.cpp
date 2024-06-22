@@ -1,5 +1,6 @@
 #include "Archers.hpp"
 
+#include "Scene/PlayScene.hpp"
 #include "Entity/Army/Army.hpp"
 
 Archers::Archers(bool selected, float x, float y): 
@@ -11,6 +12,11 @@ void Archers::Draw() const {
     Card::Draw();
 }
 
-Army* Archers::placeArmy(int instanceID, float xB, float yB) {
-    return new Army(ID, instanceID, xB, yB, Name, 1, hp, atk, coolDown, speed, atkRadius, detectRadius, 0.7);
+void Archers::placeArmy(float xB, float yB) {
+    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+
+    PS->A_ArmyPtrMap.insert({PS->instanceIDCounter, new Army(ID, PS->instanceIDCounter, xB, yB, Name, 1, hp, atk, coolDown, speed, atkRadius, detectRadius, 0.7)});
+    PS->A_ArmyToBeDeployed.push({PS->gameTime-0.5, PS->A_ArmyPtrMap[PS->instanceIDCounter++]});
+    PS->A_ArmyPtrMap.insert({PS->instanceIDCounter, new Army(ID, PS->instanceIDCounter, xB, yB, Name, 1, hp, atk, coolDown, speed, atkRadius, detectRadius, 0.7)});
+    PS->A_ArmyToBeDeployed.push({PS->gameTime-0.5, PS->A_ArmyPtrMap[PS->instanceIDCounter++]});
 }

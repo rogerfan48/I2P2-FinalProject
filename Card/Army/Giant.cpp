@@ -1,5 +1,6 @@
 #include "Giant.hpp"
 
+#include "Scene/PlayScene.hpp"
 #include "Entity/Army/Army.hpp"
 
 Giant::Giant(bool selected, float x, float y): 
@@ -11,6 +12,9 @@ void Giant::Draw() const {
     Card::Draw();
 }
 
-Army* Giant::placeArmy(int instanceID, float xB, float yB) {
-    return new Army(ID, instanceID, xB, yB, Name, 0, hp, atk, coolDown, speed, atkRadius, detectRadius, 0.7);
+void Giant::placeArmy(float xB, float yB) {
+    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+
+    PS->A_ArmyPtrMap.insert({PS->instanceIDCounter, new Army(ID, PS->instanceIDCounter, xB, yB, Name, 0, hp, atk, coolDown, speed, atkRadius, detectRadius, 0.7)});
+    PS->A_ArmyToBeDeployed.push({PS->gameTime-0.5, PS->A_ArmyPtrMap[PS->instanceIDCounter++]});
 }
