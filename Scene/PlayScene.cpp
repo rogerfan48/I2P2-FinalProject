@@ -212,7 +212,7 @@ void PlayScene::Draw() const {
 void PlayScene::OnMouseDown(int button, int mx, int my) {
     if (gameTime >= 181) return;
     if ((button & 1) && selectedCard != nullptr && mouseInPlay() && 
-        ((selectedCard->cardType==ARMY && mouseAtValid(true)) || (selectedCard->cardType==SPELL && mouseAtValid(false)))) {
+        ((selectedCard->cardType==ARMY && mouseAtValid()) || (selectedCard->cardType==SPELL))) {
             if (gameData.A.elixir < selectedCard->cost) return;
             else gameData.A.elixir -= selectedCard->cost;
             Engine::Point nowBlock(pxToBlock(mousePos));
@@ -246,7 +246,7 @@ void PlayScene::OnMouseMove(int mx, int my) {
             prohibitedMask->Enable = true;
             prohibitedMaskBorder->Enable = true;
         }
-        if ((selectedCard->cardType==ARMY && mouseAtValid(true)) || (selectedCard->cardType==SPELL && mouseAtValid(false))) {
+        if ((selectedCard->cardType==ARMY && mouseAtValid()) || (selectedCard->cardType==SPELL)) {
             placePreview->Enable = true;
             placePreviewBorder->Enable = true;
             placePreview->Position = blockToPx(nowBlock);
@@ -338,11 +338,10 @@ bool PlayScene::mouseInPlay() {
     Engine::Point nowBlock(pxToBlock(mousePos));
     return (nowBlock.x>=0 && nowBlock.x<=31 && nowBlock.y>=0 && nowBlock.y<=17);
 }
-bool PlayScene::mouseAtValid(bool isArmy) {
+bool PlayScene::mouseAtValid() {
     Engine::Point nowBlock(pxToBlock(mousePos));
     if (MapTile[nowBlock.y][nowBlock.x] == TOWER+'0') return false;
-    if (isArmy) return (nowBlock.x>=17);
-    return true;
+    return (nowBlock.x>=17);
 }
 
 void PlayScene::launchBullet(Bullet* bullet) {

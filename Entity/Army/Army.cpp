@@ -92,11 +92,11 @@ void Army::Damaged(float pt) {
 void Army::towardWhere(float deltaTime) {
     target = searchTarget();
     if (target) {   // towardArmy
-        if (side == target->side || ID==7) {
+        if (side < target->side || ID==4) {
+            go(deltaTime);
+        } else if ((side == target->side || ID==7)) {
             Position.x += std::cos(findAngle(Position, target->Position)) * speed * deltaTime;
             Position.y -= std::sin(findAngle(Position, target->Position)) * speed * deltaTime;
-        } else if (side < target->side) {
-            go(deltaTime);
         } else {
             go(deltaTime, true);
         }
