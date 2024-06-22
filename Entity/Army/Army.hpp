@@ -9,25 +9,25 @@
 
 enum Direction{U, D, L, R, UL, UR, DL, DR, NON};
 static Direction map[18][32] = {
-    {DR,DR,DR,DR,DR, D, D, D,DL,DL,DL,DL,DL,DL,DL,DL,DR, D,DL,DL,DL,DL,DL,DL,DL,DL,DL, L, L, L, L, L},
-    {DR,DR,DR,DR,DR, D, D, D,DL,DL,DL,DL,DL,DL,DL,DL,DR, D,DL,DL,DL,DL,DL, D, L, L, L, L, L, L, L, L},
-    {DR,DR,DR, D,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL, D,DL,DL,DL,DL,DL, D,DL, L, L, U, L, L, L, L},
-    {DR,DR,DR, D, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, U, L, L, L, L},
-    {DR,DR,DR, D,DL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL, U,UL, L,DL, D, L, L, L, L},
-    {DR,DR,DR, D,DL,DL,DL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UR, U,UL,UL,UL,UL,UL,UL,UL, L, L, L, L, L, L, L},
-    {DR,DR,DR, D,DL,DL,DL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UR, U,UL,UL,UL,UL,UL,UL,UL,UL,UL, L, L, L, L, L},
-    {DR,DR,DR, D,DL,DL,DL,DL,UL,UL,UL,UL,UL,UL,UL,UL,UR, U,UL,UL,UL,UL,UL,UL,UL,UL,UL, L, L, L, L, U},
-    {DR,DR,DR, D, L, L, L, L, L,UL,UL,UL,UL,UL,UL,UL,UR, U,UL,UL,UL,UL,UL,UL,UL,UL,UL, L, L, L, L, U},
-    // -----------------------------------------------------------------------------------------------
-    {UR,UR,UR, U, L, L, L, L, L,DL,DL,DL,DL,DL,DL,DL,DR, D,DL,DL,DL,DL,DL,DL,DL,DL,DL, L, L, L, L, D},
-    {UR,UR,UR, U,UL,UL,UL,UL,DL,DL,DL,DL,DL,DL,DL,DL,DR, D,DL,DL,DL,DL,DL,DL,DL,DL,DL, L, L, L, L, D},
-    {UR,UR,UR, U,UL,UL,UL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DR, D,DL,DL,DL,DL,DL,DL,DL,DL,DL, L, L, L, L, L},
-    {UR,UR,UR, U,UL,UL,UL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DR, D,DL,DL,DL,DL,DL,DL,DL, L, L, L, L, L, L, L},
-    {UR,UR,UR, U,UL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL, D,DL, L,UL, U, L, L, L, L},
-    {UR,UR,UR, U, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, D, L, L, L, L},
-    {UR,UR,UR, U,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL, U,UL,UL,UL,UL,UL, U,UL, L, L, D, L, L, L, L},
-    {UR,UR,UR,UR,UR, U, U, U,UL,UL,UL,UL,UL,UL,UL,UL,UR, U,UL,UL,UL,UL,UL, U, L, L, L, L, L, L, L, L},
-    {UR,UR,UR,UR,UR, U, U, U,UL,UL,UL,UL,UL,UL,UL,UL,UR, U,UL,UL,UL,UL,UL,UL,UL,UL,UL, L, L, L, L, L},
+    {DR,DR,DR, D, D, D,DL,DL,DL,DL,DL,DL,DL,DL,DL, DL,DR,  D, D, D,DL,DL,DL,DL,DL,DL,DL,DL, L, L, L, L},
+    {DR,DR,DR, D, D,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL, DL,DR,  D, D,DL,DL,DL,DL,DL, L, L, L, L, L, L, L, L},
+    {DR,DR,DR, D,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL, DL,DR,  D,DL,DL,DL,DL,DL,DL,DL,UL,UL,UL, L, L, L, L},
+    {DR,DR,DR, D, L, L, L, L, L, L, L, L, L, L, L,  L, L,  L, L, L, L, L, L, L, L, L, R, U, L, L, L, L},
+    {DR,DR,DR, D, L,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL, UL,UR,  U,UL,UL,UL,UL,UL,UL,UL,DL,DL,DL, L, L, L, L},
+    {DR,DR,DR, D, L, L,DL,UL,UL,UL,UL,UL,UL,UL,UL, UL,UR,  U, U,UL,UL,UL,UL,UL, L, L, L, L, L, L, L, L},
+    {DR,DR,DR, D, L, L, L,UL,UL,UL,UL,UL,UL,UL,UL, UL,UR,  U, U, U,UL,UL,UL,UL,UL,UL,UL,UL, L, L, L, L},
+    { R,DR,DR, D, L, L, L, L,UL,UL,UL,UL,UL,UL,UL, UL,UR,  U, U, U, U,UL,UL,UL,UL,UL,UL, L, U, U, U, U},
+    { R,DR,DR, D, L, L, L, L, L,UL,UL,UL,UL,UL,UL, UL,UR,  U, U, U, U, U,UL,UL,UL,UL,UL, L, U, U, U, U},
+    // -----------------------------------------------------------------------------------------------//
+    { R,UR,UR, U, L, L, L, L, L,DL,DL,DL,DL,DL,DL, DL,DR,  D, D, D, D, D,DL,DL,DL,DL,DL, L, D, D, D, D},
+    { R,UR,UR, U, L, L, L, L,DL,DL,DL,DL,DL,DL,DL, DL,DR,  D, D, D, D,DL,DL,DL,DL,DL,DL, L, D, D, D, D},
+    {UR,UR,UR, U, L, L, L,DL,DL,DL,DL,DL,DL,DL,DL, DL,DR,  D, D, D,DL,DL,DL,DL,DL,DL,DL,DL, L, L, L, L},
+    {UR,UR,UR, U, L, L,UL,DL,DL,DL,DL,DL,DL,DL,DL, DL,DR,  D, D,DL,DL,DL,DL,DL, L, L, L, L, L, L, L, L},
+    {UR,UR,UR, U, L,DL,DL,DL,DL,DL,DL,DL,DL,DL,DL, DL,DR,  D,DL,DL,DL,DL,DL,DL,DL,UL,UL,UL, L, L, L, L},
+    {UR,UR,UR, U, L, L, L, L, L, L, L, L, L, L, L,  L, L,  L, L, L, L, L, L, L, L, L, R, D, L, L, L, L},
+    {UR,UR,UR, U,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL, UL,UR,  U,UL,UL,UL,UL,UL,UL,UL,DL,DL,DL, L, L, L, L},
+    {UR,UR,UR, U, U,UL,UL,UL,UL,UL,UL,UL,UL,UL,UL, UL,UR,  U, U,UL,UL,UL,UL,UL, L, L, L, L, L, L, L, L},
+    {UR,UR,UR, U, U, U,UL,UL,UL,UL,UL,UL,UL,UL,UL, UL,UR,  U, U, U,UL,UL,UL,UL,UL,UL,UL,UL, L, L, L, L},
 };
 class Army: public Engine::IObject {
 protected:
@@ -65,8 +65,6 @@ public:
     void Damaged(float pt);
     void towardWhere();
     void go(bool mirror = false);
-    void goToBridge();
-    void goToTower();
     Army* searchTarget();
 };
 
