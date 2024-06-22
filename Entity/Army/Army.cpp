@@ -33,7 +33,8 @@ void Army::Draw() const {
     al_draw_scaled_bitmap(head.get(), 0, 0, al_get_bitmap_width(head.get()), al_get_bitmap_height(head.get()),
         Position.x-picRadiusPx, Position.y-picRadiusPx, 2*picRadiusPx, 2*picRadiusPx, 0);
     al_draw_circle(Position.x, Position.y, picRadiusPx, al_map_rgb(30, 30, 30), 10);
-    al_draw_arc(Position.x, Position.y, picRadiusPx, -1.57, (hp/hpMax)*6.28, (faction?redBlood:blueBlood), 6);
+    al_draw_arc(Position.x, Position.y, picRadiusPx, -ALLEGRO_PI/2, (hp/hpMax)*ALLEGRO_PI*2, (faction?redBlood:blueBlood), 6);
+    al_draw_arc(Position.x, Position.y, picRadiusPx-5, -ALLEGRO_PI/2, (countDown)?(1-countDown/coolDown)*ALLEGRO_PI*2:ALLEGRO_PI*2, (faction?redCdColor:blueCdColor), 4);
 }
 void Army::Update(float deltaTime) {
     PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
@@ -41,14 +42,14 @@ void Army::Update(float deltaTime) {
     // test
     if(faction) return;
     // test
-    countDown -= deltaTime;
+    countDown = std::max(countDown-deltaTime, 0.f);
 
     if (isTower && !dynamic_cast<Tower*>(this)->enabled) return;
 
     if (target) {
         if ((!(target->isTower) && (target->Position-Position).Magnitude() <= atkRadius) ||
             (target->isTower && (target->Position-Position).Magnitude() <= atkRadius + target->picRadiusPx - towerDetectRadiusRevision)) {
-            if (countDown < 0) {    // fire
+            if (countDown <= 0) {    // fire
                 countDown = coolDown;
                 if (Name == "Archers" || ID==-2) PS->launchBullet(new Bullet("bullet/arrow.png", 800, atk, Position.x, Position.y, 30, 15, target));
                 else if (Name == "Musketeer" || ID==-1) PS->launchBullet(new Bullet("bullet/bullet.png", 1000, atk, Position.x, Position.y, 20, 20, target));
@@ -69,6 +70,7 @@ void Army::Update(float deltaTime) {
 void Army::Healed(float pt) {
     hp = std::min(hp + pt, hpMax);
 }
+
 void Army::Damaged(float pt) {
     hp -= pt;
     if (isTower && !dynamic_cast<Tower*>(this)->enabled) dynamic_cast<Tower*>(this)->enabled = true;
@@ -82,7 +84,7 @@ void Army::Damaged(float pt) {
             }
             if (!isTower) PS->B_ArmyGroup->RemoveObject(objectIterator);
             else PS->B_TowerGroup->RemoveObject(objectIterator);
-            PS->B_ArmyGroup->AddNewObject(new Army(1,1,13,8,"Archers",1,500,1,1,1,1,1,0.7,1));
+            PS->B_ArmyGroup->AddNewObject(new Army(1,1,13,6,"Archers",1,500,1,1,1,1,1,0.7,1));
         } else PS->A_ToBeDead.insert(ID);
     }
 }
@@ -90,7 +92,7 @@ void Army::Damaged(float pt) {
 void Army::towardWhere(float deltaTime) {
     target = searchTarget();
     if (target) {   // towardArmy
-        if (side == target->side) {
+        if (side == target->side || ID==7) {
             Position.x += std::cos(findAngle(Position, target->Position)) * speed * deltaTime;
             Position.y -= std::sin(findAngle(Position, target->Position)) * speed * deltaTime;
         } else if (side < target->side) {
@@ -138,14 +140,15 @@ Army* Army::searchTarget() {
     float shortestDistance = 10000;
     float dist;
     Army* tmpTarget;
-    for (auto i : PS->B_ArmyGroup->GetObjects()) {
-        Army* j = dynamic_cast<Army*>(i);
-        dist = (j->Position-Position).Magnitude();
-        if (dist < shortestDistance) {
-            shortestDistance = dist;
-            tmpTarget = j;
+    if (ID!=4 && ID!=7)
+        for (auto i : PS->B_ArmyGroup->GetObjects()) {
+            Army* j = dynamic_cast<Army*>(i);
+            dist = (j->Position-Position).Magnitude();
+            if (dist < shortestDistance) {
+                shortestDistance = dist;
+                tmpTarget = j;
+            }
         }
-    }
     for (auto i : PS->B_TowerGroup->GetObjects()) {
         Army* j = dynamic_cast<Army*>(i);
         dist = (j->Position-Position).Magnitude()-j->picRadiusPx - towerDetectRadiusRevision;

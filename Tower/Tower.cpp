@@ -13,10 +13,15 @@ void Tower::Draw() const {
 	if (enabled) {
 		al_draw_scaled_bitmap(towerImage.get(), 0, 0, al_get_bitmap_width(towerImage.get()), al_get_bitmap_height(towerImage.get()),
 			Position.x-picRadiusPx, Position.y-picRadiusPx, 2*picRadiusPx, 2*picRadiusPx, 0);
+		al_draw_filled_rectangle(Position.x-picRadiusPx + 5, Position.y-picRadiusPx + 5, 
+			Position.x+picRadiusPx - 5, Position.y-picRadiusPx + 10, al_map_rgb(30, 30, 30));
+		al_draw_filled_rectangle(Position.x-picRadiusPx + 6, Position.y-picRadiusPx + 6, 
+			Position.x-picRadiusPx+6+((countDown)?(1-countDown/coolDown)*(2*picRadiusPx-12):2*picRadiusPx-12), Position.y-picRadiusPx + 9, (faction?redCdColor:blueCdColor));
 	} else {
 		al_draw_scaled_bitmap(sleepTowerImage.get(), 0, 0, al_get_bitmap_width(sleepTowerImage.get()), al_get_bitmap_height(sleepTowerImage.get()),
 			Position.x-picRadiusPx, Position.y-picRadiusPx, 2*picRadiusPx, 2*picRadiusPx, 0);
 	}
+	
     al_draw_filled_rectangle(Position.x-picRadiusPx + 5, Position.y+picRadiusPx - 25, 
 		Position.x+picRadiusPx - 5, Position.y+picRadiusPx - 5, al_map_rgb(30, 30, 30));
 	al_draw_filled_rectangle(Position.x-picRadiusPx + 8, Position.y+picRadiusPx - 22,

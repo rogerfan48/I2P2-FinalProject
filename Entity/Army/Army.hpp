@@ -35,6 +35,8 @@ protected:
     GameData& gameData = Engine::GameEngine::GetInstance().data;
     ALLEGRO_COLOR blueBlood = al_map_rgb(20, 140, 255);
     ALLEGRO_COLOR redBlood = al_map_rgb(255, 100, 100);
+    ALLEGRO_COLOR blueCdColor = al_map_rgb(0, 255, 255);
+    ALLEGRO_COLOR redCdColor = al_map_rgb(165, 40, 255);
 public:
     const static int towerDetectRadiusRevision = 20;
 

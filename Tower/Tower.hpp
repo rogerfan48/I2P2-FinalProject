@@ -6,8 +6,7 @@
 
 class Tower: public Army {
 protected:
-    ALLEGRO_COLOR blueBlood = al_map_rgb(20, 140, 255);
-    ALLEGRO_COLOR redBlood = al_map_rgb(255, 100, 100);
+    ALLEGRO_COLOR redCdColor = al_map_rgb(255, 160, 40);
     ALLEGRO_COLOR White = al_map_rgb(255, 255, 255);
     ALLEGRO_COLOR Black = al_map_rgb(0, 0, 0);
     std::shared_ptr<ALLEGRO_BITMAP> towerImage;

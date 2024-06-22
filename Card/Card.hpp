@@ -28,12 +28,12 @@ public:
         "Knight",			// 0
         "Archers",			// 1
         "Musketeer",		// 2
-        "Skeletons",	// 3
+        "Skeletons",	    // 3
         "Giant",			// 4
         "P.E.K.K.A.",		// 5
         "Wizard",			// 6
         "Hog Rider",		// 7
-        "Barbarians",	// 8
+        "Barbarians",	    // 8
         "Zap",				// 9
         "Poison",			// 10
         "Heal"				// 11
