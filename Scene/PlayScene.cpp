@@ -39,6 +39,7 @@ void PlayScene::Initialize() {
     gameTime = 184;
     tick = 0;
     turtlePicture = 1;
+    victory = false;
     halfW = Engine::GameEngine::GetInstance().GetScreenSize().x / 2;
     halfH = Engine::GameEngine::GetInstance().GetScreenSize().y / 2;
 
@@ -179,13 +180,12 @@ void PlayScene::Terminate() {
 void PlayScene::Update(float deltaTime) {
     gameTime -= deltaTime;
     tick += deltaTime;
-    // if (tick > 500.3) {
-    //     gameTime = 10000;
-    // }
     if (tick > 500.3 && turtlePicture < (int)((tick-500.3)*30+1)) {
         gameTime = 10000;
-        turtlePicture = (int)((tick-500.3)*30+1);
-        turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string(turtlePicture) + ".jpg", 26*77, 26*54);
+        if (victory) {
+            turtlePicture = (int)((tick-500.3)*30+1);
+            turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string(turtlePicture) + ".jpg", 26*77, 26*54);
+        }
         if (tick < 501.3) turtle->Tint = al_map_rgba(255, 255, 255, (int)((tick-500.3)*255));
         turtle->Update(deltaTime);
     }
@@ -251,7 +251,7 @@ void PlayScene::Update(float deltaTime) {
         if (j->time < 0) A_SpellGroup->RemoveObject(i->GetObjectIterator());
     }
 
-    // ToBeDead/ToBeRemoved:
+    // ToBeDead:
     for (int i : A_ToBeDead) {
         for (auto k : A_ArmyPtrMap[i]->beTargeted) k->target = nullptr;
         for (auto k : WeaponGroup->GetObjects()) {
@@ -272,12 +272,17 @@ void PlayScene::Update(float deltaTime) {
         B_ArmyPtrMap.erase(i);
     }
     B_ToBeDead.clear();
+    
+    // ToBeRemoved:
     for (int i : A_TowerToBeRemoved) {
+        // std::cout<<"start remove\n";
         for (auto k : A_TowerPtrMap[i]->beTargeted) k->target = nullptr;
+        // std::cout<<"target remove\n";
         for (auto k : WeaponGroup->GetObjects()) {
             Bullet* j = dynamic_cast<Bullet*>(k);
             if (j->target == A_TowerPtrMap[i]) WeaponToBeDelete.insert(j);
         }
+        // std::cout<<"weapon remove\n";
         A_TowerGroup->RemoveObject(A_TowerPtrMap[i]->GetObjectIterator());
         A_TowerPtrMap.erase(i);
     }
@@ -442,8 +447,14 @@ void PlayScene::launchBullet(Bullet* bullet) {
 }
 
 void PlayScene::showWinAnimation() {
+    victory = true;
     AudioHelper::StopSample(bgmInstance);
     bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     bgmInstance = AudioHelper::PlaySample("turtle.ogg", false, AudioHelper::BGMVolume);
 }
-void PlayScene::showLoseAnimation() {}
+void PlayScene::showLoseAnimation() {
+    turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/die.jpg", 26*77, 26*54);
+    AudioHelper::StopSample(bgmInstance);
+    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+    bgmInstance = AudioHelper::PlaySample("turtle.ogg", false, AudioHelper::BGMVolume);     // I will find new music later.
+}

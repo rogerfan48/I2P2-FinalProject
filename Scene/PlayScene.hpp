@@ -25,6 +25,7 @@ private:
     std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
     GameData& gameData = Engine::GameEngine::GetInstance().data;
     Engine::Point mousePos;
+    bool victory = false;
 public:
     enum TILE_TYPE {
         GRASS1, // 0
