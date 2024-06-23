@@ -120,6 +120,8 @@ public:
 
     static void writeToServer(tcp::socket& socket);
     static void readFromServer(tcp::socket& socket);
+
+    void putOpponentEntity();
 };
 
 #endif // PLAYSCENE_HPP

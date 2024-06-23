@@ -3,6 +3,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/bitmap.h>
 #include <allegro5/allegro_audio.h>
+#include <sstream>
 #include <vector>
 #include <iostream>
 #include <string>
@@ -199,6 +200,8 @@ void PlayScene::Update(float deltaTime) {
     
     if (gameTime >= 181) return;
     IScene::Update(deltaTime);
+
+    putOpponentEntity();
 
     // time:
     if (gameTime < 181 && gameTime >= 0) {
@@ -476,7 +479,6 @@ void PlayScene::writeToServer(tcp::socket& socket) {
     }
 }
 void PlayScene::readFromServer(tcp::socket& socket) {
-    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
     try {
         boost::asio::streambuf buf;
         boost::asio::read_until(socket, buf, "\n");
@@ -487,6 +489,7 @@ void PlayScene::readFromServer(tcp::socket& socket) {
         // : normal mode
         // !: pair
         // ?: break
+        PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
         if (line[0] == '!')  {
             LobbyScene* LS = dynamic_cast<LobbyScene*>(Engine::GameEngine::GetInstance().GetScene("lobby"));
             LS->pairSuccessfully = true;
@@ -496,5 +499,25 @@ void PlayScene::readFromServer(tcp::socket& socket) {
         } else PS->commandFromServer.push(line);
     } catch (std::exception& e) {
         std::cerr << "Exception in read_from_server: " << e.what() << "\n";
+    }
+}
+
+void PlayScene::putOpponentEntity() {
+    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+    int ID, xB, yB;
+    float t;
+    while (!commandFromServer.empty()) {
+        std::stringstream sstream;
+        sstream << commandFromServer.front();
+        commandFromServer.pop();
+        sstream >> ID >> xB >> yB >> t;
+        switch (ID) {
+            case (0): 
+                PS->A_ArmyPtrMap.insert({PS->instanceIDCounter, new Army(ID, PS->instanceIDCounter, xB, yB, Name, 1, hp, atk, coolDown, speed, atkRadius, detectRadius, 0.6)});
+                PS->A_ArmyToBeDeployed.push({PS->gameTime-0.5, PS->A_ArmyPtrMap[PS->instanceIDCounter++]});
+                PS->A_ArmyPtrMap.insert({PS->instanceIDCounter, new Army(ID, PS->instanceIDCounter, xB, yB, Name, 1, hp, atk, coolDown, speed, atkRadius, detectRadius, 0.6)});
+                PS->A_ArmyToBeDeployed.push({PS->gameTime-0.5, PS->A_ArmyPtrMap[PS->instanceIDCounter++]});
+                break;
+        }
     }
 }

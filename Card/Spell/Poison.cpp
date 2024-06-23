@@ -2,6 +2,7 @@
 
 #include "Helper/Helper.hpp"
 #include "Entity/Spell/Spell.hpp"
+#include "Scene/PlayScene.hpp"
 
 Poison::Poison(bool selected, float x, float y): 
     Card(selected, 10, x, y, "Poison", "Covers the area in a deadly toxin.", 78, 4, 8, 1, 23, 4) {
@@ -44,5 +45,8 @@ void Poison::Draw() const {
 }
 
 Spell* Poison::placeSpell(int instanceID, float xB, float yB) {
+    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+    PS->commandToServer.push(std::to_string(ID)+" "+std::to_string(31-xB)+" "+std::to_string(yB)+" "+std::to_string(PS->gameTime-0.5));
+
     return new Spell(ID, instanceID, xB, yB, Name, pt, radius, duration, interval, atkTower, al_map_rgb(150, 50, 30));
 }

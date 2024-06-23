@@ -3,6 +3,7 @@
 
 #include "Helper/Helper.hpp"
 #include "Entity/Spell/Spell.hpp"
+#include "Scene/PlayScene.hpp"
 
 Heal::Heal(bool selected, float x, float y): 
     Card(selected, 11, x, y, "Heal", "Heal your troops to keep them in the fight!", 75, 3.5, 2, 0.5, 0, 1) {
@@ -46,5 +47,8 @@ void Heal::Draw() const {
 }
 
 Spell* Heal::placeSpell(int instanceID, float xB, float yB) {
+    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+    PS->commandToServer.push(std::to_string(ID)+" "+std::to_string(31-xB)+" "+std::to_string(yB)+" "+std::to_string(PS->gameTime-0.5));
+
     return new Spell(ID, instanceID, xB, yB, Name, pt, radius, duration, interval, atkTower, al_map_rgb(255, 220, 0));
 }
