@@ -8,3 +8,4 @@ Makefile
 .vscode/
 .DS_Store
 ninja.exe
+boost_1_82_0/

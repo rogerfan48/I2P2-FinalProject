@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include "Engine/Allegro5Exception.hpp"
 #include "Engine/IScene.hpp"
@@ -180,13 +181,13 @@ void PlayScene::Terminate() {
 void PlayScene::Update(float deltaTime) {
     gameTime -= deltaTime;
     tick += deltaTime;
-    if (tick > 500.3 && turtlePicture < (int)((tick-500.3)*30+1)) {
+    if (tick > 500.5 && turtlePicture < (int)((tick-500.5)*30+1)) {
         gameTime = 10000;
         if (victory) {
-            turtlePicture = (int)((tick-500.3)*30+1);
+            turtlePicture = (int)((tick-500.5)*30+1);
             turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string(turtlePicture) + ".jpg", 26*77, 26*54);
         }
-        if (tick < 501.3) turtle->Tint = al_map_rgba(255, 255, 255, (int)((tick-500.3)*255));
+        if (tick < 501.6) turtle->Tint = al_map_rgba(255, 255, 255, std::min((int)((tick-500.5)*255), 255));
         turtle->Update(deltaTime);
     }
     if (tick >= 508) Engine::GameEngine::GetInstance().ChangeScene("lobby");

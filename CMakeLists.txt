@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 include_directories(.)
 include_directories(Resource)
+include_directories(boost_1_82_0)
 
 file(COPY Resource/audios DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY Resource/fonts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
