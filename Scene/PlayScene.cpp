@@ -149,12 +149,39 @@ void PlayScene::Initialize() {
 void PlayScene::Terminate() {
     AudioHelper::StopSample(bgmInstance);
 	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+
+    cardPointer.clear();
+
+    A_TowerPtrMap.clear();
+    A_TowerToBeRemoved.clear();
+    A_ArmyPtrMap.clear();
+    A_ToBeDead.clear();
+    while (!A_ArmyToBeDeployed.empty()) A_ArmyToBeDeployed.pop();
+    while (!A_SpellToBeDeployed.empty()) A_SpellToBeDeployed.pop();
+    B_TowerPtrMap.clear();
+    B_TowerToBeRemoved.clear();
+    B_ArmyPtrMap.clear();
+    B_ToBeDead.clear();
+    while (!B_ArmyToBeDeployed.empty()) B_ArmyToBeDeployed.pop();
+    while (!B_SpellToBeDeployed.empty()) B_SpellToBeDeployed.pop();
+
+    elixirNumber.clear();
+    WeaponToBeDelete.clear();
+
+    gameData.A.availableCards.clear();
+    while (!gameData.A.nextCardQueue.empty()) gameData.A.nextCardQueue.pop();
+    gameData.B.availableCards.clear();
+    while (!gameData.B.nextCardQueue.empty()) gameData.A.nextCardQueue.pop();
+
     IScene::Terminate();
 }
 
 void PlayScene::Update(float deltaTime) {
     gameTime -= deltaTime;
     tick += deltaTime;
+    // if (tick > 500.3) {
+    //     gameTime = 10000;
+    // }
     if (tick > 500.3 && turtlePicture < (int)((tick-500.3)*30+1)) {
         gameTime = 10000;
         turtlePicture = (int)((tick-500.3)*30+1);

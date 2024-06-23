@@ -15,6 +15,7 @@ Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
         fireBullet(bullet), hp(hp), hpMax(hp), atk(atk), coolDown(coolDown), speedOri(speed), atkRadius(atkRadius*PlayScene::BlockSize), detectRadius(detectRadius*PlayScene::BlockSize),
         picRadiusPx(picRadiusBk*PlayScene::BlockSize), stunned(0), countDown(0), target(nullptr), faction(faction), isTower(isTower), 
         needForcedMove(false), previousMoveAngle(0) {
+            beTargeted.clear();     // just in case
             if (!isTower) {
                 Position = blockToMiddlePx(Engine::Point(xB, yB));
                 head = Engine::Resources::GetInstance().GetBitmap("card/"+Name+".png");
