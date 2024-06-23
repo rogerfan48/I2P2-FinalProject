@@ -456,5 +456,5 @@ void PlayScene::showLoseAnimation() {
     turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/die.jpg", 26*77, 26*54);
     AudioHelper::StopSample(bgmInstance);
     bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
-    bgmInstance = AudioHelper::PlaySample("turtle.ogg", false, AudioHelper::BGMVolume);     // I will find new music later.
+    bgmInstance = AudioHelper::PlaySample("lose.ogg", false, AudioHelper::BGMVolume);     // I will find new music later.
 }
