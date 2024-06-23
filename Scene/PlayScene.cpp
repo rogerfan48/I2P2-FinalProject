@@ -20,6 +20,7 @@
 #include "UI/Component/Rectangle.hpp"
 #include "UI/Component/RectangleBorder.hpp"
 #include "UI/Component/Label.hpp"
+#include "Scene/LobbyScene.hpp"
 #include "Card/AllCard.hpp"
 #include "Entity/Army/Army.hpp"
 
@@ -37,6 +38,7 @@ static Engine::Sprite* turtle;
 static int turtlePicture;
 
 void PlayScene::Initialize() {
+    std::cout << onlineMode << std::endl;
     gameTime = 184;
     tick = 0;
     turtlePicture = 1;
@@ -174,6 +176,9 @@ void PlayScene::Terminate() {
     while (!gameData.A.nextCardQueue.empty()) gameData.A.nextCardQueue.pop();
     gameData.B.availableCards.clear();
     while (!gameData.B.nextCardQueue.empty()) gameData.A.nextCardQueue.pop();
+
+    while (!commandFromServer.empty()) commandFromServer.pop();
+    while (!commandToServer.empty()) commandToServer.pop();
 
     IScene::Terminate();
 }
@@ -451,7 +456,6 @@ void PlayScene::showWinAnimation() {
     victory = true;
     AudioHelper::StopSample(bgmInstance);
     bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
-    bgmInstance = AudioHelper::PlaySample("victory.ogg", false, AudioHelper::BGMVolume);
     bgmInstance = AudioHelper::PlaySample("turtle.ogg", false, AudioHelper::BGMVolume);
 }
 void PlayScene::showLoseAnimation() {
@@ -459,4 +463,38 @@ void PlayScene::showLoseAnimation() {
     AudioHelper::StopSample(bgmInstance);
     bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     bgmInstance = AudioHelper::PlaySample("lose.ogg", false, AudioHelper::BGMVolume);     // I will find new music later.
+}
+
+void PlayScene::writeToServer(tcp::socket& socket) {
+    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+    if (PS->commandToServer.empty()) return;
+    try {
+        boost::asio::write(socket, boost::asio::buffer(PS->commandToServer.front()));
+        PS->commandToServer.pop();
+    } catch (std::exception& e) {
+        std::cerr << "Exception in write_to_server: " << e.what() << "\n";
+    }
+}
+void PlayScene::readFromServer(tcp::socket& socket) {
+    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+    try {
+        boost::asio::streambuf buf;
+        boost::asio::read_until(socket, buf, "\n");
+        std::istream is(&buf);
+        std::string line;
+        std::getline(is, line);
+        std::cout << "From server: " << line << std::endl;
+        // : normal mode
+        // !: pair
+        // ?: break
+        if (line[0] == '!')  {
+            LobbyScene* LS = dynamic_cast<LobbyScene*>(Engine::GameEngine::GetInstance().GetScene("lobby"));
+            LS->pairSuccessfully = true;
+        } else if (line[0] == '?') {
+            socket.close();
+            PS->commandFromServer.push(line);   // TODO: 對手已離線
+        } else PS->commandFromServer.push(line);
+    } catch (std::exception& e) {
+        std::cerr << "Exception in read_from_server: " << e.what() << "\n";
+    }
 }

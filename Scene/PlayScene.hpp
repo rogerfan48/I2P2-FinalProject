@@ -1,6 +1,10 @@
 #ifndef PLAYSCENE_HPP
 #define PLAYSCENE_HPP
 
+#include <boost/asio.hpp>
+#include <thread>
+using boost::asio::ip::tcp;
+
 #include <allegro5/bitmap.h>
 #include <allegro5/allegro_audio.h>
 #include <string>
@@ -27,6 +31,10 @@ private:
     Engine::Point mousePos;
     bool victory = false;
 public:
+    bool onlineMode;
+    std::queue<std::string> commandFromServer;
+    std::queue<std::string> commandToServer;
+
     enum TILE_TYPE {
         GRASS1, // 0
         GRASS2, // 1
@@ -109,6 +117,9 @@ public:
 
     void showWinAnimation();
     void showLoseAnimation();
+
+    static void writeToServer(tcp::socket& socket);
+    static void readFromServer(tcp::socket& socket);
 };
 
 #endif // PLAYSCENE_HPP

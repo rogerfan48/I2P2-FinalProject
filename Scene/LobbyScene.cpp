@@ -1,11 +1,17 @@
 #include "LobbyScene.hpp"
 #include <allegro5/allegro_audio.h>
 #include <string>
+#include <iostream>
+
+#include <boost/asio.hpp>
+#include <thread>
+using boost::asio::ip::tcp;
 
 #include "Engine/GameEngine.hpp"
 #include "Engine/Point.hpp"
 #include "Engine/Resources.hpp"
 #include "Engine/AudioHelper.hpp"
+#include "Scene/PlayScene.hpp"
 #include "UI/Component/RectangleButton.hpp"
 #include "UI/Component/Label.hpp"
 
@@ -17,6 +23,9 @@ void LobbyScene::Initialize() {
     int halfW = w / 2;
     int halfH = h / 2;
     Engine::RectangleButton* btn;
+
+    startWaitPairing = false;
+    pairSuccessfully = false;
 
     const int initH = 50;
     const int labelW = 900;
@@ -60,26 +69,67 @@ void LobbyScene::Initialize() {
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Settings", "recharge.otf", 52, halfW, halfH/2+diff[3]+labelH/2, 0, 0, 0, 255, 0.5, 0.5));
 
+    AddNewObject(pairLabelGroup = new Group());
+    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 80, halfW+3, halfH, 48, 93, 0, 255, 0.5, 0.5, 0));
+    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 80, halfW-3, halfH, 48, 93, 0, 255, 0.5, 0.5, 0));
+    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 80, halfW, halfH+3, 48, 93, 0, 255, 0.5, 0.5, 0));
+    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 80, halfW, halfH-3, 48, 93, 0, 255, 0.5, 0.5, 0));
+    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 80, halfW, halfH, 191, 224, 23, 255, 0.5, 0.5, 0));
+
     if (reloadBgm) bgmLobby = AudioHelper::PlaySample("bgm/lobbyBGM.ogg", true, AudioHelper::BGMVolume);
 }
 void LobbyScene::Terminate() {
     IScene::Terminate();
 }
+
+void LobbyScene::Update(float deltaTime) {
+    if (startWaitPairing) {
+        for (auto i : pairLabelGroup->GetObjects()) {
+            Engine::Label* j = dynamic_cast<Engine::Label*>(i);
+            j->Enable = true;
+        }
+    }
+    if (pairSuccessfully) {
+        PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+        PS->onlineMode = true;
+        reloadBgm = true;
+        AudioHelper::StopSample(bgmLobby);
+        bgmLobby = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+        Engine::GameEngine::GetInstance().ChangeScene("play");
+    }
+}
+
 void LobbyScene::CardSetOnClick(int stage) {
     reloadBgm = false;
     Engine::GameEngine::GetInstance().ChangeScene("cardSet");
 }
 void LobbyScene::SinglePlayOnClick(int stage) {
+    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+    PS->onlineMode = false;
     reloadBgm = true;
     AudioHelper::StopSample(bgmLobby);
 	bgmLobby = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     Engine::GameEngine::GetInstance().ChangeScene("play");
 }
 void LobbyScene::OnlinePlayOnClick(int stage) {
-    reloadBgm = true;
-    AudioHelper::StopSample(bgmLobby);
-	bgmLobby = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
-    Engine::GameEngine::GetInstance().ChangeScene("play");
+    startWaitPairing = true;
+    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+
+    try {
+        boost::asio::io_context io_context;
+        tcp::resolver resolver(io_context);
+        auto endpoints = resolver.resolve("1.34.203.40", "11113");
+        tcp::socket socket(io_context);
+        boost::asio::connect(socket, endpoints);
+
+        std::thread reader(PS->readFromServer, std::ref(socket));
+        std::thread writer(PS->writeToServer, std::ref(socket));
+
+        reader.join();
+        writer.join();
+    } catch (std::exception& e) {
+        std::cerr << "Exception: " << e.what() << "\n";
+    }
 }
 void LobbyScene::ScoreboardOnClick(int stage) {
     reloadBgm = false;
