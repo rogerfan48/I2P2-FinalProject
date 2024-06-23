@@ -32,11 +32,13 @@ std::map<int, ALLEGRO_COLOR> PlayScene::TileColor;
 std::vector<std::string> PlayScene::MapTile;
 
 static int halfW, halfH;
-static Engine::Image* turtle;
+static Engine::Sprite* turtle;
+static int turtlePicture;
 
 void PlayScene::Initialize() {
     gameTime = 184;
     tick = 0;
+    turtlePicture = 1;
     halfW = Engine::GameEngine::GetInstance().GetScreenSize().x / 2;
     halfH = Engine::GameEngine::GetInstance().GetScreenSize().y / 2;
 
@@ -141,6 +143,8 @@ void PlayScene::Initialize() {
     }
     
     // test
+    AddNewObject(turtle = new Engine::Sprite("loading/1.jpg", halfW, halfH, 26*77, 26*54, 0.5, 0.5));
+    turtle->Tint = al_map_rgba(255, 255, 255, 0);
 }
 void PlayScene::Terminate() {
     AudioHelper::StopSample(bgmInstance);
@@ -149,9 +153,16 @@ void PlayScene::Terminate() {
 }
 
 void PlayScene::Update(float deltaTime) {
-    if (tick > 500.3) gameTime = 10000;
     gameTime -= deltaTime;
     tick += deltaTime;
+    if (tick > 500.3 && turtlePicture < (int)((tick-500.3)*30+1)) {
+        gameTime = 10000;
+        turtlePicture = (int)((tick-500.3)*30+1);
+        turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string(turtlePicture) + ".jpg", 26*77, 26*54);
+        if (tick < 501.3) turtle->Tint = al_map_rgba(255, 255, 255, (int)((tick-500.3)*255));
+        turtle->Update(deltaTime);
+    }
+    if (tick >= 508) Engine::GameEngine::GetInstance().ChangeScene("lobby");
     
     if (gameTime >= 181) return;
     IScene::Update(deltaTime);
@@ -215,21 +226,41 @@ void PlayScene::Update(float deltaTime) {
 
     // ToBeDead/ToBeRemoved:
     for (int i : A_ToBeDead) {
+        for (auto k : A_ArmyPtrMap[i]->beTargeted) k->target = nullptr;
+        for (auto k : WeaponGroup->GetObjects()) {
+            Bullet* j = dynamic_cast<Bullet*>(k);
+            if (j->target == A_ArmyPtrMap[i]) WeaponToBeDelete.insert(j);
+        }
         A_ArmyGroup->RemoveObject(A_ArmyPtrMap[i]->GetObjectIterator());
         A_ArmyPtrMap.erase(i);
     }
     A_ToBeDead.clear();
     for (int i : B_ToBeDead) {
+        for (auto k : B_ArmyPtrMap[i]->beTargeted) k->target = nullptr;
+        for (auto k : WeaponGroup->GetObjects()) {
+            Bullet* j = dynamic_cast<Bullet*>(k);
+            if (j->target == B_ArmyPtrMap[i]) WeaponToBeDelete.insert(j);
+        }
         B_ArmyGroup->RemoveObject(B_ArmyPtrMap[i]->GetObjectIterator());
         B_ArmyPtrMap.erase(i);
     }
     B_ToBeDead.clear();
     for (int i : A_TowerToBeRemoved) {
+        for (auto k : A_TowerPtrMap[i]->beTargeted) k->target = nullptr;
+        for (auto k : WeaponGroup->GetObjects()) {
+            Bullet* j = dynamic_cast<Bullet*>(k);
+            if (j->target == A_TowerPtrMap[i]) WeaponToBeDelete.insert(j);
+        }
         A_TowerGroup->RemoveObject(A_TowerPtrMap[i]->GetObjectIterator());
         A_TowerPtrMap.erase(i);
     }
     A_TowerToBeRemoved.clear();
     for (int i : B_TowerToBeRemoved) {
+        for (auto k : B_TowerPtrMap[i]->beTargeted) k->target = nullptr;
+        for (auto k : WeaponGroup->GetObjects()) {
+            Bullet* j = dynamic_cast<Bullet*>(k);
+            if (j->target == B_TowerPtrMap[i]) WeaponToBeDelete.insert(j);
+        }
         B_TowerGroup->RemoveObject(B_TowerPtrMap[i]->GetObjectIterator());
         B_TowerPtrMap.erase(i);
     }
@@ -383,5 +414,9 @@ void PlayScene::launchBullet(Bullet* bullet) {
     WeaponGroup->AddNewObject(bullet);
 }
 
-void PlayScene::showWinAnimation() {}
+void PlayScene::showWinAnimation() {
+    AudioHelper::StopSample(bgmInstance);
+    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+    bgmInstance = AudioHelper::PlaySample("turtle.ogg", false, AudioHelper::BGMVolume);
+}
 void PlayScene::showLoseAnimation() {}

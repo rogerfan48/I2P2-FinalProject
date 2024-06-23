@@ -21,17 +21,17 @@ void LoadScene::Initialize() {
     AddNewObject(new Engine::Rectangle(0, 0, w, h, bgColor));
     AddNewObject(new Engine::Label("Arena Legends", "recharge.otf", 120, halfW, halfH / 3 + 50, 10, 255, 255, 255, 0.5, 0.5));
 
-    turtle = new Engine::Image("loading/1.jpg", halfW - 504, halfH - 200, 1008, 567, 0, 0);
+    turtle = new Engine::Image("loading/60.jpg", halfW, halfH + 100, 12*77, 12*54, 0.5, 0.5);
     AddNewObject(turtle);
-    AddNewObject(new Engine::Label("Loading . . .", "recharge.otf", 64, halfW, halfH + 500, 255, 255, 255, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Loading . . .", "recharge.otf", 64, halfW, halfH + 550, 255, 255, 255, 255, 0.5, 0.5));
 
     bgmInstance = AudioHelper::PlaySample("turtle.ogg", true, AudioHelper::BGMVolume);
 }
 void LoadScene::Update(float deltaTime) {
     IScene::Update(deltaTime);
     tick += deltaTime;
-    turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string((int)(tick*30+1)) + ".jpg", 1008, 567);
-    if (tick >= 4) {
+    turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/" + std::to_string((int)(tick*30+60)) + ".jpg", 12*77, 12*54);
+    if (tick >= 3) {
         tick = 0;
         Engine::GameEngine::GetInstance().ChangeScene("lobby");
     }

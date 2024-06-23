@@ -29,6 +29,7 @@ std::string timeString(float sec) {
 }
 
 double findAngle(Engine::Point center, Engine::Point point) {
+    if ((center - point).Magnitude() == 0) return 0;
     if (center.y >= point.y) 
         return std::acos((point.x - center.x) / (center - point).Magnitude());
     else

@@ -50,7 +50,7 @@ void Army::Update(float deltaTime) {
     }
 
     Engine::Point nowBlock(pxToBlock(Position));
-    if (PS->MapTile[Position.y][Position.x] == PlayScene::RIVER) {
+    if (PS->MapTile[nowBlock.y][nowBlock.x] == PlayScene::RIVER) {
         go(deltaTime);
         return;
     }
@@ -105,6 +105,7 @@ void Army::Damaged(float pt, bool isRange) {
     } else hp -= pt;
 
     if (isTower && !dynamic_cast<Tower*>(this)->enabled) dynamic_cast<Tower*>(this)->enabled = true;
+    
     if (hp < 1) {
         if (isTower && ID==-1) {
             PS->tick = 500;
@@ -114,11 +115,6 @@ void Army::Damaged(float pt, bool isRange) {
         if (isTower && ID==-2) {
             if (faction) PS->B_TowerPtrMap[0]->enabled = true;
             else PS->A_TowerPtrMap[0]->enabled = true;
-        }
-        for (auto i : beTargeted) i->target = nullptr;
-        for (auto i : PS->WeaponGroup->GetObjects()) {
-            Bullet* j = dynamic_cast<Bullet*>(i);
-            if (j->target == this) PS->WeaponToBeDelete.insert(j);
         }
         if (faction) {
             if (!isTower) PS->B_ToBeDead.insert(instanceID);
@@ -253,9 +249,9 @@ Army* Army::searchTarget() {
     else return nullptr;
 }
 
-void Army::setForceMove(float forceMoveAngle) {
-    needForcedMove = false;
-    this->forceMoveAngle = forceMoveAngle;
+void Army::setForceMove(float angle) {
+    needForcedMove = true;      // 
+    this->forceMoveAngle = angle;
 }
 
 void Army::checkCollision(float deltaTime, Army* entity) {
