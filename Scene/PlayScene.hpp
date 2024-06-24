@@ -2,7 +2,6 @@
 #define PLAYSCENE_HPP
 
 #include <boost/asio.hpp>
-#include <thread>
 using boost::asio::ip::tcp;
 
 #include <allegro5/bitmap.h>

@@ -140,9 +140,9 @@ void PlayScene::Initialize() {
     ElixirGroup->AddNewObject(elixirNumber[4] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050, 255, 255, 255, 255, 0.5, 0.5));
 
     // test : but why it can't use.
-    B_ArmyPtrMap.insert({1, new Army(5,1,2,2,"P.E.K.K.A.",0,3760, 816, 1.8, 2, 1.2, 5,0.7,1)});
-    B_ArmyToBeDeployed.push({gameTime-0.5, B_ArmyPtrMap[1]});
-    for (int i=2; i<17; i++) {
+    B_ArmyPtrMap.insert({-16, new Army(5,-16,2,2,"P.E.K.K.A.",0,3760, 816, 1.8, 2, 1.2, 5,0.7,1)});
+    B_ArmyToBeDeployed.push({gameTime-0.5, B_ArmyPtrMap[-16]});
+    for (int i=-15; i<0; i++) {
         B_ArmyPtrMap.insert({i, new Army(3, i, 2, 16, "Skeletons", 0, 81, 81, 1, 4, 1.2, 5, 0.5, 1)});
         B_ArmyToBeDeployed.push({gameTime-0.5, B_ArmyPtrMap[i]});
     }
@@ -201,7 +201,13 @@ void PlayScene::Update(float deltaTime) {
     if (gameTime >= 181) return;
     IScene::Update(deltaTime);
 
-    putOpponentEntity();
+    if (onlineMode) {
+        LobbyScene* LS = dynamic_cast<LobbyScene*>(Engine::GameEngine::GetInstance().GetScene("lobby"));
+        Engine::GameEngine::GetInstance().io_context.poll();
+        Engine::GameEngine::GetInstance().io_context.restart();
+        LS->networkManager.write_to_server();
+        putOpponentEntity();
+    }
 
     // time:
     if (gameTime < 181 && gameTime >= 0) {
@@ -468,56 +474,106 @@ void PlayScene::showLoseAnimation() {
     bgmInstance = AudioHelper::PlaySample("lose.ogg", false, AudioHelper::BGMVolume);     // I will find new music later.
 }
 
-void PlayScene::writeToServer(tcp::socket& socket) {
-    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
-    if (PS->commandToServer.empty()) return;
-    try {
-        boost::asio::write(socket, boost::asio::buffer(PS->commandToServer.front()));
-        PS->commandToServer.pop();
-    } catch (std::exception& e) {
-        std::cerr << "Exception in write_to_server: " << e.what() << "\n";
-    }
-}
-void PlayScene::readFromServer(tcp::socket& socket) {
-    try {
-        boost::asio::streambuf buf;
-        boost::asio::read_until(socket, buf, "\n");
-        std::istream is(&buf);
-        std::string line;
-        std::getline(is, line);
-        std::cout << "From server: " << line << std::endl;
-        // : normal mode
-        // !: pair
-        // ?: break
-        PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
-        if (line[0] == '!')  {
-            LobbyScene* LS = dynamic_cast<LobbyScene*>(Engine::GameEngine::GetInstance().GetScene("lobby"));
-            LS->pairSuccessfully = true;
-        } else if (line[0] == '?') {
-            socket.close();
-            PS->commandFromServer.push(line);   // TODO: 對手已離線
-        } else PS->commandFromServer.push(line);
-    } catch (std::exception& e) {
-        std::cerr << "Exception in read_from_server: " << e.what() << "\n";
-    }
-}
+// void PlayScene::writeToServer(tcp::socket& socket) {
+//     PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+//     if (PS->commandToServer.empty()) return;
+//     try {
+//         boost::asio::write(socket, boost::asio::buffer(PS->commandToServer.front()));
+//         PS->commandToServer.pop();
+//     } catch (std::exception& e) {
+//         std::cerr << "Exception in write_to_server: " << e.what() << "\n";
+//     }
+// }
+// void PlayScene::readFromServer(tcp::socket& socket) {
+//     try {
+//         boost::asio::streambuf buf;
+//         boost::asio::read_until(socket, buf, "\n");
+//         std::istream is(&buf);
+//         std::string line;
+//         std::getline(is, line);
+//         std::cout << "From server: " << line << std::endl;
+//         // : normal mode
+//         // !: pair
+//         // ?: break
+//         PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+//         if (line[0] == '!')  {
+//             LobbyScene* LS = dynamic_cast<LobbyScene*>(Engine::GameEngine::GetInstance().GetScene("lobby"));
+//             LS->pairSuccessfully = true;
+//         } else if (line[0] == '?') {
+//             socket.close();
+//             PS->commandFromServer.push(line);   // TODO: 對手已離線
+//         } else PS->commandFromServer.push(line);
+//     } catch (std::exception& e) {
+//         std::cerr << "Exception in read_from_server: " << e.what() << "\n";
+//     }
+// }
 
 void PlayScene::putOpponentEntity() {
-    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
     int ID, xB, yB;
     float t;
+    std::stringstream sstream;
     while (!commandFromServer.empty()) {
-        std::stringstream sstream;
+        if ((commandFromServer.front())[0] == '?') {
+            commandFromServer.pop();
+            std::cout << "Opponent leaves the game" << std::endl;
+            continue;
+        }
         sstream << commandFromServer.front();
         commandFromServer.pop();
         sstream >> ID >> xB >> yB >> t;
         switch (ID) {
             case (0): 
-                PS->A_ArmyPtrMap.insert({PS->instanceIDCounter, new Army(ID, PS->instanceIDCounter, xB, yB, Name, 1, hp, atk, coolDown, speed, atkRadius, detectRadius, 0.6)});
-                PS->A_ArmyToBeDeployed.push({PS->gameTime-0.5, PS->A_ArmyPtrMap[PS->instanceIDCounter++]});
-                PS->A_ArmyPtrMap.insert({PS->instanceIDCounter, new Army(ID, PS->instanceIDCounter, xB, yB, Name, 1, hp, atk, coolDown, speed, atkRadius, detectRadius, 0.6)});
-                PS->A_ArmyToBeDeployed.push({PS->gameTime-0.5, PS->A_ArmyPtrMap[PS->instanceIDCounter++]});
+                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Knight", 1, 1766, 202, 1.2, 3, 1.2, 5, 0.7, 1)});
+                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
                 break;
+            case (1):
+                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Archers", 1, 304, 107, 0.9, 3, 5, 5, 0.6, 1)});
+                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Archers", 1, 304, 107, 0.9, 3, 5, 5, 0.6, 1)});
+                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+                break;
+            case (2):
+                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Musketeer", 1, 720, 218, 1, 3, 6, 5, 0.7, 1)});
+                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+                break;
+            case (3):
+                for (int i = 0 ; i < 15 ; i ++) {
+                    B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Skeletons", 1, 81, 81, 1, 4, 1.2, 5, 0.5, 1)});
+                    B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+                }
+                break;
+            case (4):
+                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Giant", 1, 4091, 254, 1.5, 2, 1.2, 50, 0.8, 1)});
+                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+                break;
+            case (5):
+                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "P.E.K.K.A.", 1, 3760, 816, 1.8, 2, 1.2, 5, 0.9, 1)});
+                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+                break;
+            case (6):
+                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Wizard", 1, 720, 281, 1.4, 3, 5.5, 5, 0.7, 1)});
+                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+                break;
+            case (7):
+                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Hog Rider", 1, 1696, 318, 1.6, 5, 1.2, 50, 0.7, 1)});
+                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+                break;
+            case (8):
+                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Barbarians", 1, 1341, 384, 1.4, 4, 1.2, 5, 0.7, 1)});
+                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Barbarians", 1, 1341, 384, 1.4, 4, 1.2, 5, 0.7, 1)});
+                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+                break;
+            case (9):
+                B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Zap", 192, 2.5, 0.5, 1, 58, al_map_rgb(0, 140, 255))});
+                break;
+            case (10):
+                B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Poison", 78, 4, 8, 1, 23, al_map_rgb(150, 50, 30))});
+                break;
+            case (11):
+                B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Heal", 75, 3.5, 2, 0.5, 0, al_map_rgb(255, 220, 0))});
+                break;
+            default: ;
         }
     }
 }

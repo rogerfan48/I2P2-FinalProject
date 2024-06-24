@@ -46,7 +46,7 @@ void Zap::Draw() const {
 
 Spell* Zap::placeSpell(int instanceID, float xB, float yB) {
     PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
-    PS->commandToServer.push(std::to_string(ID)+" "+std::to_string(31-xB)+" "+std::to_string(yB)+" "+std::to_string(PS->gameTime-0.5));
+    PS->commandToServer.push(std::to_string(ID)+" "+std::to_string(int(31-xB))+" "+std::to_string(int(yB))+" "+std::to_string(PS->gameTime-0.5)+"\n");
 
     return new Spell(ID, instanceID, xB, yB, Name, pt, radius, duration, interval, atkTower, al_map_rgb(0, 140, 255));
 }

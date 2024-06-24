@@ -6,6 +6,7 @@
 
 #include "Point.hpp"
 #include "GameData.hpp"
+#include "Helper/NetworkManager.hpp"
 
 /// All general classes are under this namespace for clarity.
 namespace Engine {
@@ -112,6 +113,7 @@ namespace Engine {
 		static GameEngine& GetInstance();
 
 		GameData data;
+		boost::asio::io_context io_context;
 	};
 }
 #endif // GAMEENGINE_HPP

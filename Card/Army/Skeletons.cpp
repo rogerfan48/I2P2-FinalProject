@@ -15,7 +15,7 @@ void Skeletons::Draw() const {
 void Skeletons::placeArmy(float xB, float yB) {
     PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
 
-    PS->commandToServer.push(std::to_string(ID)+" "+std::to_string(31-xB)+" "+std::to_string(yB)+" "+std::to_string(PS->gameTime-0.5));
+    PS->commandToServer.push(std::to_string(ID)+" "+std::to_string(int(31-xB))+" "+std::to_string(int(yB))+" "+std::to_string(PS->gameTime-0.5)+"\n");
     
     for (int i=0; i<15; i++) {
         PS->A_ArmyPtrMap.insert({PS->instanceIDCounter, new Army(ID, PS->instanceIDCounter, xB, yB, Name, 0, hp, atk, coolDown, speed, atkRadius, detectRadius, 0.5)});

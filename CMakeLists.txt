@@ -120,6 +120,8 @@ add_executable(
 
     Helper/Helper.cpp
     Helper/Helper.hpp
+    Helper/NetworkManager.cpp
+    Helper/NetworkManager.hpp
 )
 
 IF (WIN32)

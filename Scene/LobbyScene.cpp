@@ -4,7 +4,6 @@
 #include <iostream>
 
 #include <boost/asio.hpp>
-#include <thread>
 using boost::asio::ip::tcp;
 
 #include "Engine/GameEngine.hpp"
@@ -16,6 +15,8 @@ using boost::asio::ip::tcp;
 #include "UI/Component/Label.hpp"
 
 std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmLobby;
+
+LobbyScene::LobbyScene(boost::asio::io_context& io_context): networkManager(io_context) {}
 
 void LobbyScene::Initialize() {
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
@@ -70,11 +71,11 @@ void LobbyScene::Initialize() {
     AddNewObject(new Engine::Label("Settings", "recharge.otf", 52, halfW, halfH/2+diff[3]+labelH/2, 0, 0, 0, 255, 0.5, 0.5));
 
     AddNewObject(pairLabelGroup = new Group());
-    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 80, halfW+3, halfH, 48, 93, 0, 255, 0.5, 0.5, 0));
-    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 80, halfW-3, halfH, 48, 93, 0, 255, 0.5, 0.5, 0));
-    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 80, halfW, halfH+3, 48, 93, 0, 255, 0.5, 0.5, 0));
-    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 80, halfW, halfH-3, 48, 93, 0, 255, 0.5, 0.5, 0));
-    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 80, halfW, halfH, 191, 224, 23, 255, 0.5, 0.5, 0));
+    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 120, halfW+3, halfH, 48, 93, 0, 255, 0.5, 0.5, 0));
+    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 120, halfW-3, halfH, 48, 93, 0, 255, 0.5, 0.5, 0));
+    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 120, halfW, halfH+3, 48, 93, 0, 255, 0.5, 0.5, 0));
+    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 120, halfW, halfH-3, 48, 93, 0, 255, 0.5, 0.5, 0));
+    pairLabelGroup->AddNewObject(new Engine::Label("Pairing...", "recharge.otf", 120, halfW, halfH, 191, 224, 23, 255, 0.5, 0.5, 0));
 
     if (reloadBgm) bgmLobby = AudioHelper::PlaySample("bgm/lobbyBGM.ogg", true, AudioHelper::BGMVolume);
 }
@@ -83,6 +84,8 @@ void LobbyScene::Terminate() {
 }
 
 void LobbyScene::Update(float deltaTime) {
+    Engine::GameEngine::GetInstance().io_context.poll();
+    Engine::GameEngine::GetInstance().io_context.restart();
     if (startWaitPairing) {
         for (auto i : pairLabelGroup->GetObjects()) {
             Engine::Label* j = dynamic_cast<Engine::Label*>(i);
@@ -113,23 +116,7 @@ void LobbyScene::SinglePlayOnClick(int stage) {
 }
 void LobbyScene::OnlinePlayOnClick(int stage) {
     startWaitPairing = true;
-    PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
-
-    try {
-        boost::asio::io_context io_context;
-        tcp::resolver resolver(io_context);
-        auto endpoints = resolver.resolve("1.34.203.40", "11113");
-        tcp::socket socket(io_context);
-        boost::asio::connect(socket, endpoints);
-
-        std::thread reader(PS->readFromServer, std::ref(socket));
-        std::thread writer(PS->writeToServer, std::ref(socket));
-
-        reader.join();
-        writer.join();
-    } catch (std::exception& e) {
-        std::cerr << "Exception: " << e.what() << "\n";
-    }
+    networkManager.connect();
 }
 void LobbyScene::ScoreboardOnClick(int stage) {
     reloadBgm = false;

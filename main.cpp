@@ -1,3 +1,6 @@
+#include <boost/asio.hpp>
+using boost::asio::ip::tcp;
+
 #include "Engine/GameEngine.hpp"
 #include "Engine/LOG.hpp"
 #include "Scene/LoadScene.hpp"
@@ -10,8 +13,9 @@ int main(int argc, char **argv) {
 	Engine::LOG::SetConfig(true);
 	Engine::GameEngine& game = Engine::GameEngine::GetInstance();
 
+	std::cout << &(game.io_context) << std::endl;
 	game.AddNewScene("load", new LoadScene());
-	game.AddNewScene("lobby", new LobbyScene());
+	game.AddNewScene("lobby", new LobbyScene(game.io_context));
 	game.AddNewScene("cardSet", new CardSetScene());
 	game.AddNewScene("setting", new SettingScene());
 	game.AddNewScene("play", new PlayScene());
