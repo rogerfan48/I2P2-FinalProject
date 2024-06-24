@@ -206,6 +206,25 @@ void PlayScene::Update(float deltaTime) {
     if (gameTime >= 181) return;
     IScene::Update(deltaTime);
 
+    if (gameTime < 0) {
+        tick = 500;
+        int blueTowerHp = 0;
+        int redTowerHp = 0;
+        for (auto i : A_TowerGroup->GetObjects()) {
+            auto j = dynamic_cast<Tower>(i);
+            blueTowerHp += j->hp;
+        }
+        for (auto i : B_TowerGroup->GetObjects()) {
+            auto j = dynamic_cast<Tower>(i);
+            redTowerHp += j->hp;
+        }
+        if (blueTowerHp > redTowerHp) {
+            showWinAnimation();
+        } else {
+            showLoseAnimation();
+        }
+    }
+
     if (onlineMode) {
         LobbyScene* LS = dynamic_cast<LobbyScene*>(Engine::GameEngine::GetInstance().GetScene("lobby"));
         Engine::GameEngine::GetInstance().io_context.poll();
