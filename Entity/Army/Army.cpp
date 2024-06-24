@@ -63,7 +63,7 @@ void Army::Update(float deltaTime) {
     if (lowerSpeed > 0) {
         lowerSpeed-=deltaTime;
     } else if (lowerSpeed < 0) lowerSpeed = 0;
-    else speed = speedOri;
+    else this->speed = this->speedOri;
 
     countDown = std::max(countDown-deltaTime, 0.f);
     if (target) {

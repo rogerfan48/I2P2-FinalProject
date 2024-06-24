@@ -285,6 +285,7 @@ void PlayScene::Update(float deltaTime) {
     }
 
     // Elixir:
+    if (gameTime < 61 && gameTime > 60.5) gameData.elixirSpeed = 1;
     gameData.A.elixir += deltaTime * gameData.elixirSpeed;
     if (gameData.A.elixir > 10) gameData.A.elixir = 10;
     gameData.B.elixir += deltaTime * gameData.elixirSpeed;          // for singl
