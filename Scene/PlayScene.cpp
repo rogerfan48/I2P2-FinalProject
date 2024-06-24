@@ -514,6 +514,7 @@ void PlayScene::showWinAnimation() {
     victory = true;
     AudioHelper::StopSample(bgmInstance);
     bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+    bgmInstance = AudioHelper::PlaySample("victory.ogg", false, AudioHelper::BGMVolume);
     bgmInstance = AudioHelper::PlaySample("turtle.ogg", false, AudioHelper::BGMVolume);
 }
 void PlayScene::showLoseAnimation() {
