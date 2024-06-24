@@ -8,6 +8,8 @@ using boost::asio::ip::tcp;
 #include "Scene/CardSetScene.hpp"
 #include "Scene/SettingScene.hpp"
 #include "Scene/PlayScene.hpp"
+#include <winsock2.h>
+#include <ws2tcpip.h>
 
 int main(int argc, char **argv) {
 	Engine::LOG::SetConfig(true);

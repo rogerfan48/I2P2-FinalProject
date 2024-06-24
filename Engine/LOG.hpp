@@ -10,7 +10,7 @@ namespace Engine {
 		DEBUGGING,
 		INFO,
 		WARN,
-		ERROR
+		LOG_ERROR
 	};
 
 	/// Helper log class for quick logging to console and file. Can be used like std::cout.

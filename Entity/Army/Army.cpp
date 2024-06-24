@@ -128,6 +128,7 @@ void Army::Damaged(float pt, bool isRange) {
 }
 
 void Army::towardWhere(float deltaTime) {
+    if (isTower) speed = 0; 
     target = searchTarget();
     if (needForcedMove) return;
     if (target) {   // towardArmy

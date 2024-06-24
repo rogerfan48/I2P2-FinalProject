@@ -85,6 +85,8 @@ public:
         std::map<int, Army*> B_ArmyPtrMap;
         std::set<int> B_ToBeDead;
         std::queue<std::pair<float, Army*>> B_ArmyToBeDeployed;
+        std::queue<std::pair<int, Engine::Point>> B_WaitForDeployed;         // for single
+        std::set<int> B_CardSelect;
     Group* B_SpellGroup;
         std::queue<std::pair<float, Spell*>> B_SpellToBeDeployed;
     // Group* MapBorderGroup;
@@ -121,6 +123,9 @@ public:
     static void readFromServer(tcp::socket& socket);
 
     void putOpponentEntity();
+    void deployAccordingID(int ID, int xB, int yB, int t);
+    int singleMode(int ID);
+    int cardCost(int ID);
 };
 
 #endif // PLAYSCENE_HPP

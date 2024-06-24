@@ -48,6 +48,7 @@ void PlayScene::Initialize() {
     halfH = Engine::GameEngine::GetInstance().GetScreenSize().y / 2;
 
     gameData.A.initGame();
+    gameData.B.elixir = 3;
     selectedCard = nullptr;
     instanceIDCounter = 3;  // 0: Main Tower, 1: Upper Tower, 2: Lower Tower
     mousePos = Engine::GameEngine::GetInstance().GetMousePosition();
@@ -170,6 +171,8 @@ void PlayScene::Terminate() {
     B_ArmyPtrMap.clear();
     B_ToBeDead.clear();
     while (!B_ArmyToBeDeployed.empty()) B_ArmyToBeDeployed.pop();
+    while (!B_WaitForDeployed.empty()) B_WaitForDeployed.pop();
+    B_CardSelect.clear();
     while (!B_SpellToBeDeployed.empty()) B_SpellToBeDeployed.pop();
 
     elixirNumber.clear();
@@ -234,6 +237,15 @@ void PlayScene::Update(float deltaTime) {
         }
     }
 
+    // WaitForDeploy                                           // for single
+    while (!B_WaitForDeployed.empty()) {
+        if (gameData.B.elixir >= cardCost(B_WaitForDeployed.front().first)) {
+            deployAccordingID(B_WaitForDeployed.front().first, 31 - B_WaitForDeployed.front().second.x, B_WaitForDeployed.front().second.y, gameTime - 1);
+            gameData.B.elixir -= cardCost(B_WaitForDeployed.front().first);
+            B_WaitForDeployed.pop();
+        } else break;
+    }
+
     // ToBeDeployed:
     if (!A_ArmyToBeDeployed.empty() && A_ArmyToBeDeployed.front().first > gameTime) {
         A_ArmyGroup->AddNewObject(A_ArmyToBeDeployed.front().second);
@@ -255,6 +267,8 @@ void PlayScene::Update(float deltaTime) {
     // Elixir:
     gameData.A.elixir += deltaTime * gameData.elixirSpeed;
     if (gameData.A.elixir > 10) gameData.A.elixir = 10;
+    gameData.B.elixir += deltaTime * gameData.elixirSpeed;          // for single
+    if (gameData.B.elixir > 10) B_WaitForDeployed.push({0, Engine::Point(26, 8)});
     elixirProcess->Size.x = (gameData.A.elixir)*ElixirProcessWidth/10;
     for (auto i : elixirNumber) i->Text = std::to_string((int)gameData.A.elixir);
 
@@ -336,6 +350,16 @@ void PlayScene::OnMouseDown(int button, int mx, int my) {
             Engine::Point nowBlock(pxToBlock(mousePos));
             if (selectedCard->cardType == ARMY) {
                 selectedCard->placeArmy(nowBlock.x, nowBlock.y);
+                if (!onlineMode) {                                              // for single
+                    int singleModeID = singleMode(selectedCard->ID);
+                    if (B_CardSelect.find(singleModeID) != B_CardSelect.end() ||
+                        B_CardSelect.size() < 8) {
+                            B_CardSelect.insert(singleModeID);
+                            if (singleModeID >= 9) deployAccordingID(singleModeID, nowBlock.x, nowBlock.y, gameTime - 1);
+                            else B_WaitForDeployed.push({singleModeID, nowBlock});
+                        }
+                    //singleMode(selectedCard, nowBlock);
+                }
             } else {
                 A_SpellToBeDeployed.push({gameTime-0.5, selectedCard->placeSpell(instanceIDCounter++, nowBlock.x, nowBlock.y)});
             }
@@ -527,59 +551,95 @@ void PlayScene::putOpponentEntity() {
         sstream << commandFromServer.front();
         commandFromServer.pop();
         sstream >> ID >> xB >> yB >> t;
-        switch (ID) {
-            case (0): 
-                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Knight", 1, 1766, 202, 1.2, 3, 1.2, 5, 0.7, 1)});
+        deployAccordingID(ID, xB, yB, t);
+    }
+}
+
+void PlayScene::deployAccordingID(int ID, int xB, int yB, int t) {
+    switch (ID) {
+        case (0): 
+            B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Knight", 1, 1766, 202, 1.2, 3, 1.2, 5, 0.7, 1)});
+            B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+            break;
+        case (1):
+            B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Archers", 1, 304, 107, 0.9, 3, 5, 5, 0.6, 1)});
+            B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+            B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Archers", 1, 304, 107, 0.9, 3, 5, 5, 0.6, 1)});
+            B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+            break;
+        case (2):
+            B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Musketeer", 1, 720, 218, 1, 3, 6, 5, 0.7, 1)});
+            B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+            break;
+        case (3):
+            for (int i = 0 ; i < 15 ; i ++) {
+                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Skeletons", 1, 81, 81, 1, 4, 1.2, 5, 0.5, 1)});
                 B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
-                break;
-            case (1):
-                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Archers", 1, 304, 107, 0.9, 3, 5, 5, 0.6, 1)});
-                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
-                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Archers", 1, 304, 107, 0.9, 3, 5, 5, 0.6, 1)});
-                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
-                break;
-            case (2):
-                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Musketeer", 1, 720, 218, 1, 3, 6, 5, 0.7, 1)});
-                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
-                break;
-            case (3):
-                for (int i = 0 ; i < 15 ; i ++) {
-                    B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Skeletons", 1, 81, 81, 1, 4, 1.2, 5, 0.5, 1)});
-                    B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
-                }
-                break;
-            case (4):
-                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Giant", 1, 4091, 254, 1.5, 2, 1.2, 50, 0.8, 1)});
-                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
-                break;
-            case (5):
-                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "P.E.K.K.A.", 1, 3760, 816, 1.8, 2, 1.2, 5, 0.9, 1)});
-                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
-                break;
-            case (6):
-                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Wizard", 1, 720, 281, 1.4, 3, 5.5, 5, 0.7, 1)});
-                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
-                break;
-            case (7):
-                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Hog Rider", 1, 1696, 318, 1.6, 5, 1.2, 50, 0.7, 1)});
-                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
-                break;
-            case (8):
-                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Barbarians", 1, 1341, 384, 1.4, 4, 1.2, 5, 0.7, 1)});
-                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
-                B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Barbarians", 1, 1341, 384, 1.4, 4, 1.2, 5, 0.7, 1)});
-                B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
-                break;
-            case (9):
-                B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Zap", 192, 2.5, 0.5, 1, 58, al_map_rgb(0, 140, 255), 1)});
-                break;
-            case (10):
-                B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Poison", 78, 4, 8, 1, 23, al_map_rgb(150, 50, 30), 1)});
-                break;
-            case (11):
-                B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Heal", 75, 3.5, 2, 0.5, 0, al_map_rgb(255, 220, 0), 1)});
-                break;
-            default: ;
-        }
+            }
+            break;
+        case (4):
+            B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Giant", 1, 4091, 254, 1.5, 2, 1.2, 50, 0.8, 1)});
+            B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+            break;
+        case (5):
+            B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "P.E.K.K.A.", 1, 3760, 816, 1.8, 2, 1.2, 5, 0.9, 1)});
+            B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+            break;
+        case (6):
+            B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Wizard", 1, 720, 281, 1.4, 3, 5.5, 5, 0.7, 1)});
+            B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+            break;
+        case (7):
+            B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Hog Rider", 1, 1696, 318, 1.6, 5, 1.2, 50, 0.7, 1)});
+            B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+            break;
+        case (8):
+            B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Barbarians", 1, 1341, 384, 1.4, 4, 1.2, 5, 0.7, 1)});
+            B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+            B_ArmyPtrMap.insert({instanceIDCounter, new Army(ID, instanceIDCounter, xB, yB, "Barbarians", 1, 1341, 384, 1.4, 4, 1.2, 5, 0.7, 1)});
+            B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
+            break;
+        case (9):
+            B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Zap", 192, 2.5, 0.5, 1, 58, al_map_rgb(0, 140, 255))});
+            break;
+        case (10):
+            B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Poison", 78, 4, 8, 1, 23, al_map_rgb(150, 50, 30))});
+            break;
+        case (11):
+            B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Heal", 75, 3.5, 2, 0.5, 0, al_map_rgb(255, 220, 0))});
+            break;
+        default: ;
+    }
+}
+
+int PlayScene::singleMode(int ID) {
+    switch (ID) {
+        case (0): return 5;     //
+        case (1): return 6;     //
+        case (2): return 8;     //
+        case (3): return 9;     //
+        case (4): return 1;     //
+        case (5): return 3;     //
+        case (6): return 2;     //
+        case (7): return 0;     //
+        case (8): return 7;     // ?
+        default:  return -1;
+    }
+}
+int PlayScene::cardCost(int ID) {
+    switch (ID) {
+        case (0): return 3;
+        case (1): return 3;
+        case (2): return 4;
+        case (3): return 3;
+        case (4): return 5;
+        case (5): return 7;
+        case (6): return 5;
+        case (7): return 4;
+        case (8): return 6;
+        case (9): return 2;
+        case (10): return 4;
+        case (11): return 1;
+        default:  return -1;
     }
 }
