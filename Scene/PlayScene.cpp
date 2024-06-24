@@ -571,13 +571,13 @@ void PlayScene::putOpponentEntity() {
                 B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
                 break;
             case (9):
-                B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Zap", 192, 2.5, 0.5, 1, 58, al_map_rgb(0, 140, 255))});
+                B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Zap", 192, 2.5, 0.5, 1, 58, al_map_rgb(0, 140, 255), 1)});
                 break;
             case (10):
-                B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Poison", 78, 4, 8, 1, 23, al_map_rgb(150, 50, 30))});
+                B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Poison", 78, 4, 8, 1, 23, al_map_rgb(150, 50, 30), 1)});
                 break;
             case (11):
-                B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Heal", 75, 3.5, 2, 0.5, 0, al_map_rgb(255, 220, 0))});
+                B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Heal", 75, 3.5, 2, 0.5, 0, al_map_rgb(255, 220, 0), 1)});
                 break;
             default: ;
         }

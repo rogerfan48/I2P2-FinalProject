@@ -19,6 +19,7 @@ public:
     ALLEGRO_COLOR color;
     bool ready;
     float readyFlash;
+    bool faction;
 
     // Spell:
     int pt;    // atk or heal
@@ -27,7 +28,7 @@ public:
     float time, duration;
     float span, interval;
     Spell(int id, int instanceID, float xB, float yB, std::string Name, 
-        int pt, float radius, float duration, float interval, int atkTower, ALLEGRO_COLOR color);
+        int pt, float radius, float duration, float interval, int atkTower, ALLEGRO_COLOR color, bool faction=0);
 
     void Draw() const override;
     void Update(float deltaTime) override;

@@ -9,9 +9,9 @@
 #include "Entity/Army/Army.hpp"
 
 Spell::Spell(int id, int instanceID, float xB, float yB, std::string Name, 
-        int pt, float radius, float duration, float interval, int atkTower, ALLEGRO_COLOR color): 
+        int pt, float radius, float duration, float interval, int atkTower, ALLEGRO_COLOR color, bool faction): 
         IObject(xB, yB), ID(id), instanceID(instanceID), Name(Name), 
-        pt(pt), radius(radius*PlayScene::BlockSize), time(duration), duration(duration), span(0), interval(interval), atkTower(atkTower), color(color), ready(true), readyFlash(0.15) {
+        pt(pt), radius(radius*PlayScene::BlockSize), time(duration), duration(duration), span(0), interval(interval), atkTower(atkTower), color(color), ready(true), readyFlash(0.15), faction(faction) {
             Position = blockToPx(Engine::Point(xB, yB));
             Position.x += PlayScene::BlockSize/2;
             Position.y += PlayScene::BlockSize/2;
@@ -33,24 +33,48 @@ void Spell::Update(float deltaTime) {
     readyFlash -= deltaTime;
     if (ready) {
         PlayScene* PS = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
-        if (Name == "Heal") {
-            for (auto i : PS->A_ArmyGroup->GetObjects()) {
-                Army* j = dynamic_cast<Army*>(i);
-                if ((this->Position - j->Position).Magnitude() < this->radius) {
-                    j->Healed(pt);
+        if (!faction) {
+            if (Name == "Heal") {
+                for (auto i : PS->A_ArmyGroup->GetObjects()) {
+                    Army* j = dynamic_cast<Army*>(i);
+                    if ((this->Position - j->Position).Magnitude() < this->radius) {
+                        j->Healed(pt);
+                    }
+                }
+            } else {
+                for (auto i : PS->B_ArmyGroup->GetObjects()) {
+                    Army* j = dynamic_cast<Army*>(i);
+                    if ((this->Position - j->Position).Magnitude() < this->radius) {
+                        j->Damaged(pt);
+                    }
+                }
+                for (auto i : PS->B_TowerGroup->GetObjects()) {
+                    Army* j = dynamic_cast<Army*>(i);
+                    if ((this->Position - j->Position).Magnitude() < this->radius + j->picRadiusPx - Army::towerDetectRadiusRevision) {
+                        j->Damaged(atkTower);
+                    }
                 }
             }
         } else {
-            for (auto i : PS->B_ArmyGroup->GetObjects()) {
-                Army* j = dynamic_cast<Army*>(i);
-                if ((this->Position - j->Position).Magnitude() < this->radius) {
-                    j->Damaged(pt);
+            if (Name == "Heal") {
+                for (auto i : PS->B_ArmyGroup->GetObjects()) {
+                    Army* j = dynamic_cast<Army*>(i);
+                    if ((this->Position - j->Position).Magnitude() < this->radius) {
+                        j->Healed(pt);
+                    }
                 }
-            }
-            for (auto i : PS->B_TowerGroup->GetObjects()) {
-                Army* j = dynamic_cast<Army*>(i);
-                if ((this->Position - j->Position).Magnitude() < this->radius + j->picRadiusPx - Army::towerDetectRadiusRevision) {
-                    j->Damaged(atkTower);
+            } else {
+                for (auto i : PS->A_ArmyGroup->GetObjects()) {
+                    Army* j = dynamic_cast<Army*>(i);
+                    if ((this->Position - j->Position).Magnitude() < this->radius) {
+                        j->Damaged(pt);
+                    }
+                }
+                for (auto i : PS->A_TowerGroup->GetObjects()) {
+                    Army* j = dynamic_cast<Army*>(i);
+                    if ((this->Position - j->Position).Magnitude() < this->radius + j->picRadiusPx - Army::towerDetectRadiusRevision) {
+                        j->Damaged(atkTower);
+                    }
                 }
             }
         }
