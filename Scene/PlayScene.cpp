@@ -626,7 +626,7 @@ void PlayScene::deployAccordingID(int ID, int xB, int yB, int t) {
             B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Poison", 78, 4, 8, 1, 23, al_map_rgb(150, 50, 30), 1)});
             break;
         case (11):
-            B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Heal", 75, 3.5, 2, 0.5, 0, al_map_rgb(255, 220, 0), 1)});
+            B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Heal", 75, 3.5, 2, 1, 0, al_map_rgb(255, 220, 0), 1)});
             break;
         default: ;
     }

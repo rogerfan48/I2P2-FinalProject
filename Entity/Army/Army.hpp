@@ -63,6 +63,7 @@ public:
     // Army:
     bool fireBullet;    // := Not Melee
     float stunned;
+    float lowerSpeed;
     float hp, hpMax;
     int atk;
     float countDown, coolDown;

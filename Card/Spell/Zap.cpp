@@ -5,7 +5,7 @@
 #include "Scene/PlayScene.hpp"
 
 Zap::Zap(bool selected, float x, float y): 
-    Card(selected, 9, x, y, "Zap", "Zaps enemies and briefly stunning them.", 192, 2.5, 0.5, 1, 58, 2) { // 1 > 0.5 ∴ only run one time
+    Card(selected, 9, x, y, "Zap", "Zaps enemies and briefly stunning them.", 192, 2.5, 1, 1, 58, 2) { // 1 > 0.5 ∴ only run one time
         fontDesc = Engine::Resources::GetInstance().GetFont("recharge.otf", 16);
         fontDescH = Engine::Resources::GetInstance().GetFont("recharge.otf", 17);
     }

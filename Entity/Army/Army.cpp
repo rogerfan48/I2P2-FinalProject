@@ -13,8 +13,7 @@ Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
     bool bullet, int hp, int atk, float coolDown, float speed, float atkRadius, float detectRadius, float picRadiusBk, int faction, bool isTower): 
         IObject(xB, yB), ID(id), instanceID(instanceID), Name(Name), 
         fireBullet(bullet), hp(hp), hpMax(hp), atk(atk), coolDown(coolDown), speedOri(speed), atkRadius(atkRadius*PlayScene::BlockSize), detectRadius(detectRadius*PlayScene::BlockSize),
-        picRadiusPx(picRadiusBk*PlayScene::BlockSize), stunned(0), countDown(0), target(nullptr), faction(faction), isTower(isTower), 
-        needForcedMove(false), previousMoveAngle(0) {
+        picRadiusPx(picRadiusBk*PlayScene::BlockSize), stunned(0), countDown(0), target(nullptr), faction(faction), isTower(isTower), lowerSpeed(0), needForcedMove(false), previousMoveAngle(0) {
             beTargeted.clear();     // just in case
             if (!isTower) {
                 countDown = 0.3;
@@ -23,12 +22,13 @@ Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
             } else if (id==-1) Position = blockToPx(Engine::Point(xB, yB));
             else Position = blockToMiddlePx(Engine::Point(xB, yB));
             switch (int(speed)) {
-                case (1): this->speed = 40; break;
-                case (2): this->speed = 60; break;
-                case (3): this->speed = 80; break;
-                case (4): this->speed = 100; break;
-                case (5): this->speed = 120; break;
+                case (1): this->speedOri = 40; break;
+                case (2): this->speedOri = 60; break;
+                case (3): this->speedOri = 80; break;
+                case (4): this->speedOri = 100; break;
+                case (5): this->speedOri = 120; break;
             }
+            this->speed = this->speedOri;
             side = whichSide(Position);
         }
 
@@ -44,8 +44,6 @@ void Army::Update(float deltaTime) {
     if (PS->gameTime > 181) return;
     if (isTower && !dynamic_cast<Tower*>(this)->enabled) return;
 
-    countDown = std::max(countDown-deltaTime, 0.f);
-
     if (needForcedMove) {
         Position.x += std::cos(forceMoveAngle) * collisionAdjustmentLength * deltaTime;
         Position.y -= std::sin(forceMoveAngle) * collisionAdjustmentLength * deltaTime;
@@ -56,6 +54,18 @@ void Army::Update(float deltaTime) {
         go(deltaTime);
         return;
     }
+
+    if (stunned > 0) {
+        stunned-=deltaTime;
+        countDown = coolDown;
+        return;
+    } else if (stunned < 0) stunned = 0;
+    if (lowerSpeed > 0) {
+        lowerSpeed-=deltaTime;
+    } else if (lowerSpeed < 0) lowerSpeed = 0;
+    else speed = speedOri;
+
+    countDown = std::max(countDown-deltaTime, 0.f);
     if (target) {
         if ((!(target->isTower) && (target->Position-Position).Magnitude() <= atkRadius) ||
             (target->isTower && (target->Position-Position).Magnitude() <= atkRadius + target->picRadiusPx - towerDetectRadiusRevision)) {

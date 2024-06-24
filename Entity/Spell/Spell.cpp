@@ -46,12 +46,18 @@ void Spell::Update(float deltaTime) {
                     Army* j = dynamic_cast<Army*>(i);
                     if ((this->Position - j->Position).Magnitude() < this->radius) {
                         j->Damaged(pt);
+                        if (ID==9) j->stunned = 1;
+                        if (ID==10) {
+                            j->speed = j->speedOri*0.4;
+                            j->lowerSpeed = 1.1;
+                        }
                     }
                 }
                 for (auto i : PS->B_TowerGroup->GetObjects()) {
                     Army* j = dynamic_cast<Army*>(i);
                     if ((this->Position - j->Position).Magnitude() < this->radius + j->picRadiusPx - Army::towerDetectRadiusRevision) {
                         j->Damaged(atkTower);
+                        if (ID==9) j->stunned = 1;
                     }
                 }
             }
@@ -68,12 +74,18 @@ void Spell::Update(float deltaTime) {
                     Army* j = dynamic_cast<Army*>(i);
                     if ((this->Position - j->Position).Magnitude() < this->radius) {
                         j->Damaged(pt);
+                        if (ID==9) j->stunned = 1;
+                        if (ID==10) {
+                            j->speed = j->speedOri*0.4;
+                            j->lowerSpeed = 1.1;
+                        }
                     }
                 }
                 for (auto i : PS->A_TowerGroup->GetObjects()) {
                     Army* j = dynamic_cast<Army*>(i);
                     if ((this->Position - j->Position).Magnitude() < this->radius + j->picRadiusPx - Army::towerDetectRadiusRevision) {
                         j->Damaged(atkTower);
+                        if (ID==9) j->stunned = 1;
                     }
                 }
             }
