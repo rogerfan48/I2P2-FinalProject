@@ -211,11 +211,11 @@ void PlayScene::Update(float deltaTime) {
         int blueTowerHp = 0;
         int redTowerHp = 0;
         for (auto i : A_TowerGroup->GetObjects()) {
-            auto j = dynamic_cast<Tower>(i);
+            auto j = dynamic_cast<Tower*>(i);
             blueTowerHp += j->hp;
         }
         for (auto i : B_TowerGroup->GetObjects()) {
-            auto j = dynamic_cast<Tower>(i);
+            auto j = dynamic_cast<Tower*>(i);
             redTowerHp += j->hp;
         }
         if (blueTowerHp > redTowerHp) {
