@@ -140,6 +140,14 @@ void PlayScene::Initialize() {
     ElixirGroup->AddNewObject(elixirNumber[3] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050+2, 0, 0, 0, 255, 0.5, 0.5));
     ElixirGroup->AddNewObject(elixirNumber[4] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050, 255, 255, 255, 255, 0.5, 0.5));
 
+    AddNewObject(Elixir2xGroup = new Group());
+    Elixir2xGroup->AddNewObject(new Engine::Label("2x", "recharge.otf", 46, 800-2, 1050, 0, 0, 0, 255, 0.5, 0.5, 0));
+    Elixir2xGroup->AddNewObject(new Engine::Label("2x", "recharge.otf", 46, 800+2, 1050, 0, 0, 0, 255, 0.5, 0.5, 0));
+    Elixir2xGroup->AddNewObject(new Engine::Label("2x", "recharge.otf", 46, 800, 1050-2, 0, 0, 0, 255, 0.5, 0.5, 0));
+    Elixir2xGroup->AddNewObject(new Engine::Label("2x", "recharge.otf", 46, 800, 1050+2, 0, 0, 0, 255, 0.5, 0.5, 0));
+    Elixir2xGroup->AddNewObject(new Engine::Label("2x", "recharge.otf", 46, 800, 1050, 255, 0, 255, 255, 0.5, 0.5, 0));
+
+
     // test : but why it can't use.
     if (!onlineMode) {
         B_ArmyPtrMap.insert({-16, new Army(5,-16,2,2,"P.E.K.K.A.",0,3760, 816, 1.8, 2, 1.2, 5,0.7,1)});
@@ -285,7 +293,13 @@ void PlayScene::Update(float deltaTime) {
     }
 
     // Elixir:
-    if (gameTime < 61 && gameTime > 60.5) gameData.elixirSpeed = 1;
+    if (gameTime < 61 && gameTime > 60.5) {
+        for (auto i : Elixir2xGroup->GetObjects()) {
+            auto j = dynamic_cast<Engine::Label*>(i);
+            j->Enable = true;
+        }
+        gameData.elixirSpeed = 1;
+    }
     gameData.A.elixir += deltaTime * gameData.elixirSpeed;
     if (gameData.A.elixir > 10) gameData.A.elixir = 10;
     gameData.B.elixir += deltaTime * gameData.elixirSpeed;          // for singl

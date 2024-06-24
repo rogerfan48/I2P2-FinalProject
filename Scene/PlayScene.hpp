@@ -99,6 +99,7 @@ public:
         std::vector<Engine::Label*> elixirNumber;
     Group* WeaponGroup;
         std::set<Bullet*> WeaponToBeDelete;
+    Group* Elixir2xGroup;
 
     explicit PlayScene() = default;
 	void Initialize() override;
