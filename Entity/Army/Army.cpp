@@ -17,6 +17,7 @@ Army::Army(int id, int instanceID, float xB, float yB, std::string Name,
         needForcedMove(false), previousMoveAngle(0) {
             beTargeted.clear();     // just in case
             if (!isTower) {
+                countDown = 0.3;
                 Position = blockToMiddlePx(Engine::Point(xB, yB));
                 head = Engine::Resources::GetInstance().GetBitmap("card/"+Name+".png");
             } else if (id==-1) Position = blockToPx(Engine::Point(xB, yB));
@@ -128,7 +129,7 @@ void Army::Damaged(float pt, bool isRange) {
 }
 
 void Army::towardWhere(float deltaTime) {
-    if (isTower) speed = 0; 
+    if (!isTower) countDown = std::max(countDown-deltaTime, 0.3f);
     target = searchTarget();
     if (needForcedMove) return;
     if (target) {   // towardArmy

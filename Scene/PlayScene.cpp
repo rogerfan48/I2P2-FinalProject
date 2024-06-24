@@ -208,6 +208,7 @@ void PlayScene::Update(float deltaTime) {
 
     if (gameTime < 0) {
         tick = 500;
+        gameTime = 10;
         int blueTowerHp = 0;
         int redTowerHp = 0;
         for (auto i : A_TowerGroup->GetObjects()) {
@@ -286,8 +287,8 @@ void PlayScene::Update(float deltaTime) {
     // Elixir:
     gameData.A.elixir += deltaTime * gameData.elixirSpeed;
     if (gameData.A.elixir > 10) gameData.A.elixir = 10;
-    gameData.B.elixir += deltaTime * gameData.elixirSpeed;          // for single
-    if (gameData.B.elixir > 10) B_WaitForDeployed.push({0, Engine::Point(26, 8)});
+    gameData.B.elixir += deltaTime * gameData.elixirSpeed;          // for singl
+    if (gameData.B.elixir > 10 && !onlineMode) B_WaitForDeployed.push({0, Engine::Point(26, 8)});
     elixirProcess->Size.x = (gameData.A.elixir)*ElixirProcessWidth/10;
     for (auto i : elixirNumber) i->Text = std::to_string((int)gameData.A.elixir);
 
@@ -619,13 +620,13 @@ void PlayScene::deployAccordingID(int ID, int xB, int yB, int t) {
             B_ArmyToBeDeployed.push({t, B_ArmyPtrMap[instanceIDCounter++]});
             break;
         case (9):
-            B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Zap", 192, 2.5, 0.5, 1, 58, al_map_rgb(0, 140, 255))});
+            B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Zap", 192, 2.5, 0.5, 1, 58, al_map_rgb(0, 140, 255), 1)});
             break;
         case (10):
-            B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Poison", 78, 4, 8, 1, 23, al_map_rgb(150, 50, 30))});
+            B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Poison", 78, 4, 8, 1, 23, al_map_rgb(150, 50, 30), 1)});
             break;
         case (11):
-            B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Heal", 75, 3.5, 2, 0.5, 0, al_map_rgb(255, 220, 0))});
+            B_SpellToBeDeployed.push({t, new Spell(ID, instanceIDCounter++, xB, yB, "Heal", 75, 3.5, 2, 0.5, 0, al_map_rgb(255, 220, 0), 1)});
             break;
         default: ;
     }
