@@ -13,7 +13,6 @@ int main(int argc, char **argv) {
 	Engine::LOG::SetConfig(true);
 	Engine::GameEngine& game = Engine::GameEngine::GetInstance();
 
-	std::cout << &(game.io_context) << std::endl;
 	game.AddNewScene("load", new LoadScene());
 	game.AddNewScene("lobby", new LobbyScene(game.io_context));
 	game.AddNewScene("cardSet", new CardSetScene());

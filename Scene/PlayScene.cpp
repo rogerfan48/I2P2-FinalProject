@@ -140,11 +140,13 @@ void PlayScene::Initialize() {
     ElixirGroup->AddNewObject(elixirNumber[4] = new Engine::Label(std::to_string((int)gameData.A.elixir), "recharge.otf", 34, 893, 1050, 255, 255, 255, 255, 0.5, 0.5));
 
     // test : but why it can't use.
-    B_ArmyPtrMap.insert({-16, new Army(5,-16,2,2,"P.E.K.K.A.",0,3760, 816, 1.8, 2, 1.2, 5,0.7,1)});
-    B_ArmyToBeDeployed.push({gameTime-0.5, B_ArmyPtrMap[-16]});
-    for (int i=-15; i<0; i++) {
-        B_ArmyPtrMap.insert({i, new Army(3, i, 2, 16, "Skeletons", 0, 81, 81, 1, 4, 1.2, 5, 0.5, 1)});
-        B_ArmyToBeDeployed.push({gameTime-0.5, B_ArmyPtrMap[i]});
+    if (!onlineMode) {
+        B_ArmyPtrMap.insert({-16, new Army(5,-16,2,2,"P.E.K.K.A.",0,3760, 816, 1.8, 2, 1.2, 5,0.7,1)});
+        B_ArmyToBeDeployed.push({gameTime-0.5, B_ArmyPtrMap[-16]});
+        for (int i=-15; i<0; i++) {
+            B_ArmyPtrMap.insert({i, new Army(3, i, 2, 16, "Skeletons", 0, 81, 81, 1, 4, 1.2, 5, 0.5, 1)});
+            B_ArmyToBeDeployed.push({gameTime-0.5, B_ArmyPtrMap[i]});
+        }
     }
     
     // test
@@ -462,12 +464,16 @@ void PlayScene::launchBullet(Bullet* bullet) {
 }
 
 void PlayScene::showWinAnimation() {
+    LobbyScene* LS = dynamic_cast<LobbyScene*>(Engine::GameEngine::GetInstance().GetScene("lobby"));
+    LS->networkManager.disconnect();
     victory = true;
     AudioHelper::StopSample(bgmInstance);
     bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     bgmInstance = AudioHelper::PlaySample("turtle.ogg", false, AudioHelper::BGMVolume);
 }
 void PlayScene::showLoseAnimation() {
+    LobbyScene* LS = dynamic_cast<LobbyScene*>(Engine::GameEngine::GetInstance().GetScene("lobby"));
+    LS->networkManager.disconnect();
     turtle->bmp = Engine::Resources::GetInstance().GetBitmap("loading/die.jpg", 26*77, 26*54);
     AudioHelper::StopSample(bgmInstance);
     bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();

@@ -23,7 +23,11 @@ void NetworkManager::connect() {
                 std::cerr << "Connect failed: " << ec.message() << std::endl;
             }
         });
+}
 
+void NetworkManager::disconnect() {
+    socket.close();
+    std::cout << "Disconnected" << std::endl;
 }
 
 // void NetworkManager::read_from_server() {
@@ -59,9 +63,7 @@ void NetworkManager::async_read_from_server() {
     auto buffer = std::make_shared<std::array<char, 128>>();
     socket.async_read_some(boost::asio::buffer(*buffer),
         [this, buffer](const boost::system::error_code& ec, std::size_t bytes_transferred) {
-            std::cout << "555" << std::endl;
             read_handler(ec, bytes_transferred, buffer);
-            std::cout << "666" << std::endl;
         });
 }
 

@@ -14,6 +14,7 @@ public:
     void connect();
     void async_read_from_server();
     void async_write_to_server();
+    void disconnect();
 
     // void read_from_server();
     void write_to_server();
