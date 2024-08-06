@@ -302,7 +302,7 @@ void PlayScene::Update(float deltaTime) {
     }
     gameData.A.elixir += deltaTime * gameData.elixirSpeed;
     if (gameData.A.elixir > 10) gameData.A.elixir = 10;
-    gameData.B.elixir += deltaTime * gameData.elixirSpeed;          // for singl
+    gameData.B.elixir += deltaTime * gameData.elixirSpeed;          // for single
     if (gameData.B.elixir > 10 && !onlineMode) B_WaitForDeployed.push({0, Engine::Point(26, 8)});
     elixirProcess->Size.x = (gameData.A.elixir)*ElixirProcessWidth/10;
     for (auto i : elixirNumber) i->Text = std::to_string((int)gameData.A.elixir);
