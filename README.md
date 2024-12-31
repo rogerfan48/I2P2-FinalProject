@@ -1,4 +1,4 @@
-## Project - Freshman - Introduction to Programming 2 - Arena Legends
+## Project - Freshman Spring - Introduction to Programming II - Arena Legends
 - a multiplayer battle game developed in C++ inspired by Clash Royale.
 - implemented comprehensive game features including: diverse character roster with unique abilities and polished icons, dharacter movement and collision detection, HP and cooldown display details, base tower mechanics, single-player AI mode, two-player online battle functionality
 
